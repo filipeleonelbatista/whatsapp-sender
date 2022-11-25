@@ -57,6 +57,7 @@ function Home() {
   };
 
   const handleOpen = async () => {
+    window.electron.teste("Olha isso aqui")
     setOpen(true);
 
     console.log('handleOpen');

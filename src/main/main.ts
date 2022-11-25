@@ -23,6 +23,7 @@ class AppUpdater {
   }
 }
 
+let splash: BrowserWindow | null = null;
 let mainWindow: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
@@ -68,6 +69,25 @@ const createWindow = async () => {
   const getAssetPath = (...paths: string[]): string => {
     return path.join(RESOURCES_PATH, ...paths);
   };
+
+  splash = new BrowserWindow({
+    width: 500,
+    height: 300,
+    transparent: true,
+    frame: false,
+    alwaysOnTop: true,
+    webPreferences: {
+      devTools: false
+    }
+  });
+
+  splash.loadFile('splash.html');
+
+  splash.center();
+
+  setTimeout(() => {
+    splash?.close();
+  }, 5000);
 
   mainWindow = new BrowserWindow({
     show: false,
