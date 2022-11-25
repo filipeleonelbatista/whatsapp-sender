@@ -20,8 +20,6 @@ import { celular } from "./utils/masks";
 import whatsAuthImage from './assets/whatsAuth.png';
 import api from './services/api';
 
-import remote from '@electron/remote'
-
 function Home() {
   const [rows, setRows] = React.useState([])
   const [attachments, setAttachments] = React.useState([])
@@ -35,24 +33,24 @@ function Home() {
 
   const handleSendMessages = async () => {
     try {
-      let newRows = []
-      for (const contact of rows) {
+      // let newRows = []
+      // for (const contact of rows) {
 
-        const response = await api.post("/send", {
-          number: `+55${contact.phone.replace(/\D/g, "")}`,
-          message: message.replaceAll("{primeiroNome}", contact.name.split(" ")[0]).replaceAll("{nomeCompleto}", contact.name).replaceAll("{telefone}", contact.phone)
-        })
+      //   const response = await api.post("/send", {
+      //     number: `+55${contact.phone.replace(/\D/g, "")}`,
+      //     message: message.replaceAll("{primeiroNome}", contact.name.split(" ")[0]).replaceAll("{nomeCompleto}", contact.name).replaceAll("{telefone}", contact.phone)
+      //   })
 
-        if (response.status === 200) {
-          newRows.push({
-            ...contact,
-            status: true,
-            statusInfo: "Enviado"
-          })
-        }
+      //   if (response.status === 200) {
+      //     newRows.push({
+      //       ...contact,
+      //       status: true,
+      //       statusInfo: "Enviado"
+      //     })
+      //   }
 
-      }
-      setRows(newRows)
+      // }
+      // setRows(newRows)
 
     } catch (err) {
       console.log(err)
@@ -196,7 +194,7 @@ function Home() {
   ];
   
   React.useEffect(() => {
-    handleCheckConnect()
+    // handleCheckConnect()
   }, [])
 
   return (
@@ -316,6 +314,7 @@ function Home() {
                 columns={columns}
                 rows={rows}
                 checkboxSelection={false}
+                disableSelectionOnClick
                 localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
               />
             </Box>
