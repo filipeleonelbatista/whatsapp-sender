@@ -177,11 +177,11 @@ function Home() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 helperText="Use as variáveis {primeiroNome}, {nomeCompleto}, {telefone} para usar as informações da lista de envio"
-                // value={formik.values.name}
-                // onChange={formik.handleChange}
-                // onBlur={formik.handleBlur}
-                // error={formik.errors.name ? true : false}
-                // helperText={formik.errors.name}
+              // value={formik.values.name}
+              // onChange={formik.handleChange}
+              // onBlur={formik.handleBlur}
+              // error={formik.errors.name ? true : false}
+              // helperText={formik.errors.name}
               />
             </Grid>
             <Grid item xs={6}>
@@ -331,6 +331,8 @@ function Home() {
             <DataGrid
               columns={columns}
               rows={rows}
+              pageSize={5}
+              rowsPerPageOptions={[5]}
               checkboxSelection={false}
               disableSelectionOnClick
               localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
