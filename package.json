@@ -59,6 +59,7 @@
     "electron-updater": "^5.2.3",
     "formik": "^2.2.9",
     "libphonenumber-js": "^1.10.14",
+    "puppeteer": "^19.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.0",
