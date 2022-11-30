@@ -39,11 +39,25 @@ function Home() {
       phone: celular('51992736445'),
       status: false,
       statusInfo: 'Aguardando envio',
+    },
+    {
+      id: uuidv4(),
+      name: 'Lisandra Novo',
+      phone: celular('51990163942'),
+      status: false,
+      statusInfo: 'Aguardando envio',
+    },
+    {
+      id: uuidv4(),
+      name: 'Lisandra Avon',
+      phone: celular('51984941682'),
+      status: false,
+      statusInfo: 'Aguardando envio',
     }
   ]);
   const [attachments, setAttachments] = React.useState([]);
   const [attachmentsPreview, setAttachmentsPreview] = React.useState([]);
-  const [message, setMessage] = React.useState('Teste');
+  const [message, setMessage] = React.useState('Teste da v1 *{primeiroNome}*');
 
   const handleSubmitForm = (formValues) => {
     setRows((state) => [
@@ -66,7 +80,7 @@ function Home() {
     try {
       const results = await window.electron.initiateSendProcess(rows, message);
 
-      console.log(results)
+      setRows(results.rows);
 
       console.log("Finalizou a handleSendMessages com sucesso!")
     } catch (error) {
