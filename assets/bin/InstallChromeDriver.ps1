@@ -11,6 +11,22 @@ param (
     $ForceDownload
 )
 
+# Force update chromedriver
+#  .\InstallChromeDriver.ps1 -ChromeDriverOutputPath .\chromedriver.exe -ForceDownload
+# Only install
+#  .\InstallChromeDriver.ps1 -ChromeDriverOutputPath .\chromedriver.exe
+
+# https://swimburger.net/blog/powershell/download-the-right-chromedriver-on-windows-linux-macos-using-powershell
+# Add variables to path of user
+$curDir = Get-Location
+Write-Host "Adicionando às variáveis path o caminho: $curDir para o usuário $env:UserName"
+
+$currUserEnv = [Environment]::GetEnvironmentVariable('Path', [EnvironmentVariableTarget]::User)
+Write-Host "Path: $currUserEnv"
+
+[Environment]::SetEnvironmentVariable("Path",$currUserEnv + $curDir, [EnvironmentVariableTarget]::User)
+# Ending of Add variables to path of user
+
 # store original preference to revert back later
 $OriginalProgressPreference = $ProgressPreference;
 # setting progress preference to silently continue will massively increase the performance of downloading the ChromeDriver
