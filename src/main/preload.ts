@@ -15,7 +15,9 @@ function delay(time: number) {
 }
 
 contextBridge.exposeInMainWorld('electron', {
-  initiateSendProcess: async (rows: any[], message: string) => {
+  initiateSendProcess: async (rows: any[], message: string, images: any[]) => {
+
+    console.log(images)
 
     log("Iniciando instancia do navegador")
     let driver = await new Builder().forBrowser(Browser.CHROME).build();
@@ -27,7 +29,7 @@ contextBridge.exposeInMainWorld('electron', {
       log("Aguardando Validar a página de inicio")
       const result = await driver.wait(until.elementLocated(By.css("h1[data-testid='intro-title']")));
       log("Autenticado")
-      await delay(3000);
+      await delay(5000);
 
       if (result) {
         let newRows = []
@@ -67,9 +69,33 @@ contextBridge.exposeInMainWorld('electron', {
 
             await delay(3000);
 
-            log("Procurando botão")
+            log("Procurando botão para enviar mensagem")
             const sendButton = await driver.wait(until.elementLocated(By.css("button[data-testid='compose-btn-send']")));
             sendButton.click();
+
+            if (images.length > 0) {
+              log("Enviando imagens anexadas")
+              for (const image of images) {
+                log("Procurando botão clipe")
+                const clipButton = await driver.wait(until.elementLocated(By.css("div[data-testid='conversation-clip']")));
+                clipButton.click();
+
+                await delay(1500);
+
+                log("Procurando botão anexar imagens")
+                const attachButton = await driver.wait(until.elementLocated(By.css("button[aria-label='Fotos e vídeos']")));
+                log("Inserindo imagem")
+                const inputElement = await attachButton.findElement(By.css(`input`))
+                inputElement.sendKeys(image.path)
+
+                await delay(1500);
+
+                log("Procurando botão para enviar imagem")
+                const sendImageButton = await driver.wait(until.elementLocated(By.css("span[data-testid='send']")));
+                sendImageButton.click();
+                await delay(1500);
+              }
+            }
 
             await delay(5000);
 
