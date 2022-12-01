@@ -85,6 +85,8 @@ const createWindow = async () => {
 
   splash.center();
 
+  splash.show()
+  
   setTimeout(() => {
     splash?.close();
   }, 5000);
@@ -92,7 +94,7 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
-    height: 728,    
+    height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,

@@ -1,11 +1,11 @@
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
-import TableChartIcon from '@mui/icons-material/TableChart';
 import SendIcon from '@mui/icons-material/Send';
+import TableChartIcon from '@mui/icons-material/TableChart';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import {
   Box,
   Button,
@@ -17,12 +17,12 @@ import {
   Typography
 } from '@mui/material';
 import { pink } from '@mui/material/colors';
-import { DataGrid, ptBR, GridApi, GridColDef, GridEditCellValueParams, GridToolbar, GridToolbarExportContainer, GridCsvExportMenuItem, GridPrintExportMenuItem, } from '@mui/x-data-grid';
+import { DataGrid, GridCsvExportMenuItem, GridPrintExportMenuItem, GridToolbarExportContainer, ptBR } from '@mui/x-data-grid';
 import { useFormik } from 'formik';
 import React from 'react';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 import { v4 as uuidv4 } from 'uuid';
 import * as Yup from 'yup';
-import { FaEdit, FaTrash } from 'react-icons/fa';
 
 import DrawerComponent from './components/DrawerComponent';
 
@@ -52,19 +52,11 @@ function Home() {
   const [isLoading, setisLoading] = React.useState(false);
   const [isEditable, setisEditable] = React.useState(false);
 
-  const [rows, setRows] = React.useState([
-    {
-      id: uuidv4(),
-      name: 'Lisandra Kich',
-      phone: celular('51990163942'),
-      status: false,
-      statusInfo: 'Aguardando envio',
-    },
-  ]);
+  const [rows, setRows] = React.useState([]);
   const [editableContact, setEditableContact] = React.useState();
   const [attachments, setAttachments] = React.useState([]);
   const [attachmentsPreview, setAttachmentsPreview] = React.useState([]);
-  const [message, setMessage] = React.useState('Testando o envio de mensagem com imagem');
+  const [message, setMessage] = React.useState('');
 
   const handleSubmitForm = (formValues) => {
     if (isEditable) {
