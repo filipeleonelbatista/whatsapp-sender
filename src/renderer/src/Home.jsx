@@ -56,7 +56,7 @@ function Home() {
   const [isLoading, setisLoading] = React.useState(false);
   const [isEditable, setisEditable] = React.useState(false);
 
-  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [openSnackBar, setOpenSnackBar] = React.useState(true);
   const [snackbarMessage, setSnackbarMessage] = React.useState({
     message: '',
     title: '',
@@ -291,6 +291,7 @@ function Home() {
   return (
     <>
       <Snackbar
+        sx={{ mt: 8 }}
         open={openSnackBar}
         autoHideDuration={snackbarMessage.severity === 'error' ? 30000 : 6000}
         onClose={handleClose}
