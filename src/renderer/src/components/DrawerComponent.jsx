@@ -22,13 +22,15 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 
 function Copyright() {
   return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://desenvolvedordeaplicativos.com.br/">
-        Desenvolvedor de aplicativos
-      </Link>{' '}
-      {new Date().getFullYear()}.
-    </Typography>
+    <Box sx={{mt:4}}>
+      <Typography variant="body2" color="text.secondary" align="center">
+        {'Copyright © '}
+        <Link color="inherit" href="https://desenvolvedordeaplicativos.com.br/">
+          Desenvolvedor de aplicativos
+        </Link>{' '}
+        {new Date().getFullYear()}.
+      </Typography>
+    </Box>
   );
 }
 
@@ -102,7 +104,7 @@ const mdThemeDark = createTheme({
   }
 });
 
-function DrawerComponent({ title, children }) {  
+function DrawerComponent({ title, children }) {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
   const [open, setOpen] = React.useState(false);
@@ -111,9 +113,9 @@ function DrawerComponent({ title, children }) {
     setOpen(!open);
   };
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     setMode(prefersDarkMode ? 'dark' : 'light')
-  },[])
+  }, [])
   return (
     <ThemeProvider theme={mode === 'light' ? mdTheme : mdThemeDark}>
       <Box sx={{ display: 'flex' }}>
