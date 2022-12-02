@@ -1,6 +1,13 @@
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Avatar, ListItemButton, ListItemIcon, ListItemText, ListSubheader, useMediaQuery } from '@mui/material';
+import MessageIcon from '@mui/icons-material/Message';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import { Avatar, ListItemButton, ListItemIcon, ListItemText, Tooltip, useMediaQuery } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -14,15 +21,10 @@ import { createTheme, styled, ThemeProvider } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
-
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import DashboardIcon from '@mui/icons-material/Dashboard';
 
 function Copyright() {
   return (
-    <Box sx={{mt:4}}>
+    <Box sx={{ mt: 4 }}>
       <Typography variant="body2" color="text.secondary" align="center">
         {'Copyright © '}
         <Link color="inherit" href="https://desenvolvedordeaplicativos.com.br/">
@@ -126,18 +128,21 @@ function DrawerComponent({ title, children }) {
               pr: '24px', // keep right padding when drawer closed
             }}
           >
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={toggleDrawer}
-              sx={{
-                marginRight: '36px',
-                ...(open && { display: 'none' }),
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
+
+            <Tooltip title="Expandir Menu">
+              <IconButton
+                edge="start"
+                color="inherit"
+                aria-label="open drawer"
+                onClick={toggleDrawer}
+                sx={{
+                  marginRight: '36px',
+                  ...(open && { display: 'none' }),
+                }}
+              >
+                <MenuIcon />
+              </IconButton>
+            </Tooltip>
             <Typography
               component="h1"
               variant="h6"
@@ -147,12 +152,16 @@ function DrawerComponent({ title, children }) {
             >
               {title}
             </Typography>
-            <IconButton sx={{ ml: 1 }} onClick={() => setMode(mode === "dark" ? 'light' : 'dark')} color="inherit">
-              {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-            </IconButton>
-            <IconButton>
-              <Avatar alt="Filipe" src="https://github.com/filipeleonelbatista.png" />
-            </IconButton>
+            <Tooltip title="Definir Modo Escuro/Claro">
+              <IconButton sx={{ ml: 1 }} onClick={() => setMode(mode === "dark" ? 'light' : 'dark')} color="inherit">
+                {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Perfil">
+              <IconButton>
+                <Avatar alt="Filipe" src="https://github.com/filipeleonelbatista.png" />
+              </IconButton>
+            </Tooltip>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -170,18 +179,46 @@ function DrawerComponent({ title, children }) {
                 WP Sender Bot
               </Typography>
             </Box>
-            <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon />
-            </IconButton>
+            <Tooltip title="Recolher Menu">
+              <IconButton onClick={toggleDrawer}>
+                <ChevronLeftIcon />
+              </IconButton>
+            </Tooltip>
           </Toolbar>
           <Divider />
           <List component="nav">
-            <ListItemButton>
-              <ListItemIcon>
-                <DashboardIcon />
-              </ListItemIcon>
-              <ListItemText primary="Envio de mensagens" />
-            </ListItemButton>
+            <Tooltip title="Envio de mensagens">
+              <ListItemButton>
+                <ListItemIcon>
+                  <MarkUnreadChatAltIcon />
+                </ListItemIcon>
+                <ListItemText primary="Envio de mensagens" />
+              </ListItemButton>
+            </Tooltip>
+            <Tooltip title="Modelos de mensagens">
+              <ListItemButton>
+                <ListItemIcon>
+                  <MessageIcon />
+                </ListItemIcon>
+                <ListItemText primary="Modelos" />
+              </ListItemButton>
+            </Tooltip>
+            <Tooltip title="Listas de envio">
+              <ListItemButton>
+                <ListItemIcon>
+                  <PlaylistAddIcon />
+                </ListItemIcon>
+                <ListItemText primary="Listas de envios" />
+              </ListItemButton>
+            </Tooltip>
+            <Tooltip title="Perfil">
+              <ListItemButton>
+                <ListItemIcon>
+                  <ManageAccountsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Perfil" />
+              </ListItemButton>
+            </Tooltip>
             <Divider sx={{ my: 1 }} />
           </List>
         </Drawer>
