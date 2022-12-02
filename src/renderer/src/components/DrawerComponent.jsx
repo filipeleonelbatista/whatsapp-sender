@@ -1,6 +1,6 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Avatar, ListItemButton, ListItemIcon, ListItemText, ListSubheader } from '@mui/material';
+import { Avatar, ListItemButton, ListItemIcon, ListItemText, ListSubheader, useMediaQuery } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -102,13 +102,18 @@ const mdThemeDark = createTheme({
   }
 });
 
-function DrawerComponent({ title, children }) {
+function DrawerComponent({ title, children }) {  
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
   const [open, setOpen] = React.useState(false);
   const [mode, setMode] = React.useState('light');
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
+  React.useEffect(()=>{
+    setMode(prefersDarkMode ? 'dark' : 'light')
+  },[])
   return (
     <ThemeProvider theme={mode === 'light' ? mdTheme : mdThemeDark}>
       <Box sx={{ display: 'flex' }}>

@@ -126,7 +126,7 @@ function Home() {
         handleClick()
       } else {
         setSnackbarMessage({
-          message: `${results.error}`,
+          message: `Houve um problema durante o envio. Contate o administrador. ${results.error}`,
           title: 'Tivemos um problema',
           severity: 'error'
         })
@@ -136,7 +136,7 @@ function Home() {
 
     } catch (error) {
       setSnackbarMessage({
-        message: `Houve um erro ao enviar as mensagens. \nContate o administrador. \n\n${error}`,
+        message: `Houve um erro ao tentar enviar as mensagens. \nContate o administrador. \n\n${error}`,
         title: 'Tivemos um problema',
         severity: 'error'
       })
