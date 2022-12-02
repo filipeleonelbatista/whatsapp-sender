@@ -1,6 +1,5 @@
-import { app, contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 import { Browser, Builder, By, until } from 'selenium-webdriver';
-import { currentVersion } from './main';
 
 export type Channels = 'ipc-example';
 
