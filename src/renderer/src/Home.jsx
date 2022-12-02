@@ -90,8 +90,9 @@ function Home() {
         phone: formValues.phone
       })
 
-      setRows(newRowsArray)
-      setisEditable(false)
+      setRows(newRowsArray);
+      setisEditable(false);
+      formik.resetForm();
 
     } else {
       setRows((state) => [
@@ -104,6 +105,8 @@ function Home() {
           statusInfo: 'Aguardando envio',
         },
       ]);
+
+      formik.resetForm();
     }
   };
 
