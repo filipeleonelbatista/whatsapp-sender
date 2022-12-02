@@ -59,7 +59,10 @@ contextBridge.exposeInMainWorld('electron', {
             log("Inserindo texto")
             const finalMessage = message.replaceAll("{primeiroNome}", contact.name.split(" ")[0])
               .replaceAll("{nomeCompleto}", contact.name)
-              .replaceAll("{telefone}", contact.phone);
+              .replaceAll("{telefone}", contact.phone)
+              .replaceAll("{var1}", contact.var1)
+              .replaceAll("{var2}", contact.var2)
+              .replaceAll("{var3}", contact.var3)
 
             input.click()
             input.sendKeys(finalMessage);
