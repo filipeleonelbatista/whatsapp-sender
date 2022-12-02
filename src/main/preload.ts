@@ -1,5 +1,5 @@
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-import { Builder, Browser, By, Key, until } from 'selenium-webdriver';
+import { contextBridge, ipcRenderer, IpcRendererEvent, nativeTheme } from 'electron';
+import { Browser, Builder, By, until } from 'selenium-webdriver';
 
 export type Channels = 'ipc-example';
 
@@ -16,9 +16,6 @@ function delay(time: number) {
 
 contextBridge.exposeInMainWorld('electron', {
   initiateSendProcess: async (rows: any[], message: string, images: any[]) => {
-
-    console.log(images)
-
     log("Iniciando instancia do navegador")
     let driver = await new Builder().forBrowser(Browser.CHROME).build();
 

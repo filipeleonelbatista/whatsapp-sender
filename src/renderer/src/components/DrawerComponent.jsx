@@ -14,6 +14,8 @@ import { createTheme, styled, ThemeProvider } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 import DashboardIcon from '@mui/icons-material/Dashboard';
 
@@ -75,16 +77,39 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
-const mdTheme = createTheme();
+const mdTheme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      main: '#128C7E',
+      dark: '#075E54',
+      light: '#25D366',
+      contrastText: "#FFF"
+    }
+  }
+});
+
+const mdThemeDark = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#128C7E',
+      dark: '#075E54',
+      light: '#25D366',
+      contrastText: "#FFF"
+    }
+  }
+});
 
 function DrawerComponent({ title, children }) {
   const [open, setOpen] = React.useState(false);
+  const [mode, setMode] = React.useState('light');
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
   return (
-    <ThemeProvider theme={mdTheme}>
+    <ThemeProvider theme={mode === 'light' ? mdTheme : mdThemeDark}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
@@ -114,6 +139,9 @@ function DrawerComponent({ title, children }) {
             >
               {title}
             </Typography>
+            <IconButton sx={{ ml: 1 }} onClick={()=> setMode(mode === "dark" ? 'light' : 'dark')} color="inherit">
+              {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -155,7 +183,12 @@ function DrawerComponent({ title, children }) {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Box
-              sx={{ w: '100%', borderRadius: 2, p: 4, backgroundColor: '#FFF' }}
+              sx={{
+                w: '100%', borderRadius: 2, p: 4, backgroundColor: (theme) =>
+                  theme.palette.mode === 'light'
+                    ? "#FFF"
+                    : theme.palette.grey[800],
+              }}
             >
               {children}
             </Box>
