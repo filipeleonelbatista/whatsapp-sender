@@ -1,6 +1,6 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MenuIcon from '@mui/icons-material/Menu';
-import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Avatar, ListItemButton, ListItemIcon, ListItemText, ListSubheader } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -17,6 +17,7 @@ import * as React from 'react';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 
 function Copyright() {
@@ -139,8 +140,11 @@ function DrawerComponent({ title, children }) {
             >
               {title}
             </Typography>
-            <IconButton sx={{ ml: 1 }} onClick={()=> setMode(mode === "dark" ? 'light' : 'dark')} color="inherit">
+            <IconButton sx={{ ml: 1 }} onClick={() => setMode(mode === "dark" ? 'light' : 'dark')} color="inherit">
               {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+            </IconButton>
+            <IconButton>
+              <Avatar alt="Filipe" src="https://github.com/filipeleonelbatista.png" />
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -153,6 +157,12 @@ function DrawerComponent({ title, children }) {
               px: [1],
             }}
           >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, justifyContent: "flex-start", width: "100%", pl: 2 }}>
+              <WhatsAppIcon />
+              <Typography>
+                WP Sender Bot
+              </Typography>
+            </Box>
             <IconButton onClick={toggleDrawer}>
               <ChevronLeftIcon />
             </IconButton>

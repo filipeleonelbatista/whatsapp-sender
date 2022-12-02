@@ -1,5 +1,6 @@
-import { contextBridge, ipcRenderer, IpcRendererEvent, nativeTheme } from 'electron';
+import { app, contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 import { Browser, Builder, By, until } from 'selenium-webdriver';
+import { currentVersion } from './main';
 
 export type Channels = 'ipc-example';
 
@@ -112,6 +113,7 @@ contextBridge.exposeInMainWorld('electron', {
         await driver.quit();
         return {
           rows: rows,
+          error: "Não foi possivel autenticar",
           status: false
         };
       }

@@ -7,13 +7,15 @@ import SendIcon from '@mui/icons-material/Send';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import {
+  Alert,
+  AlertTitle,
   Box,
   Button,
   CircularProgress,
   circularProgressClasses,
   Grid,
   IconButton,
-  InputAdornment, TextField,
+  InputAdornment, Slide, TextField,
   Typography
 } from '@mui/material';
 import { pink } from '@mui/material/colors';
@@ -23,7 +25,9 @@ import React from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { v4 as uuidv4 } from 'uuid';
 import * as Yup from 'yup';
+import Snackbar from '@mui/material/Snackbar';
 
+import CloseIcon from '@mui/icons-material/Close';
 import DrawerComponent from './components/DrawerComponent';
 
 import celular from './utils/masks';
@@ -51,6 +55,25 @@ const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
 function Home() {
   const [isLoading, setisLoading] = React.useState(false);
   const [isEditable, setisEditable] = React.useState(false);
+
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState({
+    message: '',
+    title: '',
+    severity: 'error'
+  });
+
+  const handleClick = () => {
+    setOpenSnackBar(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSnackBar(false);
+  };
 
   const [rows, setRows] = React.useState([]);
   const [editableContact, setEditableContact] = React.useState();
@@ -93,11 +116,31 @@ function Home() {
       setisLoading(true)
       const results = await window.electron.initiateSendProcess(rows, message, attachments);
 
+      if (results.status) {
+
+        setSnackbarMessage({
+          message: `Mensagens enviadas com sucesso!`,
+          title: 'Envio concluido',
+          severity: 'success'
+        })
+        handleClick()
+      } else {
+        setSnackbarMessage({
+          message: `${results.error}`,
+          title: 'Tivemos um problema',
+          severity: 'error'
+        })
+        handleClick()
+      }
       setRows(results.rows);
 
-      console.log("Finalizou a handleSendMessages com sucesso!")
     } catch (error) {
-      console.log("Finalizou a handleSendMessages com erro!", error)
+      setSnackbarMessage({
+        message: `Houve um erro ao enviar as mensagens. \nContate o administrador. \n\n${error}`,
+        title: 'Tivemos um problema',
+        severity: 'error'
+      })
+      handleClick()
     } finally {
       setisLoading(false)
     }
@@ -125,6 +168,9 @@ function Home() {
         id: uuidv4(),
         name: i.replace('\r', '').split(';')[0],
         phone: celular(String(i.replace('\r', '').split(';')[1])),
+        var1: i.replace('\r', '').split(';')[2],
+        var2: i.replace('\r', '').split(';')[3],
+        var3: i.replace('\r', '').split(';')[4],
         status: false,
         statusInfo: 'Aguardando envio',
       };
@@ -183,6 +229,9 @@ function Home() {
     { field: 'id', headerName: 'Id', flex: 1 },
     { field: 'name', headerName: 'Nome', flex: 1 },
     { field: 'phone', headerName: 'Telefone', flex: 1 },
+    { field: 'var1', headerName: 'Var 1', flex: 1 },
+    { field: 'var2', headerName: 'Var 2', flex: 1 },
+    { field: 'var3', headerName: 'Var 3', flex: 1 },
     { field: 'statusInfo', headerName: 'Informação', flex: 1 },
     {
       field: 'status',
@@ -241,6 +290,18 @@ function Home() {
 
   return (
     <>
+      <Snackbar
+        open={openSnackBar}
+        autoHideDuration={snackbarMessage.severity === 'error' ? 30000 : 6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        TransitionComponent={(props) => <Slide {...props} direction="left" />}
+      >
+        <Alert onClose={handleClose} severity={snackbarMessage.severity} sx={{ maxWidth: '400px', width: '100%' }}>
+          <AlertTitle>{snackbarMessage.title}</AlertTitle>
+          {snackbarMessage.message}
+        </Alert>
+      </Snackbar>
       {
         isLoading && (
           <Box sx={{
@@ -286,7 +347,7 @@ function Home() {
               rows={6}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              helperText="Use as variáveis {primeiroNome}, {nomeCompleto}, {telefone} para usar as informações da lista de envio"
+              helperText="Use as variáveis {primeiroNome}, {nomeCompleto}, {telefone}, {var1}, {var2} e {var3} para usar as informações da lista de envio"
             // value={formik.values.name}
             // onChange={formik.handleChange}
             // onBlur={formik.handleBlur}
@@ -418,10 +479,18 @@ function Home() {
             <Button type="submit" variant="contained">
               {isEditable ? 'Salvar' : 'Adicionar'}
             </Button>
+            {isEditable && (
+              <Button onClick={() => {
+                formik.resetForm()
+                setisEditable(false)
+              }} type="button" color="error" variant="contained">
+                Cancelar
+              </Button>
+            )}
           </Box>
         </form>
 
-        <Box sx={{ mt: 4 }}>
+        <Box sx={{ display: 'flex', mt: 4, gap: 4 }}>
           <Button
             variant="contained"
             component="label"
@@ -435,6 +504,18 @@ function Home() {
               type="file"
               onChange={(event) => handleLoadCsv(event)}
             />
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<FaTrash size={16} />}
+            onClick={() => {
+              if (confirm("Deseja remover todos os contatos da tabela de envios?")) {
+                setRows([])
+              }
+            }}
+          >
+            Limpar tabela
           </Button>
         </Box>
 
