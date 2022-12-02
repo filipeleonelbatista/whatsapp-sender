@@ -56,7 +56,7 @@ function Home() {
   const [isLoading, setisLoading] = React.useState(false);
   const [isEditable, setisEditable] = React.useState(false);
 
-  const [openSnackBar, setOpenSnackBar] = React.useState(true);
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState({
     message: '',
     title: '',
