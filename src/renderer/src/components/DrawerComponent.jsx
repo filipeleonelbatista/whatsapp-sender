@@ -21,6 +21,10 @@ import { createTheme, styled, ThemeProvider } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
+import StoriesIcon from './StoriesIcon';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Copyright() {
   return (
@@ -107,6 +111,9 @@ const mdThemeDark = createTheme({
 });
 
 function DrawerComponent({ title, children }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
   const [open, setOpen] = React.useState(false);
@@ -118,6 +125,11 @@ function DrawerComponent({ title, children }) {
   React.useEffect(() => {
     setMode(prefersDarkMode ? 'dark' : 'light')
   }, [])
+
+  const handleNavigate = (text) => {
+    return navigate(text)
+  }
+
   return (
     <ThemeProvider theme={mode === 'light' ? mdTheme : mdThemeDark}>
       <Box sx={{ display: 'flex' }}>
@@ -187,32 +199,40 @@ function DrawerComponent({ title, children }) {
           </Toolbar>
           <Divider />
           <List component="nav">
-            <Tooltip title="Envio de mensagens">
-              <ListItemButton>
+            <Tooltip placement="right" title="Envio de mensagens">
+              <ListItemButton selected={location.pathname === "/"} onClick={() => handleNavigate("/")}>
                 <ListItemIcon>
                   <MarkUnreadChatAltIcon />
                 </ListItemIcon>
                 <ListItemText primary="Envio de mensagens" />
               </ListItemButton>
             </Tooltip>
-            <Tooltip title="Modelos de mensagens">
-              <ListItemButton>
+            <Tooltip placement="right" title="Modelos de mensagens">
+              <ListItemButton selected={location.pathname === "/modelos-de-mensagem"} onClick={() => handleNavigate("/modelos-de-mensagem")}>
                 <ListItemIcon>
                   <MessageIcon />
                 </ListItemIcon>
                 <ListItemText primary="Modelos" />
               </ListItemButton>
             </Tooltip>
-            <Tooltip title="Listas de envio">
-              <ListItemButton>
+            <Tooltip placement="right" title="Listas de envio">
+              <ListItemButton selected={location.pathname === "/listas-de-contatos"} onClick={() => handleNavigate("/listas-de-contatos")}>
                 <ListItemIcon>
                   <PlaylistAddIcon />
                 </ListItemIcon>
                 <ListItemText primary="Listas de envios" />
               </ListItemButton>
             </Tooltip>
-            <Tooltip title="Perfil">
-              <ListItemButton>
+            <Tooltip placement="right" title="Envio de Audios">
+              <ListItemButton selected={location.pathname === "/enviar-audio"} onClick={() => handleNavigate("/enviar-audio")}>
+                <ListItemIcon>
+                  <VolumeUpIcon />
+                </ListItemIcon>
+                <ListItemText primary="Envio de Audios" />
+              </ListItemButton>
+            </Tooltip>
+            <Tooltip placement="right" title="Perfil">
+              <ListItemButton selected={location.pathname === "/perfil"} onClick={() => handleNavigate("/perfil")}>
                 <ListItemIcon>
                   <ManageAccountsIcon />
                 </ListItemIcon>
@@ -220,6 +240,14 @@ function DrawerComponent({ title, children }) {
               </ListItemButton>
             </Tooltip>
             <Divider sx={{ my: 1 }} />
+            <Tooltip placement="right" title="Configurações">
+              <ListItemButton selected={location.pathname === "/configuracoes"} onClick={() => handleNavigate("/configuracoes")}>
+                <ListItemIcon>
+                  <SettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Configurações" />
+              </ListItemButton>
+            </Tooltip>
           </List>
         </Drawer>
         <Box
