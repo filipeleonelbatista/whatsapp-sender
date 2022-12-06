@@ -4,11 +4,12 @@ import {
   Box,
   Button, Grid,
   IconButton, TextField,
+  Tooltip,
   Typography
 } from '@mui/material';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import React from 'react';
-import { FaPlay } from 'react-icons/fa';
+import { FaEdit, FaPlay, FaTrash } from 'react-icons/fa';
 
 import DrawerComponent from '../components/DrawerComponent';
 
@@ -16,14 +17,40 @@ import SendIcon from '@mui/icons-material/Send';
 
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function MessageModels() {
-
+  const [isEditable, setisEditable] = React.useState(false);
+  const [selectedEditableRow, setSelectedEditableRow] = React.useState(false);
   const [rows, setRows] = React.useState([]);
   const [attachments, setAttachments] = React.useState([]);
   const [attachmentsPreview, setAttachmentsPreview] = React.useState([]);
 
-  const handleSubmitForm = (formValues) => { }
+  const handleSubmitForm = (formValues) => {
+    if (isEditable) {
+      const newRowsArray = rows.filter(row => row.id !== selectedEditableRow.id)
+      newRowsArray.push({
+        ...selectedEditableRow,
+        name: formValues.name,
+        message: formValues.message,
+        attachments: formValues.attachments,
+      })
+      localStorage.setItem("@messages-template", JSON.stringify(newRowsArray))
+      setRows(newRowsArray)
+      setisEditable(false)
+    } else {
+      const data = [...rows, {
+        id: uuidv4(),
+        name: formValues.name,
+        message: formValues.message,
+        attachments: formValues.attachments,
+      }]
+      localStorage.setItem("@messages-template", JSON.stringify(data))
+      setRows(data)
+    }
+
+    formik.resetForm()
+  }
 
   const formSchema = React.useMemo(() => {
     return Yup.object().shape({
@@ -37,7 +64,7 @@ export default function MessageModels() {
     initialValues: {
       name: '',
       message: '',
-      attachments: '',
+      attachments: [],
     },
     validationSchema: formSchema,
     onSubmit: (values) => {
@@ -45,35 +72,48 @@ export default function MessageModels() {
     },
   });
 
-
   const columns = [
     { field: 'id', headerName: 'Id', flex: 1 },
+    { field: 'name', headerName: 'Nome do Modelo', flex: 1 },
     { field: 'message', headerName: 'Mensagem', flex: 1 },
-    { field: 'filesArray', headerName: 'Anexos', flex: 1 },
-    { field: 'updated_at', headerName: 'Data atualização', flex: 1 },
+    {
+      field: 'attachments',
+      headerName: 'Anexos',
+      flex: 1,
+      renderCell: (params) => {
+
+        return (
+          <Typography>
+            {params.row.attachments.length > 0 ? `${params.row.attachments.length} Anexo${params.row.attachments.length > 1 ? 's' : ''}` : 'Sem anexos'}
+          </Typography>
+        )
+      }
+    },
     {
       field: 'actions',
       headerName: 'Ações',
       align: 'center',
-      width: 80,
+      width: 110,
       renderCell: (params) => {
         const onClick = (e) => {
           e.stopPropagation();
-
-          setEditableContact(params.row)
           setisEditable(true)
-
+          setSelectedEditableRow(params.row)
           formik.setFieldValue("name", params.row.name)
-          formik.setFieldValue("phone", params.row.phone)
+          formik.setFieldValue("message", params.row.message)
 
-          return;
+          if (attachments.length > 0) {
+            formik.setFieldValue("attachments", params.row.attachments)
+          }
+
         };
 
         const handleDelete = (e) => {
           e.stopPropagation();
 
-          if (confirm(`Deseja remover este contato?\n${params.row.name} - ${params.row.phone}`)) {
+          if (confirm(`Deseja remover este modelo?`)) {
             const newRowsArray = rows.filter(row => row.id !== params.row.id)
+            localStorage.setItem("@messages-template", JSON.stringify(newRowsArray))
             setRows(newRowsArray)
           }
 
@@ -82,15 +122,21 @@ export default function MessageModels() {
 
         return (
           <>
-            <IconButton color="success" onClick={onClick}>
-              <FaEdit size={16} />
-            </IconButton>
-            <IconButton color="error" onClick={handleDelete}>
-              <FaTrash size={16} />
-            </IconButton>
-            <IconButton color="error" onClick={() => { }}>
-              <FaPlay size={16} />
-            </IconButton>
+            <Tooltip title="Editar">
+              <IconButton color="success" onClick={onClick}>
+                <FaEdit size={16} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Excluir">
+              <IconButton color="error" onClick={handleDelete}>
+                <FaTrash size={16} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Enviar este modelo">
+              <IconButton color="success" onClick={() => { }}>
+                <FaPlay size={16} />
+              </IconButton>
+            </Tooltip>
           </>
         );
       },
@@ -118,7 +164,7 @@ export default function MessageModels() {
     );
 
     if (newArray.length === 0) {
-      setAttachments([]);      
+      setAttachments([]);
       formik.setFieldValue("attachments", [])
       setAttachmentsPreview([]);
     } else {

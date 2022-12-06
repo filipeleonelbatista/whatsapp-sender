@@ -278,12 +278,16 @@ function Home() {
 
         return (
           <>
-            <IconButton color="success" onClick={onClick}>
-              <FaEdit size={16} />
-            </IconButton>
-            <IconButton color="error" onClick={handleDelete}>
-              <FaTrash size={16} />
-            </IconButton>
+            <Tooltip title="Editar">
+              <IconButton color="success" onClick={onClick}>
+                <FaEdit size={16} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Excluir">
+              <IconButton color="error" onClick={handleDelete}>
+                <FaTrash size={16} />
+              </IconButton>
+            </Tooltip>
           </>
         );
       },
