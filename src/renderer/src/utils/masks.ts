@@ -1,8 +1,8 @@
-export default function celular(value) {
+export default function celular(value: any): string {
   var valueNumber = parseInt(value.replace(/\D/g, ''))
-  value = valueNumber.toString().replace(/\D/g, '');
-  value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
-  value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+  var newValue = valueNumber.toString().replace(/\D/g, '');
+  newValue = newValue.replace(/^(\d{2})(\d)/g, '($1) $2');
+  newValue = newValue.replace(/(\d)(\d{4})$/, '$1-$2');
 
-  return value;
+  return newValue;
 }

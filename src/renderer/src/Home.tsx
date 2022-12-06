@@ -19,15 +19,14 @@ import {
   Typography
 } from '@mui/material';
 import { pink } from '@mui/material/colors';
+import Snackbar from '@mui/material/Snackbar';
 import { DataGrid, GridCsvExportMenuItem, GridPrintExportMenuItem, GridToolbarExportContainer, ptBR } from '@mui/x-data-grid';
 import { useFormik } from 'formik';
 import React from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { v4 as uuidv4 } from 'uuid';
 import * as Yup from 'yup';
-import Snackbar from '@mui/material/Snackbar';
 
-import CloseIcon from '@mui/icons-material/Close';
 import DrawerComponent from './components/DrawerComponent';
 
 import celular from './utils/masks';

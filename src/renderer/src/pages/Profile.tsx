@@ -1,8 +1,5 @@
+import { Avatar, Typography } from '@mui/material';
 import DrawerComponent from "../components/DrawerComponent";
-import {
-  Box,
-  Button, IconButton, Typography
-} from '@mui/material';
 
 export default function Profile() {
   return (

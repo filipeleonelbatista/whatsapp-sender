@@ -170,7 +170,7 @@ function DrawerComponent({ title, children }) {
               </IconButton>
             </Tooltip>
             <Tooltip title="Perfil">
-              <IconButton>
+              <IconButton onClick={() => handleNavigate("/perfil")}>
                 <Avatar alt="Filipe" src="https://github.com/filipeleonelbatista.png" />
               </IconButton>
             </Tooltip>

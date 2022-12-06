@@ -85,6 +85,7 @@
     "@types/react-test-renderer": "^18.0.0",
     "@types/selenium-webdriver": "^4.1.9",
     "@types/terser-webpack-plugin": "^5.0.4",
+    "@types/uuid": "^9.0.0",
     "@types/webpack-bundle-analyzer": "^4.4.2",
     "browserslist-config-erb": "^0.0.3",
     "chalk": "^4.1.2",
