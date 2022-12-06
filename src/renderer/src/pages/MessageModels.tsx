@@ -103,6 +103,14 @@ export default function MessageModels() {
     }
   };
 
+  React.useState(() => {
+    const executeAsync = async () => {
+      const response = await window.electron.getMessageModels();
+      console.log("To aqui",response)
+    }
+    executeAsync()
+  }, []);
+
   return (
     <DrawerComponent title="Modelos de mensagem">
       <Typography variant="h4">Modelos de mensagem</Typography>

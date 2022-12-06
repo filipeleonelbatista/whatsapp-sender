@@ -1,3 +1,4 @@
+import db from 'database';
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 import { Browser, Builder, By, until } from 'selenium-webdriver';
 
