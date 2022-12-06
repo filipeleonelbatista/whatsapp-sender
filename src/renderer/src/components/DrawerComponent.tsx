@@ -110,7 +110,12 @@ const mdThemeDark = createTheme({
   }
 });
 
-function DrawerComponent({ title, children }) {
+interface DrawerComponent {
+  title?: string;
+  children?: React.ReactNode;
+}
+
+function DrawerComponent({ title, children }: DrawerComponent) {
   const navigate = useNavigate();
   const location = useLocation();
 
