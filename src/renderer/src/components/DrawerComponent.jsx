@@ -223,14 +223,6 @@ function DrawerComponent({ title, children }) {
                 <ListItemText primary="Listas de envios" />
               </ListItemButton>
             </Tooltip>
-            <Tooltip placement="right" title="Envio de Audios">
-              <ListItemButton selected={location.pathname === "/enviar-audio"} onClick={() => handleNavigate("/enviar-audio")}>
-                <ListItemIcon>
-                  <VolumeUpIcon />
-                </ListItemIcon>
-                <ListItemText primary="Envio de Audios" />
-              </ListItemButton>
-            </Tooltip>
             <Tooltip placement="right" title="Perfil">
               <ListItemButton selected={location.pathname === "/perfil"} onClick={() => handleNavigate("/perfil")}>
                 <ListItemIcon>
