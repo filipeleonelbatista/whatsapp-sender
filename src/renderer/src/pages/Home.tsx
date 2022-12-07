@@ -306,13 +306,7 @@ function Home() {
   React.useEffect(() => {
     if (localStorage.getItem("@selected-messages-template") !== null) {
       const selectedMessage = JSON.parse(localStorage.getItem("@selected-messages-template"))
-
       setMessage(selectedMessage.message)
-      if (selectedMessage.attachments.length > 0) {
-        console.log(selectedMessage.attachments)
-        handleLoadAttachments({ target: { files: selectedMessage.attachments } })
-      }
-
     }
     if (localStorage.getItem("@selected-contact-list") !== null) {
       const selectedContactsRows = JSON.parse(localStorage.getItem("@selected-contact-list"))

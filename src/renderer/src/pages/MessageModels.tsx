@@ -26,8 +26,6 @@ export default function MessageModels() {
   const [isEditable, setisEditable] = React.useState(false);
   const [selectedEditableRow, setSelectedEditableRow] = React.useState(false);
   const [rows, setRows] = React.useState([]);
-  const [attachments, setAttachments] = React.useState([]);
-  const [attachmentsPreview, setAttachmentsPreview] = React.useState([]);
 
   const handleSubmitForm = (formValues) => {
     if (isEditable) {
@@ -36,7 +34,6 @@ export default function MessageModels() {
         ...selectedEditableRow,
         name: formValues.name,
         message: formValues.message,
-        attachments: formValues.attachments,
       })
       localStorage.setItem("@messages-template", JSON.stringify(newRowsArray))
       setRows(newRowsArray)
@@ -46,7 +43,6 @@ export default function MessageModels() {
         id: uuidv4(),
         name: formValues.name,
         message: formValues.message,
-        attachments: formValues.attachments,
       }]
       localStorage.setItem("@messages-template", JSON.stringify(data))
       setRows(data)
@@ -59,7 +55,6 @@ export default function MessageModels() {
     return Yup.object().shape({
       name: Yup.string().required('É Obrigado inserir um nome para o modelo!').label('Nome'),
       message: Yup.string().required('É obrigatório preencher a mensagem!').label('WhatsApp'),
-      attachments: Yup.mixed(),
     });
   }, []);
 
@@ -67,7 +62,6 @@ export default function MessageModels() {
     initialValues: {
       name: '',
       message: '',
-      attachments: [],
     },
     validationSchema: formSchema,
     onSubmit: (values) => {
@@ -79,18 +73,6 @@ export default function MessageModels() {
     { field: 'id', headerName: 'Id', flex: 1 },
     { field: 'name', headerName: 'Nome do Modelo', flex: 1 },
     { field: 'message', headerName: 'Mensagem', flex: 1 },
-    {
-      field: 'attachments',
-      headerName: 'Anexos',
-      flex: 1,
-      renderCell: (params) => {
-        return (
-          <Typography>
-            {params.row.attachments.length > 0 ? `${params.row.attachments.length} Anexo${params.row.attachments.length > 1 ? 's' : ''}` : 'Sem anexos'}
-          </Typography>
-        )
-      }
-    },
     {
       field: 'actions',
       headerName: 'Ações',
@@ -149,37 +131,6 @@ export default function MessageModels() {
     },
   ];
 
-  const handleLoadAttachments = (event) => {
-    const files = Array.from(event.target.files);
-    if (files.length > 0) {
-      const arrImg = [];
-      for (let i = 0; i < files.length; i++) {
-        arrImg.push(String(URL.createObjectURL(files[i])));
-      }
-
-      setAttachments(files);
-      formik.setFieldValue("attachments", (files))
-      setAttachmentsPreview(arrImg);
-    }
-  };
-
-  const handleRemoveImage = (index) => {
-    const newArray = attachments.filter((item, arrIndex) => arrIndex !== index);
-    const newArrayPreview = attachmentsPreview.filter(
-      (item, arrIndex) => arrIndex !== index
-    );
-
-    if (newArray.length === 0) {
-      setAttachments([]);
-      formik.setFieldValue("attachments", [])
-      setAttachmentsPreview([]);
-    } else {
-      setAttachments(newArray);
-      formik.setFieldValue("attachments", newArray)
-      setAttachmentsPreview(newArrayPreview);
-    }
-  };
-
   React.useState(() => {
     const executeAsync = async () => {
       const response = localStorage.getItem("@messages-template")
@@ -227,77 +178,6 @@ export default function MessageModels() {
               error={!!formik.errors.message}
               helperText="Use as variáveis {primeiroNome}, {nomeCompleto}, {telefone}, {var1}, {var2} e {var3} para usar as informações da lista de envio"
             />
-          </Grid>
-          <Grid item xs={6}>
-            <Button
-              sx={{ width: '100%' }}
-              variant="contained"
-              component="label"
-              startIcon={<AddAPhotoIcon />}
-            >
-              Anexar imagens
-              <input
-                id="uploadImages"
-                hidden
-                accept="image/*"
-                multiple
-                type="file"
-                onChange={(event) => handleLoadAttachments(event)}
-              />
-            </Button>
-            <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                flexDirection: 'row',
-                justifyContent: 'center',
-              }}
-            >
-              {attachmentsPreview.length > 0 ? (
-                attachmentsPreview.map((item, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      width: '64px',
-                      height: '64px',
-                      p: 1,
-                      borderRadius: 1,
-                      border: '1px solid #000',
-                      m: 0.5,
-                      overflow: 'hidden',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      position: 'relative',
-                    }}
-                  >
-                    <IconButton
-                      onClick={() => handleRemoveImage(index)}
-                      size="small"
-                      sx={{
-                        color: '#fff',
-                        backgroundColor: '#d32f2f',
-                        position: 'absolute',
-                        zIndex: 100,
-                        bottom: 0,
-                        right: 0,
-                      }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                    <img
-                      src={item}
-                      alt="Prévia da imagem selecionada"
-                      style={{ height: '64px' }}
-                    />
-                  </Box>
-                ))
-              ) : (
-                <Typography variant="body2" sx={{ mt: 4 }}>
-                  Nenhum arquivo enviado
-                </Typography>
-              )}
-            </Box>
           </Grid>
         </Grid>
 
