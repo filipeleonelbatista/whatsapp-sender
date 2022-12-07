@@ -15,8 +15,7 @@ import {
   circularProgressClasses,
   Grid,
   IconButton,
-  InputAdornment, Slide, TextField,
-  Typography
+  InputAdornment, Slide, TextField, Tooltip, Typography
 } from '@mui/material';
 import { pink } from '@mui/material/colors';
 import Snackbar from '@mui/material/Snackbar';
@@ -30,6 +29,10 @@ import * as Yup from 'yup';
 import DrawerComponent from '../components/DrawerComponent';
 
 import celular from '../utils/masks';
+
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import Switch from '@mui/material/Switch';
 
 const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
   <GridToolbarExportContainer {...other}>
@@ -79,6 +82,7 @@ function Home() {
   const [attachments, setAttachments] = React.useState([]);
   const [attachmentsPreview, setAttachmentsPreview] = React.useState([]);
   const [message, setMessage] = React.useState('');
+  const [isNewLineReturnCharacter, setisNewLineReturnCharacter] = React.useState(false);
 
   const handleSubmitForm = (formValues) => {
     if (isEditable) {
@@ -116,7 +120,7 @@ function Home() {
 
     try {
       setisLoading(true)
-      const results = await window.electron.initiateSendProcess(rows, message, attachments);
+      const results = await window.electron.initiateSendProcess(rows, message, attachments, isNewLineReturnCharacter);
 
       if (results.status) {
 
@@ -126,6 +130,11 @@ function Home() {
           severity: 'success'
         })
         handleClick()
+
+        if (localStorage.getItem("@selected-messages-template") !== null) {
+          localStorage.removeItem("@selected-messages-template")
+        }
+
       } else {
         setSnackbarMessage({
           message: `Houve um problema durante o envio. Contate o administrador. ${results.error}`,
@@ -294,6 +303,20 @@ function Home() {
     },
   ];
 
+  React.useEffect(() => {
+    if (localStorage.getItem("@selected-messages-template") !== null) {
+      const selectedMessage = JSON.parse(localStorage.getItem("@selected-messages-template"))
+
+      setMessage(selectedMessage.message)
+      if (selectedMessage.attachments.length > 0) {
+        console.log(selectedMessage.attachments)
+        handleLoadAttachments({ target: { files: selectedMessage.attachments } })
+      }
+
+      console.log(selectedMessage)
+    }
+  }, [])
+
   return (
     <>
       <Snackbar
@@ -355,12 +378,22 @@ function Home() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               helperText="Use as variáveis {primeiroNome}, {nomeCompleto}, {telefone}, {var1}, {var2} e {var3} para usar as informações da lista de envio"
-            // value={formik.values.name}
-            // onChange={formik.handleChange}
-            // onBlur={formik.handleBlur}
-            // error={formik.errors.name ? true : false}
-            // helperText={formik.errors.name}
             />
+
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={isNewLineReturnCharacter}
+                    onChange={(event) => setisNewLineReturnCharacter(event.target.checked)}
+                  />
+                }
+                label={<Typography variant="caption">Enviar cada linha digitada separadamente</Typography>} />
+            </FormGroup>
+            <Typography variant="caption" color="#999">
+              Cada vez que você apertar enter ele enviará a linha separadamente.
+              Caso ativado, enviará tudo em um bloco de mensagem
+            </Typography>
           </Grid>
           <Grid item xs={6}>
             <Button

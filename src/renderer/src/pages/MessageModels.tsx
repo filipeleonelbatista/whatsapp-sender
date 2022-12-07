@@ -18,8 +18,11 @@ import SendIcon from '@mui/icons-material/Send';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { v4 as uuidv4 } from 'uuid';
+import { useNavigate } from 'react-router-dom';
 
 export default function MessageModels() {
+  const navigate = useNavigate()
+
   const [isEditable, setisEditable] = React.useState(false);
   const [selectedEditableRow, setSelectedEditableRow] = React.useState(false);
   const [rows, setRows] = React.useState([]);
@@ -81,7 +84,6 @@ export default function MessageModels() {
       headerName: 'Anexos',
       flex: 1,
       renderCell: (params) => {
-
         return (
           <Typography>
             {params.row.attachments.length > 0 ? `${params.row.attachments.length} Anexo${params.row.attachments.length > 1 ? 's' : ''}` : 'Sem anexos'}
@@ -116,8 +118,12 @@ export default function MessageModels() {
             localStorage.setItem("@messages-template", JSON.stringify(newRowsArray))
             setRows(newRowsArray)
           }
+        };
 
-          return;
+        const handleSelectedModel = (e) => {
+          e.stopPropagation();
+          localStorage.setItem("@selected-messages-template", JSON.stringify(params.row))
+          navigate("/")
         };
 
         return (
@@ -133,7 +139,7 @@ export default function MessageModels() {
               </IconButton>
             </Tooltip>
             <Tooltip title="Enviar este modelo">
-              <IconButton color="success" onClick={() => { }}>
+              <IconButton color="success" onClick={handleSelectedModel}>
                 <FaPlay size={16} />
               </IconButton>
             </Tooltip>
@@ -186,10 +192,6 @@ export default function MessageModels() {
     }
     executeAsync()
   }, []);
-
-  React.useEffect(() => {
-    console.log(formik.errors)
-  }, [formik.errors])
 
   return (
     <DrawerComponent title="Modelos de mensagem">

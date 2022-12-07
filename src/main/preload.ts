@@ -1,6 +1,5 @@
-import db from 'database';
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-import { Browser, Builder, By, until } from 'selenium-webdriver';
+import { Browser, Builder, By, until, Key } from 'selenium-webdriver';
 
 export type Channels = 'ipc-example';
 
@@ -16,7 +15,7 @@ function delay(time: number) {
 }
 
 contextBridge.exposeInMainWorld('electron', {
-  initiateSendProcess: async (rows: any[], message: string, images: any[]) => {
+  initiateSendProcess: async (rows: any[], message: string, images: any[], isNewLineReturnCharacter: boolean) => {
     log("Iniciando instancia do navegador")
     let driver = await new Builder().forBrowser(Browser.CHROME).build();
 
@@ -58,7 +57,7 @@ contextBridge.exposeInMainWorld('electron', {
             const input = await driver.wait(until.elementLocated(By.css("p.selectable-text.copyable-text")));
 
             log("Inserindo texto")
-            const finalMessage = message.replaceAll("{primeiroNome}", contact.name.split(" ")[0])
+            let finalMessage = message.replaceAll("{primeiroNome}", contact.name.split(" ")[0])
               .replaceAll("{nomeCompleto}", contact.name)
               .replaceAll("{telefone}", contact.phone)
               .replaceAll("{var1}", contact.var1)
@@ -66,7 +65,16 @@ contextBridge.exposeInMainWorld('electron', {
               .replaceAll("{var3}", contact.var3)
 
             input.click()
-            input.sendKeys(finalMessage);
+
+
+            const finalMessageArray = finalMessage.split("\n")
+
+            for (const message of finalMessageArray) {
+              input.sendKeys(message);
+              await delay(1000);
+              input.sendKeys(isNewLineReturnCharacter ? Key.ENTER : Key.chord(Key.SHIFT, Key.ENTER));
+              await delay(1000);
+            }
 
             await delay(3000);
 
