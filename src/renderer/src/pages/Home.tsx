@@ -313,7 +313,10 @@ function Home() {
         handleLoadAttachments({ target: { files: selectedMessage.attachments } })
       }
 
-      console.log(selectedMessage)
+    }
+    if (localStorage.getItem("@selected-contact-list") !== null) {
+      const selectedContactsRows = JSON.parse(localStorage.getItem("@selected-contact-list"))
+      setRows(selectedContactsRows)
     }
   }, [])
 
