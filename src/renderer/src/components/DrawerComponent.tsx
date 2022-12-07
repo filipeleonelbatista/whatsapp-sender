@@ -184,11 +184,13 @@ function DrawerComponent({ title, children }: DrawerComponent) {
                 {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
               </IconButton>
             </Tooltip>
-            <Tooltip title="Perfil">
-              <IconButton onClick={() => handleNavigate("/perfil")}>
-                <Avatar alt="Filipe" src="https://github.com/filipeleonelbatista.png" />
-              </IconButton>
-            </Tooltip>
+            {false && (
+              <Tooltip title="Perfil">
+                <IconButton onClick={() => handleNavigate("/perfil")}>
+                  <Avatar alt="Filipe" src="https://github.com/filipeleonelbatista.png" />
+                </IconButton>
+              </Tooltip>
+            )}
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -238,23 +240,27 @@ function DrawerComponent({ title, children }: DrawerComponent) {
                 <ListItemText primary="Listas de envios" />
               </ListItemButton>
             </Tooltip>
-            <Tooltip placement="right" title="Perfil">
-              <ListItemButton selected={location.pathname === "/perfil"} onClick={() => handleNavigate("/perfil")}>
-                <ListItemIcon>
-                  <ManageAccountsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Perfil" />
-              </ListItemButton>
-            </Tooltip>
-            <Divider sx={{ my: 1 }} />
-            <Tooltip placement="right" title="Configurações">
-              <ListItemButton selected={location.pathname === "/configuracoes"} onClick={() => handleNavigate("/configuracoes")}>
-                <ListItemIcon>
-                  <SettingsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Configurações" />
-              </ListItemButton>
-            </Tooltip>
+            {false && (
+              <>
+                <Tooltip placement="right" title="Perfil">
+                  <ListItemButton selected={location.pathname === "/perfil"} onClick={() => handleNavigate("/perfil")}>
+                    <ListItemIcon>
+                      <ManageAccountsIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Perfil" />
+                  </ListItemButton>
+                </Tooltip>
+                <Divider sx={{ my: 1 }} />
+                <Tooltip placement="right" title="Configurações">
+                  <ListItemButton selected={location.pathname === "/configuracoes"} onClick={() => handleNavigate("/configuracoes")}>
+                    <ListItemIcon>
+                      <SettingsIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Configurações" />
+                  </ListItemButton>
+                </Tooltip>
+              </>
+            )}
           </List>
         </Drawer>
         <Box
