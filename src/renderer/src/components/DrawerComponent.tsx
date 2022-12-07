@@ -128,7 +128,14 @@ function DrawerComponent({ title, children }: DrawerComponent) {
   };
 
   React.useEffect(() => {
-    setMode(prefersDarkMode ? 'dark' : 'light')
+    if (localStorage.getItem("@dark-theme") !== null) {
+      const selectedTheme = localStorage.getItem("@dark-theme")
+      console.log("Entrei aqui", selectedTheme)
+      setMode(selectedTheme)
+    } else {
+      localStorage.setItem("@dark-theme", prefersDarkMode ? 'dark' : 'light')
+      setMode(prefersDarkMode ? 'dark' : 'light')
+    }
   }, [])
 
   const handleNavigate = (text) => {
@@ -170,7 +177,10 @@ function DrawerComponent({ title, children }: DrawerComponent) {
               {title}
             </Typography>
             <Tooltip title="Definir Modo Escuro/Claro">
-              <IconButton sx={{ ml: 1 }} onClick={() => setMode(mode === "dark" ? 'light' : 'dark')} color="inherit">
+              <IconButton sx={{ ml: 1 }} onClick={() => {
+                setMode(mode === "dark" ? 'light' : 'dark')
+                localStorage.setItem("@dark-theme", mode === "dark" ? 'light' : 'dark')
+              }} color="inherit">
                 {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
               </IconButton>
             </Tooltip>
