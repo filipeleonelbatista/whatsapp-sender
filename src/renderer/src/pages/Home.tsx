@@ -126,9 +126,9 @@ function Home() {
 
       if (dataLog !== null) {
         const logs = JSON.parse(dataLog)
-        localStorage.setItem("@logs", JSON.stringify([{id: uuidv4(), ...results}, ...logs]))
+        localStorage.setItem("@logs", JSON.stringify([{ id: uuidv4(), ...results }, ...logs]))
       } else {
-        localStorage.setItem("@logs", JSON.stringify([{id: uuidv4(), ...results}]))
+        localStorage.setItem("@logs", JSON.stringify([{ id: uuidv4(), ...results }]))
       }
 
       if (results.status) {
@@ -562,6 +562,19 @@ function Home() {
             }}
           >
             Limpar tabela
+          </Button>
+          <Button
+            variant="contained"
+            color="warning"
+            startIcon={<FaTrash size={16} />}
+            onClick={() => {
+              if (confirm("Deseja remover todos os contatos que receberam mensagens da tabela de envios?")) {
+                const newArray = rows.filter(row => !row.status)
+                setRows(newArray)
+              }
+            }}
+          >
+            Remover enviados
           </Button>
         </Box>
 
