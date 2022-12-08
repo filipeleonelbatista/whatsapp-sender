@@ -261,6 +261,16 @@ function DrawerComponent({ title, children }: DrawerComponent) {
                 </Tooltip>
               </>
             )}
+
+            <Divider sx={{ my: 1 }} />
+            <Tooltip placement="right" title="Histórico de envios">
+              <ListItemButton selected={location.pathname === "/historico-de-envios"} onClick={() => handleNavigate("/historico-de-envios")}>
+                <ListItemIcon>
+                  <PlaylistAddIcon />
+                </ListItemIcon>
+                <ListItemText primary="Histórico de envios" />
+              </ListItemButton>
+            </Tooltip>
           </List>
         </Drawer>
         <Box

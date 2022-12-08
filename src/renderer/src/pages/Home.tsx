@@ -122,6 +122,15 @@ function Home() {
       setisLoading(true)
       const results = await window.electron.initiateSendProcess(rows, message, attachments, isNewLineReturnCharacter);
 
+      const dataLog = localStorage.getItem("@logs")
+
+      if (dataLog !== null) {
+        const logs = JSON.parse(dataLog)
+        localStorage.setItem("@logs", JSON.stringify([{id: uuidv4(), ...results}, ...logs]))
+      } else {
+        localStorage.setItem("@logs", JSON.stringify([{id: uuidv4(), ...results}]))
+      }
+
       if (results.status) {
 
         setSnackbarMessage({

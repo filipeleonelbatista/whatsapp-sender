@@ -17,6 +17,8 @@ function delay(time: number) {
 contextBridge.exposeInMainWorld('electron', {
   initiateSendProcess: async (rows: any[], message: string, images: any[], isNewLineReturnCharacter: boolean) => {
     log("Iniciando instancia do navegador")
+    const initiated_at = Date.now()
+
     let driver = await new Builder().forBrowser(Browser.CHROME).build();
 
     try {
@@ -118,14 +120,20 @@ contextBridge.exposeInMainWorld('electron', {
         await driver.quit();
         return {
           rows: newRows,
-          status: true
+          message,
+          status: true,
+          initiated_at,
+          finalized_at: Date.now()
         };
       } else {
         await driver.quit();
         return {
           rows: rows,
+          message,
           error: "Não foi possivel autenticar",
-          status: false
+          status: false,
+          initiated_at,
+          finalized_at: Date.now()
         };
       }
     } catch (error) {
@@ -137,7 +145,10 @@ contextBridge.exposeInMainWorld('electron', {
       return {
         rows,
         error,
-        status: false
+        message,
+        status: false,
+        initiated_at,
+        finalized_at: Date.now()
       }
     }
   },
