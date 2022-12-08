@@ -53,6 +53,7 @@ const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
 );
 
 function Home() {
+
   const [isLoading, setisLoading] = React.useState(false);
   const [isEditable, setisEditable] = React.useState(false);
 
@@ -173,18 +174,9 @@ function Home() {
   };
 
   const handleRemoveImage = (index) => {
-    const newArray = attachments.filter((item, arrIndex) => arrIndex !== index);
-    const newArrayPreview = attachmentsPreview.filter(
-      (item, arrIndex) => arrIndex !== index
-    );
-
-    if (newArray.length === 0) {
-      setAttachments([]);
-      setAttachmentsPreview([]);
-    } else {
-      setAttachments(newArray);
-      setAttachmentsPreview(newArrayPreview);
-    }
+    const newArray = attachments.filter((item, arrIndex) => arrIndex !== index)
+    console.log(newArray)
+    setAttachments(newArray);
   };
 
   const csvFileToArray = (string) => {
@@ -206,15 +198,18 @@ function Home() {
   };
 
   const handleLoadAttachments = (event) => {
+    event.stopPropagation()
     const files = Array.from(event.target.files);
     if (files.length > 0) {
       const arrImg = [];
       for (let i = 0; i < files.length; i++) {
-        arrImg.push(String(URL.createObjectURL(files[i])));
+        arrImg.push({
+          path: files[i].path,
+          url: String(URL.createObjectURL(files[i]))
+        });
       }
-
-      setAttachments(files);
-      setAttachmentsPreview(arrImg);
+      console.log(arrImg)
+      setAttachments(arrImg);
     }
   };
 
@@ -448,8 +443,8 @@ function Home() {
               {
                 openEmoji && (
                   <EmojiPicker
-                    width="100%" height="30em"
-                    searchPlaceholder="Pesquisar emojis..."
+                    width="100%" height="25em"
+                    searchPlaceHolder="Pesquisar emojis..."
                     emojiVersion="3.0"
                     onEmojiClick={(emoji) => {
                       setMessage(currMessage => `${currMessage} ${emoji.emoji} `)
@@ -501,8 +496,8 @@ function Home() {
                 justifyContent: 'center',
               }}
             >
-              {attachmentsPreview.length > 0 ? (
-                attachmentsPreview.map((item, index) => (
+              {attachments.length > 0 ? (
+                attachments.map((item, index) => (
                   <Box
                     key={index}
                     sx={{
@@ -534,7 +529,7 @@ function Home() {
                       <DeleteIcon />
                     </IconButton>
                     <img
-                      src={item}
+                      src={item.url}
                       alt="Prévia da imagem selecionada"
                       style={{ height: '64px' }}
                     />
@@ -626,42 +621,48 @@ function Home() {
               onChange={(event) => handleLoadCsv(event)}
             />
           </Button>
-          <Button
-            variant="contained"
-            color="error"
-            startIcon={<FaTrash size={16} />}
-            onClick={() => {
-              if (confirm("Deseja remover todos os contatos da tabela de envios?")) {
-                setRows([])
-              }
-            }}
-          >
-            Limpar tabela
-          </Button>
-          <Button
-            variant="contained"
-            color="warning"
-            startIcon={<FaTrash size={16} />}
-            onClick={() => {
-              if (confirm("Deseja remover todos os contatos que receberam mensagens da tabela de envios?")) {
-                const newArray = rows.filter(row => !row.status)
-                setRows(newArray)
-              }
-            }}
-          >
-            Remover enviados
-          </Button>
+          {
+            rows.length > 0 && (
+              <>
+                <Button
+                  variant="contained"
+                  color="error"
+                  startIcon={<FaTrash size={16} />}
+                  onClick={() => {
+                    if (confirm("Deseja remover todos os contatos da tabela de envios?")) {
+                      setRows([])
+                    }
+                  }}
+                >
+                  Limpar tabela
+                </Button>
+                <Button
+                  variant="contained"
+                  color="warning"
+                  startIcon={<FaTrash size={16} />}
+                  onClick={() => {
+                    if (confirm("Deseja remover todos os contatos que receberam mensagens da tabela de envios?")) {
+                      const newArray = rows.filter(row => !row.status)
+                      setRows(newArray)
+                    }
+                  }}
+                >
+                  Remover enviados
+                </Button>
+              </>
+            )
+          }
         </Box>
 
-        <Box sx={{ height: 400, w: '100%', mt: 4 }}>
+        <Box sx={{ height: 500, w: '100%', mt: 4 }}>
           <DataGrid
             columnVisibilityModel={{
               id: false,
             }}
             columns={columns}
             rows={rows}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
+            pageSize={10}
+            rowsPerPageOptions={[10]}
             checkboxSelection={false}
             disableSelectionOnClick={true}
             localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}

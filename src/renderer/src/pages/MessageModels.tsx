@@ -204,8 +204,8 @@ export default function MessageModels() {
           }}
           columns={columns}
           rows={rows}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
+          pageSize={10}
+          rowsPerPageOptions={[10]}
           checkboxSelection={false}
           disableSelectionOnClick={true}
           localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}

@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 import { Browser, Builder, By, until, Key } from 'selenium-webdriver';
+import fs from 'fs'
 
 export type Channels = 'ipc-example';
 
@@ -23,6 +24,9 @@ function delay(time: number) {
 }
 
 contextBridge.exposeInMainWorld('electron', {
+  checkFilePath: (path: string) => {
+    return fs.existsSync(path)
+  },
   initiateSendProcess: async (rows: any[], message: string, images: any[], isNewLineReturnCharacter: boolean, config: TimerConfiguration) => {
     log("Iniciando instancia do navegador")
     const initiated_at = Date.now()
