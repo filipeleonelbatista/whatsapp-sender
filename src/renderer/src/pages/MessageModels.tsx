@@ -1,5 +1,6 @@
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SendIcon from '@mui/icons-material/Send';
 import {
   Box,
   Button, Grid,
@@ -8,17 +9,14 @@ import {
   Typography
 } from '@mui/material';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
+import EmojiPicker from 'emoji-picker-react';
+import { useFormik } from 'formik';
 import React from 'react';
 import { FaEdit, FaPlay, FaTrash } from 'react-icons/fa';
-
-import DrawerComponent from '../components/DrawerComponent';
-
-import SendIcon from '@mui/icons-material/Send';
-
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
-import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
+import * as Yup from 'yup';
+import DrawerComponent from '../components/DrawerComponent';
 
 export default function MessageModels() {
   const navigate = useNavigate()
@@ -26,6 +24,7 @@ export default function MessageModels() {
   const [isEditable, setisEditable] = React.useState(false);
   const [selectedEditableRow, setSelectedEditableRow] = React.useState(false);
   const [rows, setRows] = React.useState([]);
+  const [openEmoji, setOpenEmoji] = React.useState(false);
 
   const handleSubmitForm = (formValues) => {
     if (isEditable) {
@@ -85,11 +84,6 @@ export default function MessageModels() {
           setSelectedEditableRow(params.row)
           formik.setFieldValue("name", params.row.name)
           formik.setFieldValue("message", params.row.message)
-
-          if (attachments.length > 0) {
-            formik.setFieldValue("attachments", params.row.attachments)
-          }
-
         };
 
         const handleDelete = (e) => {
@@ -176,8 +170,77 @@ export default function MessageModels() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={!!formik.errors.message}
-              helperText="Use as variáveis {primeiroNome}, {nomeCompleto}, {telefone}, {var1}, {var2} e {var3} para usar as informações da lista de envio"
+              helperText={formik.errors.message}
             />
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="h6">
+              Variáveis da mensagem
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 2, mb: 2, gap: 1 }}>
+              <Button
+                variant='contained'
+                onClick={() => {
+                  formik.setFieldValue("message", `${formik.values.message} {primeiroNome} `)
+                }}>
+                {`{primeiroNome}`}
+              </Button>
+              <Button
+                variant='contained'
+                onClick={() => {
+                  formik.setFieldValue("message", `${formik.values.message} {nomeCompleto} `)
+                }}>
+                {`{nomeCompleto}`}
+              </Button>
+              <Button
+                variant='contained'
+                onClick={() => {
+                  formik.setFieldValue("message", `${formik.values.message} {telefone} `)
+                }}>
+                {`{telefone}`}
+              </Button>
+              <Button
+                variant='contained'
+                onClick={() => {
+                  formik.setFieldValue("message", `${formik.values.message} {var1} `)
+                }}>
+                {`{var1}`}
+              </Button>
+              <Button
+                variant='contained'
+                onClick={() => {
+                  formik.setFieldValue("message", `${formik.values.message} {var2} `)
+                }}>
+                {`{var2}`}
+              </Button>
+              <Button
+                variant='contained'
+                onClick={() => {
+                  formik.setFieldValue("message", `${formik.values.message} {var3} `)
+                }}>
+                {`{var3}`}
+              </Button>
+              <Button
+                variant='contained'
+                onClick={() => {
+                  setOpenEmoji(!openEmoji)
+                }}>
+                Emojis
+              </Button>
+              {
+                openEmoji && (
+                  <EmojiPicker
+                    width="100%" height="25em"
+                    searchPlaceHolder="Pesquisar emojis..."
+                    emojiVersion="3.0"
+                    onEmojiClick={(emoji) => {
+                      formik.setFieldValue("message", `${formik.values.message} ${emoji.emoji} `)
+                    }}
+                    theme={localStorage.getItem("@dark-theme") === null ? 'light' : localStorage.getItem("@dark-theme")}
+                  />
+                )
+              }
+            </Box>
           </Grid>
         </Grid>
 

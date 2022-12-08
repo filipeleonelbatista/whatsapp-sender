@@ -151,6 +151,10 @@ function Home() {
           localStorage.removeItem("@selected-messages-template")
         }
 
+        if (localStorage.getItem("@selected-contact-list") !== null) {
+          localStorage.removeItem("@selected-contact-list")
+        }
+
       } else {
         setSnackbarMessage({
           message: `Houve um problema durante o envio. Contate o administrador. ${results.error}`,
@@ -175,7 +179,6 @@ function Home() {
 
   const handleRemoveImage = (index) => {
     const newArray = attachments.filter((item, arrIndex) => arrIndex !== index)
-    console.log(newArray)
     setAttachments(newArray);
   };
 
@@ -208,7 +211,6 @@ function Home() {
           url: String(URL.createObjectURL(files[i]))
         });
       }
-      console.log(arrImg)
       setAttachments(arrImg);
     }
   };
