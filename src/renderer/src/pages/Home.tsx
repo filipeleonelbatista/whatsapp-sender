@@ -18,21 +18,19 @@ import {
   InputAdornment, Slide, TextField, Tooltip, Typography
 } from '@mui/material';
 import { pink } from '@mui/material/colors';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
 import Snackbar from '@mui/material/Snackbar';
+import Switch from '@mui/material/Switch';
 import { DataGrid, GridCsvExportMenuItem, GridPrintExportMenuItem, GridToolbarExportContainer, ptBR } from '@mui/x-data-grid';
 import { useFormik } from 'formik';
 import React from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { v4 as uuidv4 } from 'uuid';
 import * as Yup from 'yup';
-
 import DrawerComponent from '../components/DrawerComponent';
-
 import celular from '../utils/masks';
-
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
-import Switch from '@mui/material/Switch';
+import EmojiPicker from 'emoji-picker-react';
 
 const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
   <GridToolbarExportContainer {...other}>
@@ -76,6 +74,13 @@ function Home() {
 
     setOpenSnackBar(false);
   };
+  const [config, setConfig] = React.useState({
+    start: 5000,
+    initiate_send: 8000,
+    check_error: 2000,
+    send_message: 1000,
+    finalize_send: 5000,
+  })
 
   const [rows, setRows] = React.useState([]);
   const [editableContact, setEditableContact] = React.useState();
@@ -83,6 +88,7 @@ function Home() {
   const [attachmentsPreview, setAttachmentsPreview] = React.useState([]);
   const [message, setMessage] = React.useState('');
   const [isNewLineReturnCharacter, setisNewLineReturnCharacter] = React.useState(false);
+  const [openEmoji, setOpenEmoji] = React.useState(false);
 
   const handleSubmitForm = (formValues) => {
     if (isEditable) {
@@ -120,7 +126,7 @@ function Home() {
 
     try {
       setisLoading(true)
-      const results = await window.electron.initiateSendProcess(rows, message, attachments, isNewLineReturnCharacter);
+      const results = await window.electron.initiateSendProcess(rows, message, attachments, isNewLineReturnCharacter, config);
 
       const dataLog = localStorage.getItem("@logs")
 
@@ -321,6 +327,11 @@ function Home() {
       const selectedContactsRows = JSON.parse(localStorage.getItem("@selected-contact-list"))
       setRows(selectedContactsRows)
     }
+
+    if (localStorage.getItem("@config") !== null) {
+      const configStorage = JSON.parse(localStorage.getItem("@config"))
+      setConfig(configStorage)
+    }
   }, [])
 
   return (
@@ -354,8 +365,8 @@ function Home() {
             <CircularProgress
               variant="indeterminate"
               disableShrink
+              color='primary'
               sx={{
-                color: (theme) => (theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8'),
                 animationDuration: '550ms',
                 [`& .${circularProgressClasses.circle}`]: {
                   strokeLinecap: 'round',
@@ -383,8 +394,71 @@ function Home() {
               rows={6}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              helperText="Use as variáveis {primeiroNome}, {nomeCompleto}, {telefone}, {var1}, {var2} e {var3} para usar as informações da lista de envio"
             />
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 2, mb: 2, gap: 1 }}>
+              <Button
+                variant='contained'
+                onClick={() => {
+                  setMessage(currMessage => `${currMessage} {primeiroNome} `)
+                }}>
+                {`{primeiroNome}`}
+              </Button>
+              <Button
+                variant='contained'
+                onClick={() => {
+                  setMessage(currMessage => `${currMessage} {nomeCompleto} `)
+                }}>
+                {`{nomeCompleto}`}
+              </Button>
+              <Button
+                variant='contained'
+                onClick={() => {
+                  setMessage(currMessage => `${currMessage} {telefone} `)
+                }}>
+                {`{telefone}`}
+              </Button>
+              <Button
+                variant='contained'
+                onClick={() => {
+                  setMessage(currMessage => `${currMessage} {var1} `)
+                }}>
+                {`{var1}`}
+              </Button>
+              <Button
+                variant='contained'
+                onClick={() => {
+                  setMessage(currMessage => `${currMessage} {var2} `)
+                }}>
+                {`{var2}`}
+              </Button>
+              <Button
+                variant='contained'
+                onClick={() => {
+                  setMessage(currMessage => `${currMessage} {var3} `)
+                }}>
+                {`{var3}`}
+              </Button>
+              <Button
+                variant='contained'
+                onClick={() => {
+                  setOpenEmoji(!openEmoji)
+                }}>
+                Emojis
+              </Button>
+              {
+                openEmoji && (
+                  <EmojiPicker
+                    width="100%" height="30em"
+                    searchPlaceholder="Pesquisar emojis..."
+                    emojiVersion="3.0"
+                    onEmojiClick={(emoji) => {
+                      setMessage(currMessage => `${currMessage} ${emoji.emoji} `)
+                    }}
+                    theme={localStorage.getItem("@dark-theme") === null ? 'light' : localStorage.getItem("@dark-theme")}
+                  />
+                )
+              }
+            </Box>
 
             <FormGroup>
               <FormControlLabel
@@ -399,6 +473,7 @@ function Home() {
             <Typography variant="caption" color="#999">
               Cada vez que você apertar enter ele enviará a linha separadamente.
               Caso ativado, enviará tudo em um bloco de mensagem
+              * Enviar cada linha não é compatível com emojis
             </Typography>
           </Grid>
           <Grid item xs={6}>

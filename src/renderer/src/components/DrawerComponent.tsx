@@ -251,18 +251,17 @@ function DrawerComponent({ title, children }: DrawerComponent) {
                   </ListItemButton>
                 </Tooltip>
                 <Divider sx={{ my: 1 }} />
-                <Tooltip placement="right" title="Configurações">
-                  <ListItemButton selected={location.pathname === "/configuracoes"} onClick={() => handleNavigate("/configuracoes")}>
-                    <ListItemIcon>
-                      <SettingsIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Configurações" />
-                  </ListItemButton>
-                </Tooltip>
               </>
             )}
-
             <Divider sx={{ my: 1 }} />
+            <Tooltip placement="right" title="Configurações">
+              <ListItemButton selected={location.pathname === "/configuracoes"} onClick={() => handleNavigate("/configuracoes")}>
+                <ListItemIcon>
+                  <SettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Configurações" />
+              </ListItemButton>
+            </Tooltip>
             <Tooltip placement="right" title="Histórico de envios">
               <ListItemButton selected={location.pathname === "/historico-de-envios"} onClick={() => handleNavigate("/historico-de-envios")}>
                 <ListItemIcon>
