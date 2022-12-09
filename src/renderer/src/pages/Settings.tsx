@@ -18,11 +18,11 @@ export default function Settings() {
 
   const formik = useFormik({
     initialValues: {
-      start: '',
-      initiate_send: '',
-      check_error: '',
-      send_message: '',
-      finalize_send: '',
+      start: 5000,
+      initiate_send: 8000,
+      check_error: 2000,
+      send_message: 1000,
+      finalize_send: 5000,
     },
     validationSchema: formSchema,
     onSubmit: (values) => {
@@ -39,20 +39,14 @@ export default function Settings() {
       formik.setFieldValue('send_message', config.send_message)
       formik.setFieldValue('finalize_send', config.finalize_send)
     } else {
-      const config = {
+      const config =
+      {
         start: 5000,
         initiate_send: 8000,
         check_error: 2000,
         send_message: 1000,
         finalize_send: 5000,
       }
-
-      formik.setFieldValue('start', config.start)
-      formik.setFieldValue('initiate_send', config.initiate_send)
-      formik.setFieldValue('check_error', config.check_error)
-      formik.setFieldValue('send_message', config.send_message)
-      formik.setFieldValue('finalize_send', config.finalize_send)
-
       localStorage.setItem("@config", JSON.stringify(config))
     }
   }, [])

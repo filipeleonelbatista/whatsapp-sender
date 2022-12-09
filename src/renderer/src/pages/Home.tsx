@@ -608,7 +608,7 @@ function Home() {
           </Box>
         </form>
 
-        <Box sx={{ display: 'flex', mt: 4, gap: 4 }}>
+        <Box sx={{ display: 'flex', mt: 4, gap: 1 }}>
           <Button
             variant="contained"
             component="label"
