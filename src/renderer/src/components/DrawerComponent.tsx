@@ -25,6 +25,7 @@ import StoriesIcon from './StoriesIcon';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useLocation, useNavigate } from 'react-router-dom';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 function Copyright() {
   return (
@@ -217,7 +218,7 @@ function DrawerComponent({ title, children }: DrawerComponent) {
           <Divider />
           <List component="nav">
             <Tooltip placement="right" title="Envio de mensagens">
-              <ListItemButton selected={location.pathname === "/"} onClick={() => handleNavigate("/")}>
+              <ListItemButton selected={location.pathname === "/envio-mensagens"} onClick={() => handleNavigate("/envio-mensagens")}>
                 <ListItemIcon>
                   <MarkUnreadChatAltIcon />
                 </ListItemIcon>
@@ -268,6 +269,14 @@ function DrawerComponent({ title, children }: DrawerComponent) {
                   <PlaylistAddIcon />
                 </ListItemIcon>
                 <ListItemText primary="Histórico de envios" />
+              </ListItemButton>
+            </Tooltip>
+            <Tooltip placement="right" title="Sair">
+              <ListItemButton selected={location.pathname === "/"} onClick={() => handleNavigate("/")}>
+                <ListItemIcon>
+                  <LogoutIcon />
+                </ListItemIcon>
+                <ListItemText primary="Sair" />
               </ListItemButton>
             </Tooltip>
           </List>

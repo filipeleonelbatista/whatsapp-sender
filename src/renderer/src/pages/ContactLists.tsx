@@ -248,7 +248,7 @@ export default function ContactLists() {
         const handleSelectedModel = (e) => {
           e.stopPropagation();
           localStorage.setItem("@selected-contact-list", JSON.stringify(params.row.rows))
-          navigate("/")
+          navigate("/envio-mensagens")
         };
 
         return (

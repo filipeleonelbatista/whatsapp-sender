@@ -99,7 +99,7 @@ export default function MessageModels() {
         const handleSelectedModel = (e) => {
           e.stopPropagation();
           localStorage.setItem("@selected-messages-template", JSON.stringify(params.row))
-          navigate("/")
+          navigate("/envio-mensagens")
         };
 
         return (
