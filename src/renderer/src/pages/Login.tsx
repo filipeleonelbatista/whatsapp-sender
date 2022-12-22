@@ -42,9 +42,8 @@ export default function Login() {
       }
       if (result.data.data.assinantes[0].senha === formValues.senha) {
         if (result.data.data.assinantes[0].isActive) {
-          if (formValues.remember) {
-            localStorage.setItem("@user-info", JSON.stringify(result.data.data.assinantes[0]))
-          }
+          localStorage.setItem("@remember", formValues.remember)
+          localStorage.setItem("@user-info", JSON.stringify(result.data.data.assinantes[0]))
           navigate('/envio-mensagens')
         } else {
           alert("Seu acesso não está ativo ainda.")
@@ -91,9 +90,16 @@ export default function Login() {
 
   React.useEffect(() => {
     const userInfo = localStorage.getItem("@user-info")
+    const rememberInfo = localStorage.getItem("@remember")
     if (userInfo !== null) {
-      const user = JSON.parse(userInfo)
-      handleSubmitForm({ email: user.email, senha: user.senha, remember: true })
+      if (rememberInfo !== null) {
+        const rememberStatus = rememberInfo
+        console.log("rememberInfo", rememberInfo)
+        if (rememberInfo === 'true') {
+          const user = JSON.parse(userInfo)
+          handleSubmitForm({ email: user.email, senha: user.senha, remember: true })
+        }
+      }
     }
   }, [])
 
@@ -171,6 +177,7 @@ export default function Login() {
         position: 'relative',
         width: '100%',
         height: '100vh',
+        overflow: 'auto',
         backgroundColor: (theme) =>
           theme.palette.mode === 'light'
             ? theme.palette.grey[100]

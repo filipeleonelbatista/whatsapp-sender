@@ -257,6 +257,7 @@ export default function Register() {
         position: 'relative',
         width: '100%',
         height: '100vh',
+        overflow: 'auto',
         backgroundColor: (theme) =>
           theme.palette.mode === 'light'
             ? theme.palette.grey[100]
