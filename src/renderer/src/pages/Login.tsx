@@ -251,7 +251,7 @@ export default function Login() {
                     <Typography variant='caption' sx={{ w: '100%', textAlign: 'center' }} >
                       Já possui cadastro e efetuou o pagamento?
                     </Typography>
-                    <Button type="button" onClick={handleInformPayment}>Solicitar ativação</Button>
+                    <Button type="button" variant="contained" onClick={handleInformPayment}>Solicitar ativação</Button>
                   </>
                 )
               }
