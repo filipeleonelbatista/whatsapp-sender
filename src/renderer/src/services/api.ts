@@ -1,7 +1,84 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
-});
+  baseURL: "https://api-sa-east-1.hygraph.com/v2/clbz2ophl0cyc01t6fpv718o9/master"
+})
 
-export default api;
+api.interceptors.request.use(
+  (config) => {
+    config.headers = {
+      'content-type': 'application/json',
+      'Authorization': `Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImdjbXMtbWFpbi1wcm9kdWN0aW9uIn0.eyJ2ZXJzaW9uIjozLCJpYXQiOjE2NzE3MTUxNTksImF1ZCI6WyJodHRwczovL2FwaS1zYS1lYXN0LTEuaHlncmFwaC5jb20vdjIvY2xiejJvcGhsMGN5YzAxdDZmcHY3MThvOS9tYXN0ZXIiLCJtYW5hZ2VtZW50LW5leHQuZ3JhcGhjbXMuY29tIl0sImlzcyI6Imh0dHBzOi8vbWFuYWdlbWVudC5ncmFwaGNtcy5jb20vIiwic3ViIjoiZjNlNzQxMjEtNjJkOS00NzM4LTgyNjQtYjg1MzMwMTE1NjBjIiwianRpIjoiY2xiejQxa2xuMGYwcjAxdW42eWhxMmtiZiJ9.w8BjCcPmJIebMJcTc5c9hErVfqDWzsEjEDY9QeCOCWIjRNVpkmE4DrAO5E4xJPhHW3lqXp7oV1nI5RNIwAIRS1hFZ0Jr8_yBAzWFURvABp5vIblPbi4qoSokw6UAzqi1lI1zyS97p4vNYRM320TrpnijFTJcoPhMi4abymNTHWyddZD2RDUFCe_LGPL9YXiuKdZoiwFTdWDQX17zIfhqZltgkcpGvJ_gynXLdEqgB9lZEr_qafvgflsPEccErvz8Y8jkQAHHau9ly6XadhirAqzS5Krj6lfmUtwTeQCpT-6IupoTCx3fXaSwkaaWEiQi-ouwX-KTMqaLukDf1biTZm3uEfVNsxxhBvvm_9aNh2GVp2Efk2QDEcP0fZz2843ZS9M8oKJRdmfChcFS6EHwzVlCUzxWj0-0u0yb_Ahcgs9Z1nQ3RAE_S1jcktPdqUYPQRz7pKvYq_6kwr-We3IIUA38_0DFUD5OrWZnQ3-aLSKQtHh-OZjq4dBzPQXIPpe-4ox_aH-eBpWVXeZn83Rf0mun5fBch-fXukB1Ogo4Clp9KWaeOCAcUhx5kxU_PDANQwhZ8UHbqo1uSjBNoTb7sI4TcuVoFp_uvjDB-eM62Nz1TL5tF8Dep5lUs7z_vCTl3lT4UpRnfnl5v1lIx_17nT4MPZjmtnRpi6S4IIS74QU`
+    };
+    return config;
+  },
+  (err) => {
+    return Promise.reject(err)
+  }
+)
+
+const filterAssinantesByEmail = (email: string) => {
+  return {
+    query: `
+      query filterAssinantesByEmail {
+        assinantes(where: {email: "${email}"}) {
+          createdAt
+          email
+          id
+          isActive
+          nome
+          paymentDate
+          publishedAt
+          requestAccessDate
+          selectedPlan
+          senha
+          updatedAt
+        }
+      }
+    `
+  }
+}
+
+const listAssinantes = {
+  query: `
+      query listAssinantes {
+        assinantes {
+          createdAt
+          email
+          id
+          isActive
+          nome
+          paymentDate
+          publishedAt
+          requestAccessDate
+          selectedPlan
+          senha
+          updatedAt
+        }
+      }
+    `
+}
+
+const createAssinante = (nome: string, email: string, senha: string, requestAccessDate: string, selectedPlan: number, isActive: boolean, paymentDate: string | null) => {
+  return {
+    query: `mutation {
+                createAssinante(
+                  data: { nome: "${nome}", email: "${email}", senha: "${senha}", requestAccessDate: "${requestAccessDate}", selectedPlan: ${selectedPlan}, isActive: ${isActive}, paymentDate: ${paymentDate ? `"${paymentDate}"` : `null`}}
+                ) {
+                  email
+                  id
+                  isActive
+                  nome
+                  paymentDate
+                  requestAccessDate
+                  selectedPlan
+                  senha
+                }
+                publishAssinante(where: {email: "${email}"}) {
+                  id
+                }
+              }`
+  }
+}
+
+export { api, filterAssinantesByEmail, listAssinantes, createAssinante };
