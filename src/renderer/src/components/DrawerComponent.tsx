@@ -272,7 +272,10 @@ function DrawerComponent({ title, children }: DrawerComponent) {
               </ListItemButton>
             </Tooltip>
             <Tooltip placement="right" title="Sair">
-              <ListItemButton selected={location.pathname === "/"} onClick={() => handleNavigate("/")}>
+              <ListItemButton selected={location.pathname === "/"} onClick={() => {
+                localStorage.removeItem("@user-info")
+                handleNavigate("/")
+              }}>
                 <ListItemIcon>
                   <LogoutIcon />
                 </ListItemIcon>
