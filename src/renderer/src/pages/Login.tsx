@@ -1,6 +1,6 @@
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { Button, Card, Checkbox, CircularProgress, circularProgressClasses, FormControl, FormControlLabel, FormGroup, FormHelperText, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, Typography, useMediaQuery } from '@mui/material';
+import { Button, Card, Checkbox, CircularProgress, circularProgressClasses, FormControl, FormControlLabel, FormGroup, FormHelperText, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Select, TextField, Typography, useMediaQuery } from '@mui/material';
 import { Box } from '@mui/system';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useFormik } from 'formik';
@@ -9,8 +9,35 @@ import * as Yup from 'yup';
 import { FaWhatsapp } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
 import { api, filterAssinantesByEmail } from '../services/api';
+import { add, differenceInCalendarDays } from 'date-fns';
+import QRCode from 'react-qr-code';
 
 export default function Login() {
+  const [open, setOpen] = React.useState(false);
+  const [QrCode, setQrCode] = React.useState('');
+  const [plan, setPlan] = React.useState(0);
+  const [licenseExpiration, setLicenseExpiration] = React.useState(false)
+
+  const handleInformPaymentReactivation = async () => {
+    const message = `Olá gostaria de informar o pagamento do WPSender para o email ${formik.values.email} com o plano ${plan === 1 ? 'Mensal R$ 10,00' : plan === 6 ? 'Semestral de R$ 60,00 por R$ 50,00' : plan === 12 ? 'Anual de R$ 120,00 por R$ 100,00' : ''}`
+
+    window.open(`https://web.whatsapp.com/send/?phone=%2B5551992736445}&text=${encodeURI(message)}&amp;text&amp;type=phone_number&amp;app_absent=0`, "_blank")
+    setOpen(false)
+    setQrCode('')
+  }
+
+  const handleChangeQrCode = async (event) => {
+    if (Number(event.target.value) === 1) {
+      setQrCode('00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b520400005303986540510.005802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062160512NUbJF4xOYcz56304C81C')
+    } else if (Number(event.target.value) === 6) {
+      setQrCode('00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b520400005303986540550.005802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062070503***63041DE2')
+    } else if (Number(event.target.value) === 12) {
+      setQrCode('00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b5204000053039865406100.005802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062070503***630469E3')
+    }
+
+    setPlan(Number(event.target.value))
+  }
+
   const [selectedUser, setSelectedUser] = React.useState();
   const [waitingActivation, setWaitingActivation] = React.useState(false);
   const [isLoading, setisLoading] = React.useState(false);
@@ -25,7 +52,7 @@ export default function Login() {
   };
 
   const handleInformPayment = async () => {
-    const message = `Olá sou ${selectedUser.nome}, e gostaria de informar o pagamento do WPSender para o email ${selectedUser.email} com o plano ${selectedUser.selectedPlan === 1 ? 'Mensal R$ 10,00' : selectedUser.selectedPlan === 2 ? 'Semestral de R$ 60,00 por R$ 50,00' : selectedUser.selectedPlan === 3 ? 'Anual de R$ 120,00 por R$ 100,00' : ''}`
+    const message = `Olá sou ${selectedUser.nome}, e gostaria de informar o pagamento do WPSender para o email ${selectedUser.email} com o plano ${selectedUser.selectedPlan === 1 ? 'Mensal R$ 10,00' : selectedUser.selectedPlan === 6 ? 'Semestral de R$ 60,00 por R$ 50,00' : selectedUser.selectedPlan === 12 ? 'Anual de R$ 120,00 por R$ 100,00' : ''}`
 
     window.open(`https://web.whatsapp.com/send/?phone=%2B5551992736445}&text=${encodeURI(message)}&amp;text&amp;type=phone_number&amp;app_absent=0`, "_blank")
   }
@@ -41,14 +68,20 @@ export default function Login() {
         return;
       }
       if (result.data.data.assinantes[0].senha === formValues.senha) {
-        if (result.data.data.assinantes[0].isActive) {
-          localStorage.setItem("@remember", formValues.remember)
-          localStorage.setItem("@user-info", JSON.stringify(result.data.data.assinantes[0]))
-          navigate('/envio-mensagens')
+        if (differenceInCalendarDays(add(new Date(result.data.data.assinantes[0].paymentDate), { months: result.data.data.assinantes[0].selectedPlan }), Date.now()) < 1) {
+          alert("Sua licença expirou. adiquira uma nova licença e continue usando o aplicativo");
+          setLicenseExpiration(true)
+          return;
         } else {
-          alert("Seu acesso não está ativo ainda.")
-          setWaitingActivation(true)
-          setSelectedUser(result.data.data.assinantes[0])
+          if (result.data.data.assinantes[0].isActive) {
+            localStorage.setItem("@remember", formValues.remember)
+            localStorage.setItem("@user-info", JSON.stringify(result.data.data.assinantes[0]))
+            navigate('/envio-mensagens')
+          } else {
+            alert("Seu acesso não está ativo ainda.")
+            setWaitingActivation(true)
+            setSelectedUser(result.data.data.assinantes[0])
+          }
         }
       } else {
         alert("Usuário ou senha incorretos!")
@@ -141,8 +174,73 @@ export default function Login() {
     }
   }, [])
 
+  const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    backgroundColor: (theme) =>
+      theme.palette.mode === 'light'
+        ? theme.palette.grey[100]
+        : theme.palette.grey[900],
+    border: 'none',
+    borderRadius: 4,
+    boxShadow: 24,
+    p: 4,
+  };
+
   return (
     <ThemeProvider theme={mode === 'light' ? mdTheme : mdThemeDark}>
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Selecione o plano que deseja
+          </Typography>
+
+          <FormControl fullWidth>
+            <InputLabel id="plans-label">Plano</InputLabel>
+            <Select
+              labelId="plans-label"
+              label="Planos"
+              id="plan"
+              name="plan"
+              value={plan}
+              onChange={handleChangeQrCode}
+            >
+              <MenuItem value={0} disabled>Selecione um plano</MenuItem>
+              <MenuItem value={1}>Mensal R$ 10,00</MenuItem>
+              <MenuItem value={6}>Semestral<sub style={{ margin: '0 8px' }}>de <s>R$ 60,00</s> por</sub>R$ 50,00</MenuItem>
+              <MenuItem value={12}>Anual<sub style={{ margin: '0 8px' }}>de <s>R$ 120,00</s> por</sub>R$ 100,00</MenuItem>
+            </Select>
+            <FormHelperText>Selecione o plano que deseja pagar.</FormHelperText>
+          </FormControl>
+
+          {plan > 0 && (
+            <>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Efetue o pagamento
+              </Typography>
+              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                Faça o pagamento via Pix Usando o QrCode a baixo.
+              </Typography>
+              <Box sx={{ height: "auto", width: "100%", mt: 2, mb: 2 }}>
+                <QRCode
+                  style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                  value={QrCode}
+                />
+              </Box>
+
+              <Button fullWidth onClick={handleInformPaymentReactivation} variant="contained" color="primary">Informar o pagamento</Button>
+            </>
+          )}
+        </Box>
+      </Modal>
       {
         isLoading && (
           <Box sx={{
@@ -259,6 +357,16 @@ export default function Login() {
                       Já possui cadastro e efetuou o pagamento?
                     </Typography>
                     <Button type="button" variant="contained" onClick={handleInformPayment}>Solicitar ativação</Button>
+                  </>
+                )
+              }
+              {
+                licenseExpiration && (
+                  <>
+                    <Typography variant='caption' sx={{ w: '100%', textAlign: 'center' }} >
+                      Faça sua renovação clicando no botão abaixo
+                    </Typography>
+                    <Button type="button" variant="contained" onClick={() => setOpen(true)}>Quero renovar</Button>
                   </>
                 )
               }

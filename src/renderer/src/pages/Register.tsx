@@ -26,7 +26,7 @@ export default function Register() {
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
-  
+
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
   const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
@@ -69,19 +69,18 @@ export default function Register() {
     try {
       setisLoading(true)
 
-      if (process.env.NODE_ENV === 'production') {
-        emailjs.send('service_4o2awb7', 'template_uc48uh8', {
-          ...data,
-          plano: data.selected_plan === 1 ? 'Mensal R$ 10,00' : data.selected_plan === 2 ? 'Semestral de R$ 60,00 por R$ 50,00' : data.selected_plan === 3 ? 'Anual de R$ 120,00 por R$ 100,00' : '',
+      emailjs.send('service_4o2awb7', 'template_uc48uh8', {
+        ...data,
+        plano: data.selected_plan === 1 ? 'Mensal R$ 10,00' : data.selected_plan === 6 ? 'Semestral de R$ 60,00 por R$ 50,00' : data.selected_plan === 12 ? 'Anual de R$ 120,00 por R$ 100,00' : '',
 
-        }, 'user_y1zamkr7P7dPydkNhdhxi').then((res) => {
-          console.log("Sucesso", res)
-          // alert("Sua mensagem foi enviada com sucesso")
-        }, (err) => {
-          console.log("ERRO", err)
-          // alert("Houve um erro ao enviar sua mensagem. Tente o contato pelo Whatsapp ou tente novamente mais tarde!")
-        })
-      }
+      }, 'user_y1zamkr7P7dPydkNhdhxi').then((res) => {
+        console.log("Sucesso", res)
+        // alert("Sua mensagem foi enviada com sucesso")
+      }, (err) => {
+        console.log("ERRO", err)
+        // alert("Houve um erro ao enviar sua mensagem. Tente o contato pelo Whatsapp ou tente novamente mais tarde!")
+      })
+
 
       const { nome, email, senha, selected_plan, request_access_date, payment_date, is_active } = data;
       const mutationcreateAssinante = createAssinante(nome, email, senha, request_access_date, selected_plan, is_active, payment_date)
@@ -89,9 +88,9 @@ export default function Register() {
 
       if (formValues.plan === 1) {
         setQrCode('00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b520400005303986540510.005802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062160512NUbJF4xOYcz56304C81C')
-      } else if (formValues.plan === 2) {
+      } else if (formValues.plan === 6) {
         setQrCode('00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b520400005303986540550.005802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062070503***63041DE2')
-      } else if (formValues.plan === 3) {
+      } else if (formValues.plan === 12) {
         setQrCode('00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b5204000053039865406100.005802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062070503***630469E3')
       }
 
@@ -179,7 +178,7 @@ export default function Register() {
   });
 
   const handleInformPayment = async () => {
-    const message = `Olá sou ${formik.values.name}, e gostaria de informar o pagamento do WPSender para o email ${formik.values.email} com o plano ${formik.values.plan === 1 ? 'Mensal R$ 10,00' : formik.values.plan === 2 ? 'Semestral de R$ 60,00 por R$ 50,00' : formik.values.plan === 3 ? 'Anual de R$ 120,00 por R$ 100,00' : ''}`
+    const message = `Olá sou ${formik.values.name}, e gostaria de informar o pagamento do WPSender para o email ${formik.values.email} com o plano ${formik.values.plan === 1 ? 'Mensal R$ 10,00' : formik.values.plan === 6 ? 'Semestral de R$ 60,00 por R$ 50,00' : formik.values.plan === 12 ? 'Anual de R$ 120,00 por R$ 100,00' : ''}`
 
     window.open(`https://web.whatsapp.com/send/?phone=%2B5551992736445}&text=${encodeURI(message)}&amp;text&amp;type=phone_number&amp;app_absent=0`, "_blank")
     setOpen(false)
@@ -362,8 +361,8 @@ export default function Register() {
                   >
                     <MenuItem value={0} disabled>Selecione um plano</MenuItem>
                     <MenuItem value={1}>Mensal R$ 10,00</MenuItem>
-                    <MenuItem value={2}>Semestral<sub style={{ margin: '0 8px' }}>de <s>R$ 60,00</s> por</sub>R$ 50,00</MenuItem>
-                    <MenuItem value={3}>Anual<sub style={{ margin: '0 8px' }}>de <s>R$ 120,00</s> por</sub>R$ 100,00</MenuItem>
+                    <MenuItem value={6}>Semestral<sub style={{ margin: '0 8px' }}>de <s>R$ 60,00</s> por</sub>R$ 50,00</MenuItem>
+                    <MenuItem value={12}>Anual<sub style={{ margin: '0 8px' }}>de <s>R$ 120,00</s> por</sub>R$ 100,00</MenuItem>
                   </Select>
                   <FormHelperText>Selecione o plano que deseja pagar. {formik.errors.plan}</FormHelperText>
                 </FormControl>

@@ -26,6 +26,7 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useLocation, useNavigate } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { add, differenceInCalendarDays } from 'date-fns';
 
 function Copyright() {
   return (
@@ -119,6 +120,7 @@ interface DrawerComponent {
 function DrawerComponent({ title, children }: DrawerComponent) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [user, setUser] = React.useState()
 
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
@@ -129,6 +131,10 @@ function DrawerComponent({ title, children }: DrawerComponent) {
   };
 
   React.useEffect(() => {
+    const userInfo = localStorage.getItem("@user-info")
+    if (userInfo !== null) {
+      setUser(JSON.parse(userInfo))
+    }
     if (localStorage.getItem("@dark-theme") !== null) {
       const selectedTheme = localStorage.getItem("@dark-theme")
       console.log("Entrei aqui", selectedTheme)
@@ -177,6 +183,13 @@ function DrawerComponent({ title, children }: DrawerComponent) {
             >
               {title}
             </Typography>
+            {
+              differenceInCalendarDays(add(new Date(user?.paymentDate), { months: user?.selectedPlan }), Date.now()) < 15 && (
+                <Typography>
+                  Licença expira em {differenceInCalendarDays(add(new Date(user?.paymentDate), { months: user?.selectedPlan }), Date.now())} dias
+                </Typography>
+              )
+            }
             <Tooltip title="Definir Modo Escuro/Claro">
               <IconButton sx={{ ml: 1 }} onClick={() => {
                 setMode(mode === "dark" ? 'light' : 'dark')
