@@ -262,6 +262,7 @@ export default function MessageModels() {
 
       <Box sx={{ height: 400, w: '100%', mt: 4 }}>
         <DataGrid
+          onCellFocusOut={() => { }}
           columnVisibilityModel={{
             id: false,
           }}

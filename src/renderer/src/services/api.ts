@@ -81,4 +81,75 @@ const createAssinante = (nome: string, email: string, senha: string, requestAcce
   }
 }
 
-export { api, filterAssinantesByEmail, listAssinantes, createAssinante };
+const listCategories = {
+  query: `
+    query listCategories {
+      categorias(orderBy: nome_ASC) {
+        id
+        nome
+      }
+    }  
+  `
+}
+
+const getLast5Posts = {
+  query: `
+    query getLast5Posts {
+      posts (last: 5 orderBy: publishedAt_DESC){
+        id
+        content {
+          html
+        }
+        categorias {
+          nome
+          id
+        }
+        title
+        url_id
+        publishedAt
+        featuredImage {
+          url
+        }
+      }
+    }
+  `
+}
+
+const getLast5PostsByCategory = (id: string) => {
+  return {
+    query: `
+      query getLast5PostsByCategory {
+        categoria(where: {id: "${id}"}) {
+          posts(orderBy: publishedAt_DESC) {
+            id
+            publishedAt
+            title
+            url_id
+            featuredImage {
+              url
+            }
+            categorias {
+              id
+              nome
+            }
+            content {
+              html
+            }
+          }
+          id
+          nome
+        }
+      }
+    `
+  }
+}
+
+export {
+  api,
+  filterAssinantesByEmail,
+  listAssinantes,
+  createAssinante,
+  listCategories,
+  getLast5Posts,
+  getLast5PostsByCategory
+};

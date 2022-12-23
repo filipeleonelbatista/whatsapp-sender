@@ -180,6 +180,7 @@ export default function Logs() {
 
             <Box sx={{ height: 400, w: '100%', mt: 4 }}>
               <DataGrid
+                onCellFocusOut={() => { }}
                 columnVisibilityModel={{
                   id: false,
                 }}
@@ -202,6 +203,7 @@ export default function Logs() {
 
             <Box sx={{ height: 400, w: '100%', mt: 4 }}>
               <DataGrid
+                onCellFocusOut={() => { }}
                 columnVisibilityModel={{
                   id: false,
                 }}

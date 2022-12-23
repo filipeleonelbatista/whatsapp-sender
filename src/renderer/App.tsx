@@ -7,6 +7,7 @@ import MessageModels from './src/pages/MessageModels';
 import Profile from './src/pages/Profile';
 import Register from './src/pages/Register';
 import Settings from './src/pages/Settings';
+import Blog from './src/pages/Blog';
 import './src/styles/global.css';
 
 export default function App() {
@@ -14,6 +15,7 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/blog" element={<Blog />} />
         <Route path="/cadastrar" element={<Register />} />
         <Route path="/envio-mensagens" element={<Home />} />
         <Route path="/modelos-de-mensagem" element={<MessageModels />} />

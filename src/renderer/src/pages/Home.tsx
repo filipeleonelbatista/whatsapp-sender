@@ -658,6 +658,7 @@ function Home() {
 
         <Box sx={{ height: 500, w: '100%', mt: 4 }}>
           <DataGrid
+            onCellFocusOut={() => { }}
             columnVisibilityModel={{
               id: false,
             }}

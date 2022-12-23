@@ -27,6 +27,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { useLocation, useNavigate } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { add, differenceInCalendarDays } from 'date-fns';
+import NewspaperIcon from '@mui/icons-material/Newspaper';
 
 function Copyright() {
   return (
@@ -267,6 +268,15 @@ function DrawerComponent({ title, children }: DrawerComponent) {
                 <Divider sx={{ my: 1 }} />
               </>
             )}
+            <Divider sx={{ my: 1 }} />
+            <Tooltip placement="right" title="Blog">
+              <ListItemButton selected={location.pathname === "/blog"} onClick={() => handleNavigate("/blog")}>
+                <ListItemIcon>
+                  <NewspaperIcon />
+                </ListItemIcon>
+                <ListItemText primary="Blog" />
+              </ListItemButton>
+            </Tooltip>
             <Divider sx={{ my: 1 }} />
             <Tooltip placement="right" title="Configurações">
               <ListItemButton selected={location.pathname === "/configuracoes"} onClick={() => handleNavigate("/configuracoes")}>
