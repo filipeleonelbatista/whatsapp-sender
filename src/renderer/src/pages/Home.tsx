@@ -23,6 +23,7 @@ import FormGroup from '@mui/material/FormGroup';
 import Snackbar from '@mui/material/Snackbar';
 import Switch from '@mui/material/Switch';
 import { DataGrid, GridCsvExportMenuItem, GridPrintExportMenuItem, GridToolbarExportContainer, ptBR } from '@mui/x-data-grid';
+import EmojiPicker from 'emoji-picker-react';
 import { useFormik } from 'formik';
 import React from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
@@ -30,7 +31,6 @@ import { v4 as uuidv4 } from 'uuid';
 import * as Yup from 'yup';
 import DrawerComponent from '../components/DrawerComponent';
 import celular from '../utils/masks';
-import EmojiPicker from 'emoji-picker-react';
 
 const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
   <GridToolbarExportContainer {...other}>

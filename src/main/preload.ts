@@ -12,6 +12,12 @@ interface TimerConfiguration {
   finalize_send: number,
 }
 
+interface ExtractionObject {
+  id: string;
+  name: string;
+  phone: string;
+}
+
 const log = (message: string) => {
   console.log(message)
   ipcRenderer.send('ipc-example', [message])
@@ -26,6 +32,48 @@ function delay(time: number) {
 contextBridge.exposeInMainWorld('electron', {
   checkFilePath: (path: string) => {
     return fs.existsSync(path)
+  },
+  extractContacts: async (group_name: string, config: TimerConfiguration) => {
+    let contacts_extracted: ExtractionObject[] = []
+
+    log("Iniciando instancia do navegador")
+    const initiated_at = Date.now()
+    let driver = await new Builder().forBrowser(Browser.CHROME).build();
+
+    log("Abrindo Login Whatsapp")
+    await driver.get(`https://web.whatsapp.com/`)
+
+    try {
+      log("Aguardando Validar a página de inicio")
+      const result = await driver.wait(until.elementLocated(By.css("h1[data-testid='intro-title']")));
+
+      log("Autenticado")
+      await delay(config.start);
+
+      log("Procurando grupo")
+      const group = await driver.wait(until.elementLocated(By.css(`span[title='${group_name}']`)));
+
+      log("Abrindo o grupo")
+      group.click()
+
+      log("Clicando em informações")
+      const groupInfoTitle = await driver.wait(until.elementLocated(By.css("span[data-testid='conversation-info-header-chat-title']")));
+      groupInfoTitle.click();
+
+
+      log("Obtendo total de participantes")
+      const participants = await driver.wait(until.elementLocated(By.css("div[data-testid='section-participants'] span[class='x2dsD _1lF7t bze30y65 a4ywakfo']")));
+      const pq = await participants.getAttribute("value")
+      console.log("participants", participants)
+      log(`Aqui está o total de participantes ${pq}`)
+
+    } catch (error) {
+
+    }
+
+
+
+    return contacts_extracted
   },
   initiateSendProcess: async (rows: any[], message: string, images: any[], isNewLineReturnCharacter: boolean, config: TimerConfiguration) => {
     log("Iniciando instancia do navegador")

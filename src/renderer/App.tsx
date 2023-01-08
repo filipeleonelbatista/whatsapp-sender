@@ -9,6 +9,7 @@ import Register from './src/pages/Register';
 import Settings from './src/pages/Settings';
 import Blog from './src/pages/Blog';
 import './src/styles/global.css';
+import Extractor from './src/pages/Extractor';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/perfil" element={<Profile />} />
         <Route path="/configuracoes" element={<Settings />} />
         <Route path="/historico-de-envios" element={<Logs />} />
+        <Route path="/extrator" element={<Extractor />} />
       </Routes>
     </Router >
   );

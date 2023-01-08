@@ -28,6 +28,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { add, differenceInCalendarDays } from 'date-fns';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
+import ContactsIcon from '@mui/icons-material/Contacts';
 
 function Copyright() {
   return (
@@ -253,6 +254,14 @@ function DrawerComponent({ title, children }: DrawerComponent) {
                   <PlaylistAddIcon />
                 </ListItemIcon>
                 <ListItemText primary="Listas de envios" />
+              </ListItemButton>
+            </Tooltip>
+            <Tooltip placement="right" title="Extrator de contatos">
+              <ListItemButton selected={location.pathname === "/extrator"} onClick={() => handleNavigate("/extrator")}>
+                <ListItemIcon>
+                  <ContactsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Extrator de contatoss" />
               </ListItemButton>
             </Tooltip>
             {false && (
