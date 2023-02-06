@@ -127,7 +127,6 @@ export default function Login() {
     if (userInfo !== null) {
       if (rememberInfo !== null) {
         const rememberStatus = rememberInfo
-        console.log("rememberInfo", rememberInfo)
         if (rememberInfo === 'true') {
           const user = JSON.parse(userInfo)
           handleSubmitForm({ email: user.email, senha: user.senha, remember: true })

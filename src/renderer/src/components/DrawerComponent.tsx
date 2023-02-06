@@ -139,7 +139,6 @@ function DrawerComponent({ title, children }: DrawerComponent) {
     }
     if (localStorage.getItem("@dark-theme") !== null) {
       const selectedTheme = localStorage.getItem("@dark-theme")
-      console.log("Entrei aqui", selectedTheme)
       setMode(selectedTheme)
     } else {
       localStorage.setItem("@dark-theme", prefersDarkMode ? 'dark' : 'light')
@@ -256,14 +255,14 @@ function DrawerComponent({ title, children }: DrawerComponent) {
                 <ListItemText primary="Listas de envios" />
               </ListItemButton>
             </Tooltip>
-            <Tooltip placement="right" title="Extrator de contatos">
+            {/* <Tooltip placement="right" title="Extrator de contatos">
               <ListItemButton selected={location.pathname === "/extrator"} onClick={() => handleNavigate("/extrator")}>
                 <ListItemIcon>
                   <ContactsIcon />
                 </ListItemIcon>
                 <ListItemText primary="Extrator de contatoss" />
               </ListItemButton>
-            </Tooltip>
+            </Tooltip> */}
             {false && (
               <>
                 <Tooltip placement="right" title="Perfil">
@@ -305,8 +304,10 @@ function DrawerComponent({ title, children }: DrawerComponent) {
             </Tooltip>
             <Tooltip placement="right" title="Sair">
               <ListItemButton selected={location.pathname === "/"} onClick={() => {
-                localStorage.removeItem("@user-info")
-                handleNavigate("/")
+                if (window.confirm("Deseja realmente sair do sistema?")) {
+                  localStorage.removeItem("@user-info")
+                  handleNavigate("/")
+                }
               }}>
                 <ListItemIcon>
                   <LogoutIcon />

@@ -26,7 +26,7 @@ import { DataGrid, GridCsvExportMenuItem, GridPrintExportMenuItem, GridToolbarEx
 import EmojiPicker from 'emoji-picker-react';
 import { useFormik } from 'formik';
 import React from 'react';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaPlay, FaTrash } from 'react-icons/fa';
 import { v4 as uuidv4 } from 'uuid';
 import * as Yup from 'yup';
 import DrawerComponent from '../components/DrawerComponent';
@@ -86,10 +86,33 @@ function Home() {
   const [rows, setRows] = React.useState([]);
   const [editableContact, setEditableContact] = React.useState();
   const [attachments, setAttachments] = React.useState([]);
-  const [attachmentsPreview, setAttachmentsPreview] = React.useState([]);
   const [message, setMessage] = React.useState('');
-  const [isNewLineReturnCharacter, setisNewLineReturnCharacter] = React.useState(false);
+  const [isLoadingButton, setIsLoadingButton] = React.useState(false);
   const [openEmoji, setOpenEmoji] = React.useState(false);
+
+  const [selectionStart, setSelectionStart] = React.useState();
+  const inputMessageRef = React.useRef();
+
+  const registerLog = (initiated_at, currentRows) => {
+    const results = {
+      rows: currentRows,
+      message,
+      status: true,
+      initiated_at,
+      finalized_at: Date.now()
+    }
+
+    setTimeout(() => {
+      const dataLog = localStorage.getItem("@logs")
+
+      if (dataLog !== null) {
+        const logs = JSON.parse(dataLog)
+        localStorage.setItem("@logs", JSON.stringify([{ id: uuidv4(), ...results }, ...logs]))
+      } else {
+        localStorage.setItem("@logs", JSON.stringify([{ id: uuidv4(), ...results }]))
+      }
+    }, 3000)
+  }
 
   const handleSubmitForm = (formValues) => {
     if (isEditable) {
@@ -120,50 +143,48 @@ function Home() {
     }
   };
 
-  const handleSendMessages = async () => {
-    console.log('handleSendMessages', rows, attachments);
+  const handleSendSingleMessage = async (contact) => {
     if (message === "") return alert("Você não digitou a mensagem ainda")
-    if (rows.length === 0) return alert("Você não incluiu contatos para o envio das mensagens")
 
     try {
+      setIsLoadingButton(true)
       setisLoading(true)
-      const results = await window.electron.initiateSendProcess(rows, message, attachments, isNewLineReturnCharacter, config);
+      const initiated_at = Date.now()
 
-      const dataLog = localStorage.getItem("@logs")
+      await window.electron.createGlobalInstanceOfDriver();
 
-      if (dataLog !== null) {
-        const logs = JSON.parse(dataLog)
-        localStorage.setItem("@logs", JSON.stringify([{ id: uuidv4(), ...results }, ...logs]))
-      } else {
-        localStorage.setItem("@logs", JSON.stringify([{ id: uuidv4(), ...results }]))
-      }
+      await window.electron.loginWhatsapp(config)
 
-      if (results.status) {
+      const request = await window.electron.sendMessage(contact, message, attachments, config)
 
+      if (!request.status) {
         setSnackbarMessage({
-          message: `Mensagens enviadas com sucesso!`,
-          title: 'Envio concluido',
-          severity: 'success'
-        })
-        handleClick()
-
-        if (localStorage.getItem("@selected-messages-template") !== null) {
-          localStorage.removeItem("@selected-messages-template")
-        }
-
-        if (localStorage.getItem("@selected-contact-list") !== null) {
-          localStorage.removeItem("@selected-contact-list")
-        }
-
-      } else {
-        setSnackbarMessage({
-          message: `Houve um problema durante o envio. Contate o administrador. ${results.error}`,
-          title: 'Tivemos um problema',
+          message: `Ao tentar enviar a mensagem para ${contact.name} telefone ${contact.phone}, o erro ${request.error} `,
+          title: 'Problemas no envio',
           severity: 'error'
         })
+
         handleClick()
       }
-      setRows(results.rows);
+
+      const updatedRow = {
+        ...contact,
+        statusInfo: request.status ? "Mensagem Enviada" : request.error,
+        status: request.status,
+      }
+
+      setRows(prevState => prevState.map(contact => contact.id === updatedRow.id ? { ...contact, ...updatedRow } : contact))
+
+      await window.electron.closeGlobalInstanceOfDriver();
+
+      registerLog(initiated_at, rows)
+
+      setSnackbarMessage({
+        message: `Mensagen enviada com sucesso!`,
+        title: 'Envio concluido',
+        severity: 'success'
+      })
+      handleClick()
 
     } catch (error) {
       setSnackbarMessage({
@@ -173,7 +194,72 @@ function Home() {
       })
       handleClick()
     } finally {
+      setIsLoadingButton(false)
       setisLoading(false)
+    }
+  }
+
+  const handleSendMessages = async () => {
+    if (message === "") return alert("Você não digitou a mensagem ainda")
+    if (rows.length === 0) return alert("Você não incluiu contatos para o envio das mensagens")
+
+    try {
+      setIsLoadingButton(true)
+      const initiated_at = Date.now()
+
+      await window.electron.createGlobalInstanceOfDriver();
+
+      await window.electron.loginWhatsapp(config)
+
+      for (const contact of rows) {
+        const request = await window.electron.sendMessage(contact, message, attachments, config)
+
+        if (!request.status) {
+          setSnackbarMessage({
+            message: `Ao tentar enviar a mensagem para ${contact.name} telefone ${contact.phone}, o erro ${request.error} `,
+            title: 'Problemas no envio',
+            severity: 'error'
+          })
+        }
+
+        const updatedRow = {
+          ...contact,
+          statusInfo: request.status ? "Mensagem Enviada" : request.error,
+          status: request.status,
+        }
+
+        setRows(prevState => prevState.map(contact => contact.id === updatedRow.id ? { ...contact, ...updatedRow } : contact))
+
+      }
+
+      await window.electron.closeGlobalInstanceOfDriver();
+
+      registerLog(initiated_at, rows)
+
+      setSnackbarMessage({
+        message: `Mensagens enviadas com sucesso!`,
+        title: 'Envio concluido',
+        severity: 'success'
+      })
+      handleClick()
+
+      if (localStorage.getItem("@selected-messages-template") !== null) {
+        localStorage.removeItem("@selected-messages-template")
+      }
+
+      if (localStorage.getItem("@selected-contact-list") !== null) {
+        localStorage.removeItem("@selected-contact-list")
+      }
+
+    } catch (error) {
+      setSnackbarMessage({
+        message: `Houve um erro ao tentar enviar as mensagens. \nContate o administrador. \n\n${error}`,
+        title: 'Tivemos um problema',
+        severity: 'error'
+      })
+      handleClick()
+    } finally {
+      setIsLoadingButton(false)
     }
   };
 
@@ -272,7 +358,7 @@ function Home() {
       field: 'actions',
       headerName: 'Ações',
       align: 'center',
-      width: 80,
+      width: 140,
       renderCell: (params) => {
         const onClick = (e) => {
           e.stopPropagation();
@@ -307,6 +393,15 @@ function Home() {
             <Tooltip title="Excluir">
               <IconButton color="error" onClick={handleDelete}>
                 <FaTrash size={16} />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Enviar somente para este contato">
+              <IconButton color="success" onClick={(event) => {
+                event.stopPropagation()
+                handleSendSingleMessage(params.row)
+              }}>
+                <FaPlay size={16} />
               </IconButton>
             </Tooltip>
           </>
@@ -383,10 +478,14 @@ function Home() {
         <Grid container spacing={2} sx={{ mt: 2, mb: 4 }}>
           <Grid item xs={6}>
             <TextField
+              inputRef={inputMessageRef}
               fullWidth
               label="Mensagem"
               id="message"
               name="message"
+              onSelect={(event) => {
+                setSelectionStart(inputMessageRef?.current?.selectionStart)
+              }}
               multiline
               rows={6}
               value={message}
@@ -396,42 +495,42 @@ function Home() {
               <Button
                 variant='contained'
                 onClick={() => {
-                  setMessage(currMessage => `${currMessage} {primeiroNome} `)
+                  setMessage([message.slice(0, selectionStart), "{primeiroNome}", message.slice(selectionStart)].join(''))
                 }}>
                 {`{primeiroNome}`}
               </Button>
               <Button
                 variant='contained'
                 onClick={() => {
-                  setMessage(currMessage => `${currMessage} {nomeCompleto} `)
+                  setMessage([message.slice(0, selectionStart), "{nomeCompleto}", message.slice(selectionStart)].join(''))
                 }}>
                 {`{nomeCompleto}`}
               </Button>
               <Button
                 variant='contained'
                 onClick={() => {
-                  setMessage(currMessage => `${currMessage} {telefone} `)
+                  setMessage([message.slice(0, selectionStart), "{telefone}", message.slice(selectionStart)].join(''))
                 }}>
                 {`{telefone}`}
               </Button>
               <Button
                 variant='contained'
                 onClick={() => {
-                  setMessage(currMessage => `${currMessage} {var1} `)
+                  setMessage([message.slice(0, selectionStart), "{var1}", message.slice(selectionStart)].join(''))
                 }}>
                 {`{var1}`}
               </Button>
               <Button
                 variant='contained'
                 onClick={() => {
-                  setMessage(currMessage => `${currMessage} {var2} `)
+                  setMessage([message.slice(0, selectionStart), "{var2}", message.slice(selectionStart)].join(''))
                 }}>
                 {`{var2}`}
               </Button>
               <Button
                 variant='contained'
                 onClick={() => {
-                  setMessage(currMessage => `${currMessage} {var3} `)
+                  setMessage([message.slice(0, selectionStart), "{var3}", message.slice(selectionStart)].join(''))
                 }}>
                 {`{var3}`}
               </Button>
@@ -449,14 +548,14 @@ function Home() {
                     searchPlaceHolder="Pesquisar emojis..."
                     emojiVersion="3.0"
                     onEmojiClick={(emoji) => {
-                      setMessage(currMessage => `${currMessage} ${emoji.emoji} `)
+                      setMessage([message.slice(0, selectionStart), `${emoji.emoji}`, message.slice(selectionStart)].join(''))
                     }}
                     theme={localStorage.getItem("@dark-theme") === null ? 'light' : localStorage.getItem("@dark-theme")}
                   />
                 )
               }
             </Box>
-
+            {/* 
             <FormGroup>
               <FormControlLabel
                 control={
@@ -472,6 +571,7 @@ function Home() {
               Caso ativado, enviará tudo em um bloco de mensagem
               * Enviar cada linha não é compatível com emojis
             </Typography>
+             */}
           </Grid>
           <Grid item xs={6}>
             <Button
@@ -680,11 +780,18 @@ function Home() {
 
         <Button
           onClick={handleSendMessages}
-          sx={{ width: '100%', mt: 4, mb: 4 }}
+          sx={{
+            width: '100%',
+            mt: 4,
+            mb: 4,
+          }}
           variant="contained"
-          startIcon={<SendIcon />}
+          disabled={isLoadingButton}
+          startIcon={isLoadingButton ? <CircularProgress size={22} color="inherit" /> : <SendIcon />}
         >
-          Enviar mensagens
+          {
+            isLoadingButton ? "Aguarde, Enviando Mensagens" : "Enviar mensagens"
+          }
         </Button>
       </DrawerComponent>
     </>

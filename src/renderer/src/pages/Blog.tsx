@@ -55,7 +55,7 @@ export default function Blog() {
 
           </List>
         </Box>
-        <Box >
+        <Box sx={{ width: '100%' }}>
           {
             posts.length === 0 && (
               <Box>
@@ -70,7 +70,7 @@ export default function Blog() {
           }
           {
             posts.map(post => (
-              <Paper key={post.id} elevation={3} sx={{ p: 2, mt: 4 }}>
+              <Box key={post.id} sx={{ width: '100%', p: 2, mt: 4, boxShadow: 3, backgroundColor: '#FFF', borderRadius: 2 }}>
                 <Typography variant="h4">
                   {post.title}
                 </Typography>
@@ -86,11 +86,22 @@ export default function Blog() {
                   </Typography>
                 </Box>
                 <CardMedia image={post.featuredImage.url} style={{ borderRadius: 4, width: '100%', height: 350 }} />
-                <Typography variant="body2" dangerouslySetInnerHTML={{
-                  __html: post.content.html
-                }}>
+                <Typography
+                  component="div"
+                  sx={{
+                    '& > img': {
+                      width: "100%",
+                      heigth: 'auto',
+                      borderRadius: 2,
+                      boxShadow: 2,
+                    }
+                  }}
+                  variant="body2"
+                  dangerouslySetInnerHTML={{
+                    __html: post.content.html
+                  }}>
                 </Typography>
-              </Paper>
+              </Box>
             ))
           }
 

@@ -26,6 +26,9 @@ export default function MessageModels() {
   const [rows, setRows] = React.useState([]);
   const [openEmoji, setOpenEmoji] = React.useState(false);
 
+  const [selectionStart, setSelectionStart] = React.useState();
+  const inputMessageRef = React.useRef();
+
   const handleSubmitForm = (formValues) => {
     if (isEditable) {
       const newRowsArray = rows.filter(row => row.id !== selectedEditableRow.id)
@@ -160,10 +163,14 @@ export default function MessageModels() {
               sx={{ mb: 2 }}
             />
             <TextField
-              fullWidth
+              fullWidth              
+              inputRef={inputMessageRef}
               label="Mensagem"
               id="message"
               name="message"
+              onSelect={(event) => {
+                setSelectionStart(inputMessageRef?.current?.selectionStart)
+              }}
               multiline
               rows={6}
               value={formik.values.message}
@@ -178,45 +185,45 @@ export default function MessageModels() {
               Variáveis da mensagem
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 2, mb: 2, gap: 1 }}>
-              <Button
+            <Button
                 variant='contained'
                 onClick={() => {
-                  formik.setFieldValue("message", `${formik.values.message} {primeiroNome} `)
+                  formik.setFieldValue('message', [formik.values.message.slice(0, selectionStart), "{primeiroNome}", formik.values.message.slice(selectionStart)].join(''))
                 }}>
                 {`{primeiroNome}`}
               </Button>
               <Button
                 variant='contained'
                 onClick={() => {
-                  formik.setFieldValue("message", `${formik.values.message} {nomeCompleto} `)
+                  formik.setFieldValue('message', [formik.values.message.slice(0, selectionStart), "{nomeCompleto}", formik.values.message.slice(selectionStart)].join(''))
                 }}>
                 {`{nomeCompleto}`}
               </Button>
               <Button
                 variant='contained'
                 onClick={() => {
-                  formik.setFieldValue("message", `${formik.values.message} {telefone} `)
+                  formik.setFieldValue('message', [formik.values.message.slice(0, selectionStart), "{telefone}", formik.values.message.slice(selectionStart)].join(''))
                 }}>
                 {`{telefone}`}
               </Button>
               <Button
                 variant='contained'
                 onClick={() => {
-                  formik.setFieldValue("message", `${formik.values.message} {var1} `)
+                  formik.setFieldValue('message', [formik.values.message.slice(0, selectionStart), "{var1}", formik.values.message.slice(selectionStart)].join(''))
                 }}>
                 {`{var1}`}
               </Button>
               <Button
                 variant='contained'
                 onClick={() => {
-                  formik.setFieldValue("message", `${formik.values.message} {var2} `)
+                  formik.setFieldValue('message', [formik.values.message.slice(0, selectionStart), "{var2}", formik.values.message.slice(selectionStart)].join(''))
                 }}>
                 {`{var2}`}
               </Button>
               <Button
                 variant='contained'
                 onClick={() => {
-                  formik.setFieldValue("message", `${formik.values.message} {var3} `)
+                  formik.setFieldValue('message', [formik.values.message.slice(0, selectionStart), "{var3}", formik.values.message.slice(selectionStart)].join(''))
                 }}>
                 {`{var3}`}
               </Button>
@@ -234,7 +241,7 @@ export default function MessageModels() {
                     searchPlaceHolder="Pesquisar emojis..."
                     emojiVersion="3.0"
                     onEmojiClick={(emoji) => {
-                      formik.setFieldValue("message", `${formik.values.message} ${emoji.emoji} `)
+                      formik.setFieldValue('message', [formik.values.message.slice(0, selectionStart), `${emoji.emoji}`, formik.values.message.slice(selectionStart)].join(''))
                     }}
                     theme={localStorage.getItem("@dark-theme") === null ? 'light' : localStorage.getItem("@dark-theme")}
                   />
