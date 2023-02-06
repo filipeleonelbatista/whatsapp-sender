@@ -70,7 +70,17 @@ export default function Blog() {
           }
           {
             posts.map(post => (
-              <Box key={post.id} sx={{ width: '100%', p: 2, mt: 4, boxShadow: 3, backgroundColor: '#FFF', borderRadius: 2 }}>
+              <Box key={post.id} sx={{
+                width: '100%',
+                p: 2,
+                mt: 4,
+                boxShadow: 3,
+                backgroundColor: (theme) =>
+                  theme.palette.mode === 'light'
+                    ? theme.palette.grey[100]
+                    : theme.palette.grey[900],
+                borderRadius: 2
+              }}>
                 <Typography variant="h4">
                   {post.title}
                 </Typography>
