@@ -25,3 +25,5 @@ dist-ssr
 release/*
 .erb
 .tst
+package-lock.json
+yarn.lock
