@@ -100,7 +100,7 @@ contextBridge.exposeInMainWorld('electron', {
   closeGlobalInstanceOfDriver: async () => {
     await GlobalDriver.quit();
   },
-  sendMessage: async (contact: Contact, message: string, images: any[], config: TimerConfiguration) => {
+  sendMessage: async (contact: Contact, message: string, attachments: File[], config: TimerConfiguration) => {
     try {
       let finalMessage = message.replaceAll("{primeiroNome}", contact.name.split(" ")[0])
         .replaceAll("{nomeCompleto}", contact.name)
@@ -136,24 +136,26 @@ contextBridge.exposeInMainWorld('electron', {
       await delay(300);
       sendButton.click();
 
-      if (images.length > 0) {
-        log("Enviando imagens anexadas")
-        for (const image of images) {
-          log("Procurando botão clipe")
+      if (attachments.length > 0) {
+        log("Enviando arquivos")
+        for (const file of attachments) {
+          log("Procurando botão clip")
           const clipButton = await GlobalDriver.wait(until.elementLocated(By.css("div[data-testid='conversation-clip']")));
           clipButton.click();
 
           await delay(config.send_message);
 
-          log("Procurando botão anexar imagens")
-          const attachButton = await GlobalDriver.wait(until.elementLocated(By.css("button[aria-label='Fotos e vídeos']")));
-          log("Inserindo imagem")
+          const selectButtonByTypes = (file.type === 'image/png' || file.type === 'image/jpg') ? "button[aria-label='Fotos e vídeos']" : "button[aria-label='Documento']"
+
+          log("Procurando botão de anexar o tipo")
+          const attachButton = await GlobalDriver.wait(until.elementLocated(By.css(selectButtonByTypes)));
+          log("Inserindo anexo")
           const inputElement = await attachButton.findElement(By.css(`input`))
-          inputElement.sendKeys(image.path)
+          inputElement.sendKeys(file.path)
 
           await delay(config.send_message);
 
-          log("Procurando botão para enviar imagem")
+          log("Procurando botão para enviar anexo")
           const sendImageButton = await GlobalDriver.wait(until.elementLocated(By.css("span[data-testid='send']")));
           sendImageButton.click();
           await delay(config.send_message);

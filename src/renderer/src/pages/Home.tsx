@@ -26,7 +26,8 @@ import { DataGrid, GridCsvExportMenuItem, GridPrintExportMenuItem, GridToolbarEx
 import EmojiPicker from 'emoji-picker-react';
 import { useFormik } from 'formik';
 import React from 'react';
-import { FaEdit, FaPlay, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaFile, FaFilePdf, FaPlay, FaTrash } from 'react-icons/fa';
+import { BsFiletypeJpg, BsFiletypePng, BsFiletypeMp3, BsFiletypeWav } from 'react-icons/bs';
 import { v4 as uuidv4 } from 'uuid';
 import * as Yup from 'yup';
 import DrawerComponent from '../components/DrawerComponent';
@@ -271,7 +272,7 @@ function Home() {
     }
   };
 
-  const handleRemoveImage = (index) => {
+  const removeAttachment = (index) => {
     const newArray = attachments.filter((item, arrIndex) => arrIndex !== index)
     setAttachments(newArray);
   };
@@ -296,17 +297,8 @@ function Home() {
 
   const handleLoadAttachments = (event) => {
     event.stopPropagation()
-    const files = Array.from(event.target.files);
-    if (files.length > 0) {
-      const arrImg = [];
-      for (let i = 0; i < files.length; i++) {
-        arrImg.push({
-          path: files[i].path,
-          url: String(URL.createObjectURL(files[i]))
-        });
-      }
-      setAttachments(arrImg);
-    }
+    console.log("Olha isso", Array.from(event.target.files))
+    setAttachments(Array.from(event.target.files));
   };
 
   const handleLoadCsv = (event) => {
@@ -563,23 +555,6 @@ function Home() {
                 )
               }
             </Box>
-            {/* 
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={isNewLineReturnCharacter}
-                    onChange={(event) => setisNewLineReturnCharacter(event.target.checked)}
-                  />
-                }
-                label={<Typography variant="caption">Enviar cada linha digitada separadamente</Typography>} />
-            </FormGroup>
-            <Typography variant="caption" color="#999">
-              Cada vez que você apertar enter ele enviará a linha separadamente.
-              Caso ativado, enviará tudo em um bloco de mensagem
-              * Enviar cada linha não é compatível com emojis
-            </Typography>
-             */}
           </Grid>
           <Grid item xs={6}>
             <Button
@@ -588,11 +563,11 @@ function Home() {
               component="label"
               startIcon={<AddAPhotoIcon />}
             >
-              Anexar imagens
+              Anexar arquivos
               <input
                 id="uploadImages"
                 hidden
-                accept="image/*"
+                accept=".pdf,.jpg,.png,.mp3,.wav"
                 multiple
                 type="file"
                 onChange={(event) => handleLoadAttachments(event)}
@@ -601,8 +576,7 @@ function Home() {
             <Box
               sx={{
                 display: 'flex',
-                flexWrap: 'wrap',
-                flexDirection: 'row',
+                flexDirection: 'column',
                 justifyContent: 'center',
               }}
             >
@@ -611,38 +585,37 @@ function Home() {
                   <Box
                     key={index}
                     sx={{
-                      width: '64px',
-                      height: '64px',
-                      p: 1,
+                      width: '100%',
+                      minHeight: 42,
+                      padding: 1,
                       borderRadius: 1,
-                      border: '1px solid #000',
-                      m: 0.5,
-                      overflow: 'hidden',
+                      marginTop: 1,
+                      border: '1px solid #CCC',
                       display: 'flex',
+                      justifyContent: 'space-between',
                       alignItems: 'center',
-                      justifyContent: 'center',
-                      position: 'relative',
                     }}
                   >
-                    <IconButton
-                      onClick={() => handleRemoveImage(index)}
-                      size="small"
-                      sx={{
-                        color: '#fff',
-                        backgroundColor: '#d32f2f',
-                        position: 'absolute',
-                        zIndex: 100,
-                        bottom: 0,
-                        right: 0,
-                      }}
-                    >
-                      <DeleteIcon />
+                    {
+                      item.type === 'application/pdf' && <Typography><FaFilePdf size={28} /></Typography>
+                    }
+                    {
+                      item.type === 'image/jpg' && <Typography><BsFiletypeJpg size={28} /></Typography>
+                    }
+                    {
+                      item.type === 'image/png' && <Typography><BsFiletypePng size={28} /></Typography>
+                    }
+                    {
+                      item.type === 'audio/mpeg' && <Typography><BsFiletypeMp3 size={28} /></Typography>
+                    }
+                    {
+                      item.type === 'audio/wav' && <Typography><BsFiletypeWav size={28} /></Typography>
+                    }
+                    <Typography>{item.name.length > 20 ? item.name.substr(0, 20) + "..." : item.name}</Typography>
+                    <Typography>{(item.size / (1024 * 1024)).toFixed(3)} Mb</Typography>
+                    <IconButton color="error" onClick={() => removeAttachment(index)}>
+                      <FaTrash size={20} />
                     </IconButton>
-                    <img
-                      src={item.url}
-                      alt="Prévia da imagem selecionada"
-                      style={{ height: '64px' }}
-                    />
                   </Box>
                 ))
               ) : (
