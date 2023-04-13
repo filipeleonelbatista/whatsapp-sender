@@ -23,7 +23,7 @@ function Home() {
 
   function handleDownloadApp() {
     console.log("Baixar o app")
-    window.open(window.location.href + 'WhatsAppSenderBot.Setup.4.7.0.exe', '_blank')
+    window.open(window.location.href + 'WhatsAppSenderBot.Setup.4.7.1.exe', '_blank')
   }
 
   function handleToggleModal() {
