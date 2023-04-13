@@ -1,0 +1,15 @@
+.container {
+  width: 100%;
+  height: auto;
+}
+
+.container label {
+  display: flex;
+  flex-direction: row;
+  gap: 1.4rem;
+  align-items: center;
+
+  color: #121212;
+  font-weight: normal;
+  margin: 0.8rem 0;
+}

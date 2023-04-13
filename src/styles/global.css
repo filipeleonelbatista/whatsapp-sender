@@ -1,0 +1,221 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+ }
+ ::-webkit-scrollbar-thumb {
+  background: #cfcfcf;
+  border-radius: 5px;
+ }
+ ::-webkit-scrollbar-thumb:hover{
+  background: #999999;
+ }
+ ::-webkit-scrollbar-track{
+  background: #ffffff;
+  border-radius: 5px;
+  box-shadow: inset 7px 10px 12px #f0f0f0;
+ }
+
+p.firebase-emulator-warning{
+  opacity: 0.5;
+}
+
+html {
+  font-size: 62.5%
+}
+
+body {
+  font-size: 1.6rem
+}
+
+body, input, textarea, button{
+  font: 400 1.6rem "Poppins", sans-serif;  
+}
+
+ button{
+  cursor: pointer;
+}
+
+a{
+  color: inherit;
+  text-decoration: none;
+}
+
+#root{
+  overflow: hidden;
+}
+
+/* PC */
+@media (min-width: 720px) {
+  .statusbar{
+    display: none;
+    margin: 0;
+  }
+}
+/* Tablet */
+@media (min-width: 320px) and (max-width: 720px) {
+  .statusbar{
+    display: flex;
+    margin: 1.4rem 0 0 0;
+  }
+}
+/* Celular */
+@media (max-width: 320px) {
+  .statusbar{
+    display: flex;
+    margin: 1.4rem 0 0 0;
+  }
+}
+
+.whats-btn{
+  position: fixed;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  bottom: 15px;
+  right: 30px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  background-color: #4FCE5D;
+  box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.45);
+  transition: 0.3s;
+  z-index: 60;
+}
+
+.whats-btn:hover{
+  background-color: #3c9c48;
+}
+.error{         
+  opacity: 1;
+  text-align: center;
+  font-weight: 800;
+  color: #F00;
+  transition: 0.5s;
+}
+.error.hidden{    
+  opacity: 0;
+}
+.call-to-action.hidden{
+  opacity: 0;
+}
+.call-to-action{
+  font-family: "Poppins";    
+  opacity: 1;
+  position: fixed;
+  bottom: 20px;
+  right: 120px;
+  width: 15rem;
+  border-radius: 0.8rem;
+  padding: 0.8rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  text-transform: uppercase;
+  line-height: 1.2;
+  background-color: #EEE;
+  font-weight: 800;
+  box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.45);
+  transition: 1s;
+  z-index: 50;
+}
+
+.whats-form{
+  opacity: 1;
+  position: fixed;
+  bottom: 100px;
+  right: 30px;
+  width: 30rem;
+  display: flex;
+  border-radius: 0.8rem;
+  flex-direction: column;
+  box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.45);
+  transition: 1s;
+  z-index: 55;
+}
+
+.whats-form.hidden{
+  opacity: 0;
+  bottom: -1000px;
+}
+
+.whats-form .form-header{
+  text-align: center;
+  padding: 0.8rem 1.8rem;
+  background-color: #4FCE5D;
+  color: #FFF;
+  border-radius: 0.8rem 0.8rem 0 0;
+}
+
+.whats-form .form-body{
+  padding: 0.8rem 1.8rem;
+  background-color: #FFF;
+  background-image: url('../assets/whatsBackground.png');
+  background-size: cover
+}
+
+.whats-form .form-body .form-input-group{
+  display: flex;
+  flex-direction: column;  
+  margin: 1.4rem 0;
+  width: 100%;
+}
+
+.whats-form .form-body .form-input-group .whats-form-label{
+  font-weight: 400;
+  font-size: 1.4rem;
+  color: #000;
+  margin-left: 0.4rem;
+}
+
+.whats-form .form-body .form-input-group .whats-form-input{
+  border-radius: 0.8rem;
+  padding: 0.8rem 0.8rem;
+  outline: none;
+  border: 1px solid #999;
+  transition: 0.3s;
+}
+
+.whats-form .form-body .form-input-group .whats-form-input:focus{    
+  border: 1px solid #4FCE5D;
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75); 
+}
+
+.whats-form .form-body .whats-form-button{
+  width: 100%;
+  border-radius: 0.8rem;
+  padding: 0.8rem 0.8rem;
+  border: none;
+  background-color: #4FCE5D;
+  color: #FFF;
+  text-transform: uppercase;
+  font-weight: 600;
+  outline: none;
+  transition: 0.3s;
+}
+
+.whats-form .form-body .whats-form-button:hover{
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.55);    
+  background-color: #59e96a;
+}
+.whats-form .form-body .whats-form-button:active{    
+  background-color: #3c9e48;
+  box-shadow: inset 0px 0px 5px 0px rgba(0,0,0,0.75); 
+}
+
+.whats-form .form-footer{
+  padding: 0.8rem 1.8rem;
+  border-top: 1px solid #ddd;
+  background-color: #eee;
+  font-size: small;
+  text-align: center;
+  border-radius: 0 0 0.8rem 0.8rem;
+}
