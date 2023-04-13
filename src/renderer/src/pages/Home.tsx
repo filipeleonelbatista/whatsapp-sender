@@ -252,11 +252,19 @@ function Home() {
       }
 
     } catch (error) {
-      setSnackbarMessage({
-        message: `Houve um erro ao tentar enviar as mensagens. \nContate o administrador. \n\n${error}`,
-        title: 'Tivemos um problema',
-        severity: 'error'
-      })
+      if (String(error).includes("ChromeDriver could not be found")) {
+        setSnackbarMessage({
+          message: `O Chromedriver não está instalado ou configurado. Faça a instalação corretamente ou\nContate o administrador.`,
+          title: 'Tivemos um problema',
+          severity: 'error'
+        })
+      } else {
+        setSnackbarMessage({
+          message: `Houve um erro ao tentar enviar as mensagens. \nContate o administrador. \n\n${error}`,
+          title: 'Tivemos um problema',
+          severity: 'error'
+        })
+      }
       handleClick()
     } finally {
       setIsLoadingButton(false)
