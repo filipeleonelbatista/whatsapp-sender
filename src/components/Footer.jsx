@@ -12,8 +12,8 @@ export default function Footer() {
         <p>Todos os direitos reservados</p>
       </div>
       <div className={styles.socialNetworks}>
-        <a href="https://instagram.com/envio.de.mensagens">
-          <FaInstagram />
+        <a href="https://wa.me/+5551992736445">
+          <FaWhatsapp />
         </a>
       </div>
     </footer>
