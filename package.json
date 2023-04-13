@@ -187,7 +187,7 @@
     "publish": {
       "provider": "github",
       "owner": "filipeleonelbatista",
-      "repo": "filipeleonelbatista"
+      "repo": "https://github.com/filipeleonelbatista/whatsapp-sender"
     }
   },
   "collective": {

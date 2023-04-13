@@ -1,11 +1,11 @@
 {
   "name": "whatsappsenderbot",
-  "version": "4.7.0",
+  "version": "4.7.1",
   "description": "Envio automatizado de mensagens pelo whatsapp",
   "license": "MIT",
   "author": {
-    "name": "Desenvolvedor de aplicativos - Filipe Leonel Batista",
-    "email": "filipe.batista@desenvolvedordeaplicativos.com.br",
+    "name": "Filipe Leonel Batista - Desenvolvedor",
+    "email": "filipe.x2016@gmail.com",
     "url": "https://github.com/filipeleonelbatista"
   },
   "main": "./dist/main/main.js",
