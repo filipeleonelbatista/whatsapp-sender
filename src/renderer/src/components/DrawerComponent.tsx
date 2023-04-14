@@ -191,6 +191,9 @@ function DrawerComponent({ title, children }: DrawerComponent) {
                 </Typography>
               )
             }
+            <Typography variant="caption">
+              Ver. 4.7.2
+            </Typography>
             <Tooltip title="Definir Modo Escuro/Claro">
               <IconButton sx={{ ml: 1 }} onClick={() => {
                 setMode(mode === "dark" ? 'light' : 'dark')
