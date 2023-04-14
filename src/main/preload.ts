@@ -133,7 +133,7 @@ contextBridge.exposeInMainWorld('electron', {
       log("Procurando botão para enviar mensagem")
       await delay(config.send_message);
       const sendButton = await GlobalDriver.wait(until.elementLocated(By.css("button[data-testid='compose-btn-send']")));
-      await delay(300);
+      await delay(config.send_message);
       sendButton.click();
 
       if (attachments.length > 0) {
