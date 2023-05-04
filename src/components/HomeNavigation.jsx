@@ -5,9 +5,9 @@ import { useFormik } from 'formik';
 import { useMemo, useState } from "react";
 import { FaBars, FaDownload, FaQrcode, FaWhatsapp } from "react-icons/fa";
 import QRCode from 'react-qr-code';
-import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from 'yup';
 import { useResize } from "../hooks/useResize";
+import { api, createAssinante } from '../services/api';
 
 export default function HomeNavigation() {
   const plansArray = [
@@ -131,8 +131,6 @@ export default function HomeNavigation() {
     },
   });
 
-  const navigate = useNavigate();
-  const location = useLocation();
   const { size } = useResize();
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -408,7 +406,7 @@ export default function HomeNavigation() {
                   transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                   anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                  <MenuItem onClick={() => setOpen(true)}>
+                  <MenuItem id={"cadastre"} onClick={() => setOpen(true)}>
                     Cadastre-se agora!
                   </MenuItem>
                   <Divider />
@@ -430,6 +428,7 @@ export default function HomeNavigation() {
                 }}
               >
                 <Button
+                  id={"cadastre"}
                   color="primary"
                   onClick={() => setOpen(true)}
                 >

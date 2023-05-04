@@ -1,6 +1,5 @@
 import { Box, Link, Typography } from "@mui/material";
-import { FaFacebook, FaInstagram, FaLinkedin, FaWhatsapp } from "react-icons/fa";
-import logoImg from "../assets/logo_white.svg";
+import { FaWhatsapp } from "react-icons/fa";
 import { useResize } from "../hooks/useResize";
 
 export default function Footer() {

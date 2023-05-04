@@ -1,6 +1,7 @@
-import { Box, Button, Card, CardMedia, Container, Grid, IconButton, Modal, TextField, Typography } from "@mui/material";
+import { Box, Button, Card, CardActions, CardContent, CardHeader, CardMedia, Container, Grid, IconButton, Modal, TextField, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import { useMemo, useState } from "react";
+import { BsStar } from 'react-icons/bs';
 import { FaCheck, FaTimes, FaWhatsapp } from "react-icons/fa";
 import ReactPlayer from "react-player";
 import * as Yup from 'yup';
@@ -14,6 +15,48 @@ import { useResize } from "../hooks/useResize";
 import { phone as phoneMask } from "../utils/masks";
 
 function HomeComponent() {
+  const tiers = [
+    {
+      title: 'Mensal',
+      price: '10',
+      description: [
+        'Envios ilimitados',
+        'Importar lista de contatos',
+        'Modelos de mensagens',
+        'Libere agora via PIX',
+      ],
+      buttonText: 'Quero este!',
+      buttonVariant: 'outlined',
+    },
+    {
+      title: 'Semestral',
+      subheader: 'Mais Comprado',
+      price: '50',
+      description: [
+        'Desconto de 10R$ comparado ao mensal',
+        'Envios ilimitados',
+        'Importar lista de contatos',
+        'Modelos de mensagens',
+        'Libere agora via PIX',
+      ],
+      buttonText: 'Quero este!',
+      buttonVariant: 'contained',
+    },
+    {
+      title: 'Anual',
+      price: '100',
+      description: [
+        'Desconto de 20R$ comparado ao mensal',
+        'Envios ilimitados',
+        'Importar lista de contatos',
+        'Modelos de mensagens',
+        'Libere agora via PIX',
+      ],
+      buttonText: 'Quero este!',
+      buttonVariant: 'outlined',
+    },
+  ];
+
   const { size } = useResize();
   const [isShow, setIsShow] = useState(false)
 
@@ -598,6 +641,101 @@ function HomeComponent() {
           </Box>
         </Container>
         {/* ctaContact */}
+        {/* Preço */}
+        <Container disableGutters maxWidth="sm" component="main" sx={{ pt: 8, pb: 6 }}>
+          <Typography
+            variant="body1"
+            align="center"
+            color="primary"
+            gutterBottom
+            marginY={4}
+          >
+            PREÇOS
+          </Typography>
+
+          <Typography variant="h5" align="center" color="text.secondary" component="p">
+            O que você vai pagar para poder enviar mensagens em massa para seus contatos,
+            salvar listas de envio, criar modelos de mensagens para agilizar seu dia.
+            Pague pelo tempo que quer usar e nada mais.
+          </Typography>
+        </Container>
+        {/* End hero unit */}
+        <Container maxWidth="md" component="main">
+          <Grid container spacing={5} alignItems="flex-end">
+            {tiers.map((tier) => (
+              // Enterprise card is full width at sm breakpoint
+              <Grid
+                item
+                key={tier.title}
+                xs={12}
+                sm={tier.title === 'Enterprise' ? 12 : 6}
+                md={4}
+              >
+                <Card>
+                  <CardHeader
+                    title={tier.title}
+                    subheader={tier.subheader}
+                    titleTypographyProps={{ align: 'center', color: "#FFF", fontWeight: "bold" }}
+                    action={tier.title === 'Semestral' ? <BsStar size={24} color={"#DDD"} /> : null}
+                    subheaderTypographyProps={{
+                      align: 'center',
+                      color: "#FFF"
+                    }}
+                    sx={{
+                      backgroundColor: (theme) =>
+                        theme.palette.mode === 'light'
+                          ? theme.palette.primary.dark
+                          : theme.palette.grey[700],
+                    }}
+                  />
+                  <CardContent sx={{ py: 4 }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'baseline',
+                        mb: 2,
+                      }}
+                    >
+                      <Typography component="h2" variant="h3" color="text.primary">
+                        R${tier.price}
+                      </Typography>
+                      <Typography variant="h6" color="text.secondary">
+                        {tier.title === 'Mensal' && "/mês"}
+                        {tier.title === 'Semestral' && "/Sem"}
+                        {tier.title === 'Anual' && "/Ano"}
+                      </Typography>
+                    </Box>
+                    <ul>
+                      {tier.description.map((line) => (
+                        <Typography
+                          component="li"
+                          variant="subtitle1"
+                          fontWeight={"bold"}
+                          align="center"
+                          key={line}
+                          sx={{
+                            listStyle: 'none',
+                          }}
+                        >
+                          {line}
+                        </Typography>
+                      ))}
+                    </ul>
+                  </CardContent>
+                  <CardActions>
+                    <Button fullWidth variant={tier.buttonVariant} onClick={() => {
+                      document.getElementById("cadastre").click()
+                    }}>
+                      {tier.buttonText}
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+        {/* Fim do preço */}
         {/* video */}
         <Container
           sx={{
