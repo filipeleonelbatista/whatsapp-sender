@@ -1,8 +1,26 @@
 import React, { useEffect } from "react";
+import { ConversionContextProvider } from "./context/ConversionContext";
+import { LoadingContextProvider } from "./context/LoadingContext";
+import { ResizeContextProvider } from "./context/ResizeContext";
 import Routes from "./routes";
 import "./styles/global.css";
+import { ToastContextProvider } from "./context/ToastContext";
+import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 
 function App() {
+
+
+  const mdTheme = createTheme({
+    palette: {
+      mode: 'light',
+      primary: {
+        main: '#128C7E',
+        dark: '#075E54',
+        light: '#25D366',
+        contrastText: "#FFF"
+      }
+    }
+  });
 
   useEffect(() => {
     console.log("Ambiente", process.env.NODE_ENV)
@@ -36,9 +54,20 @@ function App() {
       }
     }
   }, [])
-  
+
   return (
-    <Routes />
+    <ThemeProvider theme={mdTheme}>
+      <CssBaseline />
+      <LoadingContextProvider>
+        <ToastContextProvider>
+          <ConversionContextProvider>
+            <ResizeContextProvider>
+              <Routes />
+            </ResizeContextProvider>
+          </ConversionContextProvider>
+        </ToastContextProvider>
+      </LoadingContextProvider>
+    </ThemeProvider>
   );
 }
 

@@ -1,57 +1,49 @@
+import { Button, Card, Modal, Typography } from "@mui/material";
+import MuiLink from '@mui/material/Link';
 import { useEffect, useState } from "react";
-import styles from "../styles/components/AcceptTerms.module.css";
-import Button from "./Button";
 
-const AcceptTerms = () => {
+const AcceptTerms = (props) => {
   const [isShow, setIsShow] = useState(false);
 
   const handleAccept = () => {
-    localStorage.setItem("terms", true);
+    localStorage.setItem("terms", JSON.stringify(true));
     setIsShow(false);
   };
 
   useEffect(() => {
     const termsAcepted = localStorage.getItem("terms");
-    if (termsAcepted === null) {
-      setIsShow(true);
+    if (termsAcepted !== null) {
+      const isTermsAcepted = JSON.parse(termsAcepted)
+      setIsShow(isTermsAcepted);
+      setIsShow(!isTermsAcepted);
     }
     setIsShow(!termsAcepted === true);
   }, []);
 
   if (!isShow) return null;
 
+
   return (
-    <div className={styles.container}>
-      <div className={styles.content}>
-        <small>
-          Nós utilizamos cookies e outras tecnologias semelhantes para melhorar
-          sua experiência em nossos serviços e recomendar conteúdos de seu
-          interesse. Ao utilizar nossos serviços você concorda com tal
-          monitoramento. Conheça melhor nossos{" "}
-          <b>
-            <a
-              href="https://cadastrapet.com.br/termos-e-condicoes"
-              rel="noreferrer noopener"
-              target="_blank"
-            >
-              Termos e Condições
-            </a>
-          </b>{" "}
-          e{" "}
-          <b>
-            <a
-              href="https://cadastrapet.com.br/politicas-de-privacidade"
-              rel="noreferrer noopener"
-              target="_blank"
-            >
-              Políticas de Privacidade.
-            </a>
-          </b>
-        </small>
-        <Button onClick={handleAccept}>Concordo</Button>
-      </div>
-    </div>
-  );
-};
+    <Modal open={isShow} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <Card sx={{ display: 'flex', p: 4, justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="body1" color="text.secondary" sx={{ width: '90%' }}>
+          Nós utilizamos cookies e outras tecnologias semelhantes para
+          melhorar sua experiência em nossos serviços e recomendar conteúdos
+          de seu interesse. Ao utilizar nossos serviços você concorda com tal
+          monitoramento. Conheça melhor nossos{' '}
+          <MuiLink color="inherit" href="https://filipeleonelbatista.vercel.app/termos-e-condicoes">
+            <b>Termos e condições</b>
+          </MuiLink>{' '} e {' '}
+          <MuiLink color="inherit" href="https://filipeleonelbatista.vercel.app/politicas-de-privacidade">
+            <b>Políticas de privacidade</b>
+          </MuiLink>{' '}
+        </Typography>
+        <Button onClick={handleAccept} variant="contained">
+          Concordo
+        </Button>
+      </Card>
+    </Modal>
+  )
+}
 
 export default AcceptTerms;

@@ -1,19 +1,21 @@
 import emailjs from '@emailjs/browser';
+import { Button, Card, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, IconButton, InputLabel, ListItemIcon, Menu, MenuItem, Modal, Select, TextField, Typography } from "@mui/material";
+import { Box } from "@mui/system";
 import { useFormik } from 'formik';
-import { useEffect, useMemo, useState } from "react";
-import { FaBars, FaDownload, FaWhatsapp } from "react-icons/fa";
+import { useMemo, useState } from "react";
+import { FaBars, FaDownload, FaQrcode, FaWhatsapp } from "react-icons/fa";
 import QRCode from 'react-qr-code';
-import { Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from 'yup';
-import { api, createAssinante } from '../services/api';
-import styles from "../styles/components/HomeNavigation.module.css";
-import Button from "./Button";
-import Checkbox from "./Checkbox";
-import Input from "./Input";
-import Modal from "./Modal";
-import Select from "./Select";
+import { useResize } from "../hooks/useResize";
 
 export default function HomeNavigation() {
+  const plansArray = [
+    { value: '', key: "Selecione um plano" },
+    { value: '1', key: "Mensal R$ 10,00" },
+    { value: '6', key: "Semestral de R$ 60,00 por R$ 50,00" },
+    { value: '12', key: "Anual de R$ 120,00 por R$ 100,00" },
+  ]
   const [open, setOpen] = useState(false);
   const [isShow, setIsShow] = useState(false);
   const [qrCode, setQrCode] = useState('');
@@ -26,8 +28,6 @@ export default function HomeNavigation() {
     console.log("Baixar o app")
     window.open(window.location.href + 'WhatsAppSenderBot.Setup.4.7.0.exe', '_blank')
   }
-
-  const [offset, setOffset] = useState(0);
 
   const handleSubmitForm = async (formValues) => {
     if (!formValues.accept_terms) {
@@ -131,37 +131,50 @@ export default function HomeNavigation() {
     },
   });
 
-  useEffect(() => {
-    const onScroll = () => setOffset(window.pageYOffset);
-    // clean up code
-    window.removeEventListener("scroll", onScroll);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { size } = useResize();
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openMenu = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <>
-      <Modal open={open} onClose={() => {
-        setOpen(false)
-        setQrCode('')
-        formik.resetForm()
-      }} >
-        <div style={{
-          width: '100%',
+      <Modal open={open}
+        sx={{
+          display: "flex",
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+        onClose={() => {
+          setOpen(false)
+          setQrCode('')
+          formik.resetForm()
+        }}>
+        <Card style={{
+          minWidth: 450,
+          maxHeight: '90%',
+          padding: "20px",
+          gap: '20px',
           display: "flex",
           flexDirection: "column",
           alignItems: 'center',
+          overflow: 'auto'
         }}>
           {
             qrCode !== '' ? (
               <>
-                <h2>Efetue o pagamento</h2>
-                <p style={{ textAlign: 'center' }}>
-                  <small>
-                    Faça o pagamento via Pix Usando o QrCode a baixo.
-                  </small>
-                </p>
-                <div style={{ height: "auto", width: "100%", margin: "2.4rem 0", maxWidth: "350px" }}>
+                <Typography variant='h5'>Efetue o pagamento</Typography>
+                <Typography variant="body2" textAlign={"center"}>
+                  Faça o pagamento via Pix Usando o QrCode a baixo.
+                </Typography>
+                <div style={{ height: "auto", width: "100%", margin: "0.5rem 0", maxWidth: "350px" }}>
                   <QRCode
                     style={{ height: "auto", maxWidth: "100%", width: "100%" }}
                     value={qrCode}
@@ -171,47 +184,48 @@ export default function HomeNavigation() {
                 <Button
                   type="button"
                   onClick={handleInformPayment}
-                  style={{ width: "100%", margin: '0.8rem 0' }}
+                  variant={"outlined"}
+                  fullWidth
                 >
                   Informar o pagamento
                 </Button>
-                <p>
-                  <small>
-                    Já informou? então baixe o App
-                  </small>
-                </p>
-                <Button onClick={() => {
-                  setOpen(false)
-                  setQrCode('')
-                  formik.resetForm()
-                  handleDownloadApp()
-                }}
+                <Typography variant="body2">
+                  Já informou? então baixe o App
+                </Typography>
+                <Button
                   type="button"
-                  style={{ width: "100%", margin: '0.8rem 0' }}
-                  transparent>
+                  variant={"contained"}
+                  fullWidth
+                  onClick={() => {
+                    setOpen(false)
+                    setQrCode('')
+                    formik.resetForm()
+                    handleDownloadApp()
+                  }}
+                >
                   <FaDownload />
                   Baixe o app
                 </Button>
               </>
             ) : (
               <>
-                <h2>Que bom que você tem interesse</h2>
-                <p style={{ textAlign: 'center' }}>
-                  <small>
-                    Para continuar basta realizar o cadastro e efetuar o pagamento.<br />
-                    Em seguida basta informar o pagamento clicando no botão a baixo.
-                  </small>
-                </p>
+                <Typography variant="h5">Que bom que você tem interesse</Typography>
+                <Typography variant="body2" textAlign={"center"}>
+                  Para continuar basta realizar o cadastro e efetuar o pagamento.<br />
+                  Em seguida basta informar o pagamento clicando no botão a baixo.
+                </Typography>
                 <form
                   onSubmit={formik.handleSubmit}
                   style={{
-                    width: "100%", display: "flex",
+                    width: "100%",
+                    display: "flex",
                     flexDirection: "column",
                     alignItems: 'center',
+                    gap: '8px',
                   }}>
-                  <Input
+                  <TextField
                     required
-                    style={{ width: "100%" }}
+                    fullWidth
                     id="name"
                     name="name"
                     label="Nome"
@@ -221,9 +235,9 @@ export default function HomeNavigation() {
                     error={!!formik.errors.name}
                     helperText={formik.errors.name}
                   />
-                  <Input
+                  <TextField
                     required
-                    style={{ width: "100%" }}
+                    fullWidth
                     id="email"
                     name="email"
                     label="Email"
@@ -233,9 +247,9 @@ export default function HomeNavigation() {
                     error={!!formik.errors.email}
                     helperText={formik.errors.email}
                   />
-                  <Input
+                  <TextField
                     required
-                    style={{ width: "100%" }}
+                    fullWidth
                     id="password"
                     name="password"
                     label="Senha"
@@ -245,7 +259,7 @@ export default function HomeNavigation() {
                     error={!!formik.errors.password}
                     helperText={formik.errors.password}
                   />
-                  <Input
+                  <TextField
                     required
                     style={{ width: "100%" }}
                     id="confirm_password"
@@ -257,96 +271,184 @@ export default function HomeNavigation() {
                     error={!!formik.errors.confirm_password}
                     helperText={formik.errors.confirm_password}
                   />
-                  <Select
-                    required
-                    style={{ width: "100%" }}
-                    options={[
-                      { value: '', key: "Selecione um plano" },
-                      { value: '1', key: "Mensal R$ 10,00" },
-                      { value: '6', key: "Semestral de R$ 60,00 por R$ 50,00" },
-                      { value: '12', key: "Anual de R$ 120,00 por R$ 100,00" },
-                    ]}
-                    id="plan"
-                    name="plan"
-                    label="Selecione seu plano"
-                    value={formik.values.plan}
-                    onChange={formik.handleChange}
-                    error={!!formik.errors.plan}
-                    helperText={formik.errors.plan}
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Selecione seu plano</InputLabel>
+                    <Select
+                      required
+                      fullWidth
+                      id="plan"
+                      name="plan"
+                      label="Selecione seu plano"
+                      value={formik.values.plan}
+                      onChange={formik.handleChange}
+                      error={!!formik.errors.plan}
+                      helperText={formik.errors.plan}
+                    >
+                      {
+                        plansArray.map((item, index) => <MenuItem key={index} value={item.value}>{item.key}</MenuItem>)
+                      }
+                    </Select>
+                  </FormControl>
 
-                  <Checkbox
-                    id="accept_terms"
-                    name="accept_terms"
-                    label={<p>Aceito os <a href="https://desenvolvedordeaplicativos.com.br/termos-e-condicoes" target="_blank" >Termos e Condições de serviço</a></p>}
-                    checked={formik.values.accept_terms}
-                    onChange={formik.handleChange}
-                  />
+                  <FormGroup>
+                    <FormControlLabel control={
+                      <Checkbox
+                        id="accept_terms"
+                        name="accept_terms"
+                        checked={formik.values.accept_terms}
+                        onChange={formik.handleChange}
+                      />
+                    }
+                      label={<Typography variant='body2'>Aceito os <a href="https://filipeleonelbatista.vercel.app/termos-e-condicoes" target="_blank" >Termos e Condições de serviço</a></Typography>}
+                    />
+                  </FormGroup>
 
-                  <Button type="submit" style={{ width: "100%", margin: '0.8rem 0' }}>Solicitar Código Pix</Button>
-                  <p>
-                    <small>
-                      Já é cadastrado?
-                    </small>
-                  </p>
-                  <Button onClick={() => {
-                    setOpen(false)
-                    setQrCode('')
-                    formik.resetForm()
-                    handleDownloadApp()
-                  }}
-                    type="button"
-                    style={{ width: "100%", margin: '0.8rem 0' }}
-                    transparent>
-                    <FaDownload />
-                    Baixe o app
+
+                  <Button
+                    type="submit"
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<FaQrcode size={18} />}
+                  >
+                    Solicitar Código Pix
+                  </Button>
+
+                  <Typography variant="body2">
+                    Já é cadastrado?
+                  </Typography>
+
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    startIcon={<FaDownload size={18} />}
+                    onClick={() => {
+                      setOpen(false)
+                      setQrCode('')
+                      formik.resetForm()
+                      handleDownloadApp()
+                    }}
+                  >
+                    Baixar App
                   </Button>
                 </form>
               </>
             )
           }
-        </div>
-      </Modal>
-      <header
-        className={`${styles.header} ${offset > 50 ? styles.headerFloating : ""
-          }`}
+        </Card>
+      </Modal >
+      <Box
+        sx={{
+          position: 'fixed',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          width: '100%',
+          py: 2.8,
+          px: 4,
+          backgroundColor: '#dcf8c6',
+          zIndex: 100,
+        }}
       >
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <FaWhatsapp color="#25d366" /> <span style={{ color: "#25d366" }}>WhatsApp</span><span style={{ color: '#075e54' }}>Sender</span>
-        </h2>
-        <div className={styles.container}>
-          <div className={styles.navItems}>
-            <button onClick={() => setOpen(true)} className={styles.navItem}>
-              Cadastre-se agora!
-            </button>
-            {/* <Link to={'/blog'} className={styles.navItem}>
-              Blog
-            </Link> */}
-            <button onClick={handleDownloadApp} className={styles.navItemDestaque}>
-              <FaDownload />
-              Baixar App
-            </button>
-          </div>
-
-          <button className={styles.roundedButton} onClick={handleIsShowMenu}>
-            <FaBars size={18} />
-          </button>
-          {isShow && (
-            <div className={styles.menuItems}>
-              <button className={styles.menuItem}>
-                Cadastre-se agora!
-              </button>
-              {/* <button className={styles.menuItem}>
-                Blog
-              </button> */}
-              <button onClick={handleDownloadApp} className={styles.menuItem}>
-                <FaDownload />
-                Baixar App
-              </button>
-            </div>
-          )}
-        </div>
-      </header>
+        <Typography component={"h1"} sx={{ fontWeight: "bold", fontSize: 24, display: 'flex', gap: 2, alignItems: 'center' }}>
+          <FaWhatsapp color="#25d366" size={28} /> <p><span style={{ color: "#25d366" }}>WhatsApp</span><span style={{ color: '#075e54' }}>Sender</span></p>
+        </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {
+            size[0] < 720 ? (
+              <>
+                <IconButton
+                  onClick={handleClick}
+                  size="small"
+                  sx={{ width: 48, height: 48 }}
+                  aria-controls={openMenu ? 'account-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={openMenu ? 'true' : undefined}
+                >
+                  <FaBars />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  id="account-menu"
+                  open={openMenu}
+                  onClose={handleClose}
+                  onClick={handleClose}
+                  PaperProps={{
+                    elevation: 0,
+                    sx: {
+                      overflow: 'visible',
+                      filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                      mt: 1.5,
+                      '& .MuiAvatar-root': {
+                        width: 32,
+                        height: 32,
+                        ml: -0.5,
+                        mr: 1,
+                      },
+                      '&:before': {
+                        content: '""',
+                        display: 'block',
+                        position: 'absolute',
+                        top: 0,
+                        right: 14,
+                        width: 10,
+                        height: 10,
+                        bgcolor: 'background.paper',
+                        transform: 'translateY(-50%) rotate(45deg)',
+                        zIndex: 0,
+                      },
+                    },
+                  }}
+                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                  <MenuItem onClick={handleIsShowMenu}>
+                    Cadastre-se agora!
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem onClick={handleDownloadApp}>
+                    <ListItemIcon>
+                      <FaDownload />
+                    </ListItemIcon>
+                    Baixar App
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 2
+                }}
+              >
+                <Button
+                  variant={location.pathname === "/adote" ? "outlined" : "text"}
+                  color="primary"
+                  onClick={handleIsShowMenu}
+                >
+                  Cadastre-se agora!
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<FaDownload size={18} />}
+                  onClick={handleDownloadApp}
+                >
+                  Baixar App
+                </Button>
+              </Box>
+            )
+          }
+        </Box>
+      </Box>
     </>
   );
 }
