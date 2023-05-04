@@ -55,6 +55,13 @@ function HomeComponent() {
 
     localStorage.setItem("contact", true);
   }
+
+
+  function handleDownloadApp() {
+    console.log("Baixar o app")
+    window.open(window.location.href + 'WhatsAppSenderBot.Setup.4.7.0.exe', '_blank')
+  }
+
   const handleCadastrar = () => { }
 
   return (
@@ -237,7 +244,7 @@ function HomeComponent() {
               <Typography sx={{ maxWidth: 450 }} variant="body1">
                 Com o app você consegue enviar mensagens, salvar modelos de mensagens e listas, salvar listas de envios para usar em outros momentos e mais.
               </Typography>
-              <Button sx={{ maxWidth: 450 }} variant="contained" color="primary" size="large" onClick={handleCadastrar}>BAIXAR O APP AGORA</Button>
+              <Button sx={{ maxWidth: 450 }} variant="contained" color="primary" size="large" onClick={handleDownloadApp}>BAIXAR O APP AGORA</Button>
             </Box>
             <CardMedia
               component="img"
@@ -574,7 +581,7 @@ function HomeComponent() {
             }}
           >
             <Typography variant="h3" color="white" textAlign={size[0] > 720 ? 'left' : "center"} maxWidth={500}>
-              Comece enviar mensagens agora mesmo
+              Comece a enviar mensagens agora mesmo
             </Typography>
             <Button
               variant="contained"
@@ -587,7 +594,7 @@ function HomeComponent() {
                   color: '#25d366'
                 }
               }}
-              onClick={handleCadastrar}>Baixar o App</Button>
+              onClick={handleDownloadApp}>Baixar o App</Button>
           </Box>
         </Container>
         {/* ctaContact */}
@@ -624,7 +631,7 @@ function HomeComponent() {
               Com uma equipe empenhada a encontrar soluções que agregam aos
               clientes trazendo maiores resultados.
             </Typography>
-            <Button variant="contained" color="primary" size="large" onClick={handleCadastrar}>Baixe o App Agora</Button>
+            <Button variant="contained" color="primary" size="large" onClick={handleDownloadApp}>Baixe o App Agora</Button>
           </Box>
           <Box
             sx={{

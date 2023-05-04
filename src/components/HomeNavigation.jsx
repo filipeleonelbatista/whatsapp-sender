@@ -408,7 +408,7 @@ export default function HomeNavigation() {
                   transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                   anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                  <MenuItem onClick={handleIsShowMenu}>
+                  <MenuItem onClick={() => setOpen(true)}>
                     Cadastre-se agora!
                   </MenuItem>
                   <Divider />
@@ -430,9 +430,8 @@ export default function HomeNavigation() {
                 }}
               >
                 <Button
-                  variant={location.pathname === "/adote" ? "outlined" : "text"}
                   color="primary"
-                  onClick={handleIsShowMenu}
+                  onClick={() => setOpen(true)}
                 >
                   Cadastre-se agora!
                 </Button>
