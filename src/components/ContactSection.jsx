@@ -97,7 +97,7 @@ export default function ContactSection({ location = "" }) {
             <FaEnvelope color="#128c7e" size={24} />{" "}
             <b>
               <Link color="#212529" underline="none" target="_blank" rel="noopener noreferrer" href="mailto:filipe.x2016@gmail.com">
-                filipe.x2016@gmail.com
+                Email do desenvolvedor
               </Link>
             </b>
           </Typography>

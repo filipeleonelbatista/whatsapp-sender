@@ -115,6 +115,23 @@ const getLast5Posts = {
   `
 }
 
+const getFaq = {
+  query: `
+    query getFaqs {
+      faqs(orderBy: order_ASC) {
+        id
+        order
+        createdAt
+        title
+        subtitle
+        content {
+          html
+        }
+      }
+    }
+  `
+}
+
 const getLast5PostsByCategory = (id) => {
   return {
     query: `
@@ -151,5 +168,6 @@ export {
   createAssinante,
   listCategories,
   getLast5Posts,
-  getLast5PostsByCategory
+  getLast5PostsByCategory,
+  getFaq
 };

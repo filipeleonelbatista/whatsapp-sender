@@ -8,8 +8,12 @@ import QRCode from 'react-qr-code';
 import * as Yup from 'yup';
 import { useResize } from "../hooks/useResize";
 import { api, createAssinante } from '../services/api';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function HomeNavigation() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const plansArray = [
     { value: '', key: "Selecione um plano" },
     { value: '1', key: "Mensal R$ 10,00" },
@@ -406,6 +410,11 @@ export default function HomeNavigation() {
                   transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                   anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
+                  <MenuItem
+                    onClick={() => navigate("/perguntas-frequentes")}
+                  >
+                    Perguntas frequentes
+                  </MenuItem>
                   <MenuItem id={"cadastre"} onClick={() => setOpen(true)}>
                     Cadastre-se agora!
                   </MenuItem>
@@ -427,6 +436,13 @@ export default function HomeNavigation() {
                   gap: 2
                 }}
               >
+                <Button
+                  variant={location.pathname === "/perguntas-frequentes" ? "outlined" : "text"}
+                  color="primary"
+                  onClick={() => navigate("/perguntas-frequentes")}
+                >
+                  Perguntas Frequentes
+                </Button>
                 <Button
                   id={"cadastre"}
                   color="primary"
