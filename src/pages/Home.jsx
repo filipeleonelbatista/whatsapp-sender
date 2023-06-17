@@ -2,7 +2,7 @@ import { Box, Button, Card, CardActions, CardContent, CardHeader, CardMedia, Con
 import { useFormik } from "formik";
 import { useMemo, useState } from "react";
 import { BsStar } from 'react-icons/bs';
-import { FaCheck, FaTimes, FaWhatsapp } from "react-icons/fa";
+import { FaCheck, FaTimes, FaWhatsapp, FaCheckCircle } from "react-icons/fa";
 import ReactPlayer from "react-player";
 import * as Yup from 'yup';
 import AcceptTerms from "../components/AcceptTerms";
@@ -13,12 +13,13 @@ import HomeNavigation from "../components/HomeNavigation";
 import { ConversionContextProvider } from "../context/ConversionContext";
 import { useResize } from "../hooks/useResize";
 import { phone as phoneMask } from "../utils/masks";
+import TestCTA from "../components/TestCTA";
 
 function HomeComponent() {
   const tiers = [
     {
       title: 'Mensal',
-      price: '10',
+      price: '19,90',
       description: [
         'Envios ilimitados',
         'Importar lista de contatos',
@@ -30,10 +31,11 @@ function HomeComponent() {
     },
     {
       title: 'Semestral',
-      subheader: 'Mais Comprado',
-      price: '50',
+      subheader: 'Preço Promocional',
+      currentPrice: '79,90',
+      price: '119,40',
       description: [
-        'Desconto de 10R$ comparado ao mensal',
+        'Conteúdos exclusivos no blog',
         'Envios ilimitados',
         'Importar lista de contatos',
         'Modelos de mensagens',
@@ -44,9 +46,12 @@ function HomeComponent() {
     },
     {
       title: 'Anual',
-      price: '100',
+      subheader: 'Preço Promocional',
+      currentPrice: '159,90',
+      price: '238,80',
       description: [
-        'Desconto de 20R$ comparado ao mensal',
+        'Consultoria de primeiros passos',
+        'Conteúdos exclusivos no blog',
         'Envios ilimitados',
         'Importar lista de contatos',
         'Modelos de mensagens',
@@ -355,7 +360,42 @@ function HomeComponent() {
               gap: 1,
             }}
           >
-            <Typography variant="h2">120,00 R$</Typography>
+            {
+              !!tiers[2].currentPrice ? (
+                <Box
+                  flexDirection={'column'}
+                >
+                  <Box display={"flex"} alignItems="baseline" flexDirection={'row'} width={"100%"}>
+                    <Typography mr={1}>De</Typography>
+                    <Typography sx={{ textDecoration: 'line-through' }}>R${tiers[2].price}</Typography>
+                    <Typography sx={{ textDecoration: 'line-through' }} variant="caption" color="text.secondary">
+                      /Ano
+                    </Typography>
+                    <Typography ml={1}>Por</Typography>
+                  </Box>
+                  <Box display={"flex"} alignItems="baseline" flexDirection={'row'}>
+                    <Typography component="h2" variant="h4" color="text.primary">
+                      R${tiers[2].currentPrice}
+                    </Typography>
+                    <Typography variant="h6" color="text.secondary">
+                      /Ano
+                    </Typography>
+                  </Box>
+                </Box>
+
+              ) : (
+                <Box
+                  flexDirection={'row'}
+                >
+                  <Typography component="h2" variant="h4" color="text.primary">
+                    R${tiers[2].price}
+                  </Typography>
+                  <Typography variant="h6" color="text.secondary">
+                    /Ano
+                  </Typography>
+                </Box>
+              )
+            }
             <Typography variant="body2" color="primary">
               Custo anual baixo
             </Typography>
@@ -537,7 +577,7 @@ function HomeComponent() {
                 </Box>
                 <Typography variant="h5"><b>Pague pelo tempo que usar</b></Typography>
                 <Typography variant="body1">
-                  Com planos mensais, semestrais e anuais, voce decide quando quer usar o app. sem custos adicionais e sem multas.
+                  Voce decide quando quer usar o app. sem custos adicionais e sem multas.
                 </Typography>
               </Card>
             </Grid>
@@ -653,7 +693,7 @@ function HomeComponent() {
             PREÇOS
           </Typography>
 
-          <Typography variant="h5" align="center" color="text.secondary" component="p">
+          <Typography variant="body2" align="center" color="text.secondary" component="p">
             O que você vai pagar para poder enviar mensagens em massa para seus contatos,
             salvar listas de envio, criar modelos de mensagens para agilizar seu dia.
             Pague pelo tempo que quer usar e nada mais.
@@ -661,7 +701,7 @@ function HomeComponent() {
         </Container>
         {/* End hero unit */}
         <Container maxWidth="md" component="main">
-          <Grid container spacing={5} alignItems="flex-end">
+          <Grid container spacing={5} alignItems="flex-start">
             {tiers.map((tier) => (
               // Enterprise card is full width at sm breakpoint
               <Grid
@@ -697,28 +737,60 @@ function HomeComponent() {
                         mb: 2,
                       }}
                     >
-                      <Typography component="h2" variant="h3" color="text.primary">
-                        R${tier.price}
-                      </Typography>
-                      <Typography variant="h6" color="text.secondary">
-                        {tier.title === 'Mensal' && "/mês"}
-                        {tier.title === 'Semestral' && "/Sem"}
-                        {tier.title === 'Anual' && "/Ano"}
-                      </Typography>
+                      {
+                        !!tier.currentPrice ? (
+                          <Box
+                            flexDirection={'column'}
+                          >
+                            <Box display={"flex"} alignItems="baseline" flexDirection={'row'} width={"100%"}>
+                              <Typography mr={1}>De</Typography>
+                              <Typography sx={{ textDecoration: 'line-through' }}>R${tier.price}</Typography>
+                              <Typography sx={{ textDecoration: 'line-through' }} variant="caption" color="text.secondary">
+                                {tier.title === 'Mensal' && "/mês"}
+                                {tier.title === 'Semestral' && "/Sem"}
+                                {tier.title === 'Anual' && "/Ano"}
+                              </Typography>
+                              <Typography ml={1}>Por</Typography>
+                            </Box>
+                            <Box display={"flex"} alignItems="baseline" flexDirection={'row'}>
+                              <Typography component="h2" variant="h4" color="text.primary">
+                                R${tier.currentPrice}
+                              </Typography>
+                              <Typography variant="h6" color="text.secondary">
+                                {tier.title === 'Mensal' && "/mês"}
+                                {tier.title === 'Semestral' && "/Sem"}
+                                {tier.title === 'Anual' && "/Ano"}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        ) : (
+                          <>
+                            <Typography component="h2" variant="h4" color="text.primary">
+                              R${tier.price}
+                            </Typography>
+                            <Typography variant="h6" color="text.secondary">
+                              {tier.title === 'Mensal' && "/mês"}
+                              {tier.title === 'Semestral' && "/Sem"}
+                              {tier.title === 'Anual' && "/Ano"}
+                            </Typography>
+                          </>
+                        )
+                      }
                     </Box>
                     <ul>
                       {tier.description.map((line) => (
                         <Typography
                           component="li"
                           variant="subtitle1"
-                          fontWeight={"bold"}
-                          align="center"
+                          fontWeight={"normal"}
+                          align="left"
                           key={line}
+                          fontSize={14}
                           sx={{
                             listStyle: 'none',
                           }}
                         >
-                          {line}
+                          <FaCheckCircle color={"#25d366"} />  {line}
                         </Typography>
                       ))}
                     </ul>
@@ -797,10 +869,11 @@ function HomeComponent() {
         </Container>
         {/* video */}
         <ContactSection location="Home" />
-      </Box>
+      </Box >
       <Footer />
       <AcceptTerms />
       <Floating location="Home" />
+      <TestCTA />
     </Box >
   );
 }
