@@ -192,7 +192,7 @@ function DrawerComponent({ title, children }: DrawerComponent) {
               )
             }
             <Typography variant="caption">
-              Ver. 4.7.2
+              Ver. 4.7.4
             </Typography>
             <Tooltip title="Definir Modo Escuro/Claro">
               <IconButton sx={{ ml: 1 }} onClick={() => {
@@ -279,15 +279,21 @@ function DrawerComponent({ title, children }: DrawerComponent) {
                 <Divider sx={{ my: 1 }} />
               </>
             )}
-            <Divider sx={{ my: 1 }} />
-            <Tooltip placement="right" title="Blog">
-              <ListItemButton selected={location.pathname === "/blog"} onClick={() => handleNavigate("/blog")}>
-                <ListItemIcon>
-                  <NewspaperIcon />
-                </ListItemIcon>
-                <ListItemText primary="Blog" />
-              </ListItemButton>
-            </Tooltip>
+            {
+              user && user?.selectedPlan > 1 && (
+                <>
+                  <Divider sx={{ my: 1 }} />
+                  <Tooltip placement="right" title="Blog">
+                    <ListItemButton selected={location.pathname === "/blog"} onClick={() => handleNavigate("/blog")}>
+                      <ListItemIcon>
+                        <NewspaperIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Blog" />
+                    </ListItemButton>
+                  </Tooltip>
+                </>
+              )
+            }
             <Divider sx={{ my: 1 }} />
             <Tooltip placement="right" title="Configurações">
               <ListItemButton selected={location.pathname === "/configuracoes"} onClick={() => handleNavigate("/configuracoes")}>

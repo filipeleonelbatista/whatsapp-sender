@@ -71,7 +71,10 @@ export default function Register() {
 
       emailjs.send('service_4o2awb7', 'template_uc48uh8', {
         ...data,
-        plano: data.selected_plan === 1 ? 'Mensal R$ 10,00' : data.selected_plan === 6 ? 'Semestral de R$ 60,00 por R$ 50,00' : data.selected_plan === 12 ? 'Anual de R$ 120,00 por R$ 100,00' : '',
+        plano: data.selected_plan === '0' ? 'Primeiro Mês por R$ 10,00'
+          : data.selected_plan === '1' ? 'Mensal R$ 19,90'
+            : data.selected_plan === '6' ? 'Semestral de R$ 119,40 por R$ 79,90'
+              : data.selected_plan === '12' ? 'Anual de R$ 238,80 por R$ 159,90' : '',
 
       }, 'user_y1zamkr7P7dPydkNhdhxi').then((res) => {
         console.log("Sucesso", res)
@@ -86,12 +89,14 @@ export default function Register() {
       const mutationcreateAssinante = createAssinante(nome, email, senha, request_access_date, selected_plan, is_active, payment_date)
       await api.post('', mutationcreateAssinante)
 
-      if (formValues.plan === 1) {
-        setQrCode('00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b520400005303986540510.005802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062160512NUbJF4xOYcz56304C81C')
+      if (formValues.plan === 0) {
+        setQrCode('00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b520400005303986540520.005802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062250521eN2bHtVplcyggdJ13l5he6304D991')
+      } else if (formValues.plan === 1) {
+        setQrCode('00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b520400005303986540519.905802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062210517WhatsappSenderApp6304573D')
       } else if (formValues.plan === 6) {
-        setQrCode('00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b520400005303986540550.005802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062070503***63041DE2')
+        setQrCode('00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b520400005303986540579.905802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062240520WhatsappSender6meses63048645')
       } else if (formValues.plan === 12) {
-        setQrCode('00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b5204000053039865406100.005802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062070503***630469E3')
+        setQrCode('00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b5204000053039865406159.905802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062250521WhatsappSender12meses6304860D')
       }
 
       setOpen(true)
@@ -178,8 +183,8 @@ export default function Register() {
   });
 
   const handleInformPayment = async () => {
-    const message = `Olá sou ${formik.values.name}, e gostaria de informar o pagamento do WPSender para o email ${formik.values.email} com o plano ${formik.values.plan === 1 ? 'Mensal R$ 10,00' : formik.values.plan === 6 ? 'Semestral de R$ 60,00 por R$ 50,00' : formik.values.plan === 12 ? 'Anual de R$ 120,00 por R$ 100,00' : ''}`
-
+    const message = `Olá sou ${formik.values.name}, e gostaria de informar o pagamento do WPSender para o email ${formik.values.email} com o plano ${formik.values.plan === '0' ? 'Primeiro mês por R$ 10,00' : formik.values.plan === '1' ? 'Mensal R$ 19,90' : formik.values.plan === '6' ? 'Semestral de R$ 119,40 por R$ 79,90' : formik.values.plan === '12' ? 'Anual de R$ 238,80 por R$159,90' : ''}`
+    
     window.open(`https://web.whatsapp.com/send/?phone=%2B5551992736445}&text=${encodeURI(message)}&amp;text&amp;type=phone_number&amp;app_absent=0`, "_blank")
     setOpen(false)
     setQrCode('')
@@ -359,10 +364,11 @@ export default function Register() {
                     onChange={formik.handleChange}
                     error={!!formik.errors.plan}
                   >
-                    <MenuItem value={0} disabled>Selecione um plano</MenuItem>
-                    <MenuItem value={1}>Mensal R$ 10,00</MenuItem>
-                    <MenuItem value={6}>Semestral<sub style={{ margin: '0 8px' }}>de <s>R$ 60,00</s> por</sub>R$ 50,00</MenuItem>
-                    <MenuItem value={12}>Anual<sub style={{ margin: '0 8px' }}>de <s>R$ 120,00</s> por</sub>R$ 100,00</MenuItem>
+                    <MenuItem disabled>Selecione um plano</MenuItem>
+                    <MenuItem value={0}>Primeiro Mês por R$ 10,00</MenuItem>
+                    <MenuItem value={1}>Mensal R$ 19,90</MenuItem>
+                    <MenuItem value={6}>Semestral<sub style={{ margin: '0 8px' }}>de <s>R$ 119,40</s> por</sub>R$ 79,90</MenuItem>
+                    <MenuItem value={12}>Anual<sub style={{ margin: '0 8px' }}>de <s>R$ 238,80</s> por</sub>R$ 159,90</MenuItem>
                   </Select>
                   <FormHelperText>Selecione o plano que deseja pagar. {formik.errors.plan}</FormHelperText>
                 </FormControl>
