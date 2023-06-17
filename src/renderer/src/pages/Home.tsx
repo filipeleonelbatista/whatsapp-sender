@@ -297,8 +297,8 @@ function Home() {
 
   const handleLoadAttachments = (event) => {
     event.stopPropagation()
-    console.log("Olha isso", Array.from(event.target.files))
-    setAttachments(Array.from(event.target.files));
+    const newItensAdded = Array.from(event.target.files)
+    setAttachments([...attachments, ...newItensAdded]);
   };
 
   const handleLoadCsv = (event) => {
@@ -563,7 +563,7 @@ function Home() {
               component="label"
               startIcon={<AddAPhotoIcon />}
             >
-              Anexar arquivos
+              Adicionar arquivos
               <input
                 id="uploadImages"
                 hidden

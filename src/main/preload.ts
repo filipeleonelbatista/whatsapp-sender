@@ -17,6 +17,7 @@ interface TimerConfiguration {
   initiate_send: number,
   check_error: number,
   send_message: number,
+  send_attachment: number,
   finalize_send: number,
 }
 
@@ -158,7 +159,7 @@ contextBridge.exposeInMainWorld('electron', {
           log("Procurando botão para enviar anexo")
           const sendImageButton = await GlobalDriver.wait(until.elementLocated(By.css("span[data-testid='send']")));
           sendImageButton.click();
-          await delay(config.send_message);
+          await delay(config.send_attachment);
         }
       }
       log("Finalizei o envio")

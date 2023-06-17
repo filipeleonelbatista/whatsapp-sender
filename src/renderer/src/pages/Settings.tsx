@@ -54,6 +54,7 @@ export default function Settings() {
       initiate_send: Yup.number().required(),
       check_error: Yup.number().required(),
       send_message: Yup.number().required(),
+      send_attachment: Yup.number().required(),
       finalize_send: Yup.number().required(),
     });
   }, []);
@@ -63,11 +64,13 @@ export default function Settings() {
       start: 5000,
       initiate_send: 8000,
       check_error: 2000,
-      send_message: 1000,
+      send_message: 3000,
+      send_attachment: 3000,
       finalize_send: 5000,
     },
     validationSchema: formSchema,
     onSubmit: (values) => {
+      localStorage.removeItem("@config")
       localStorage.setItem("@config", JSON.stringify(values))
     },
   });
@@ -79,18 +82,20 @@ export default function Settings() {
     }
     if (localStorage.getItem("@config") !== null) {
       const config = JSON.parse(localStorage.getItem("@config"))
-      formik.setFieldValue('start', config.start)
-      formik.setFieldValue('initiate_send', config.initiate_send)
-      formik.setFieldValue('check_error', config.check_error)
-      formik.setFieldValue('send_message', config.send_message)
-      formik.setFieldValue('finalize_send', config.finalize_send)
+      formik.setFieldValue('start', config.start ?? 5000)
+      formik.setFieldValue('initiate_send', config.initiate_send ?? 8000)
+      formik.setFieldValue('check_error', config.check_error ?? 2000)
+      formik.setFieldValue('send_message', config.send_message ?? 3000)
+      formik.setFieldValue('send_attachment', config.send_attachment ?? 3000)
+      formik.setFieldValue('finalize_send', config.finalize_send ?? 5000)
     } else {
       const config =
       {
         start: 5000,
         initiate_send: 8000,
         check_error: 2000,
-        send_message: 1000,
+        send_message: 3000,
+        send_attachment: 3000,
         finalize_send: 5000,
       }
       localStorage.setItem("@config", JSON.stringify(config))
@@ -231,6 +236,19 @@ export default function Settings() {
             onBlur={formik.handleBlur}
             error={!!formik.errors.send_message}
             helperText="Tempo de espera Entre os envios de mensagem."
+          />
+          <TextField
+            fullWidth
+            type="number"
+            sx={{ mb: 2 }}
+            label="Envio de anexo"
+            id="send_attachment"
+            name="send_attachment"
+            value={formik.values.send_attachment}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={!!formik.errors.send_attachment}
+            helperText="Tempo de espera Após enviar um anexo."
           />
           <TextField
             fullWidth
