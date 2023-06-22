@@ -107,7 +107,7 @@ function HomeComponent() {
 
   function handleDownloadApp() {
     console.log("Baixar o app")
-    window.open(window.location.href + 'WhatsAppSenderBot.Setup.4.7.4.exe', '_blank')
+    window.open(window.location.href + 'WhatsAppSenderBot.Setup.4.7.8.exe', '_blank')
   }
 
   const handleCadastrar = () => { }
