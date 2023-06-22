@@ -5,12 +5,14 @@ import React, { useState } from 'react';
 import QRCode from 'react-qr-code';
 import * as Yup from 'yup';
 import DrawerComponent from "../components/DrawerComponent";
+import { useNavigate } from 'react-router-dom';
 
 export default function Settings() {
   const [user, setUser] = useState()
   const [open, setOpen] = useState(false);
   const [QrCode, setQrCode] = useState('');
   const [plan, setPlan] = useState(0);
+  const navigate = useNavigate();
 
   const handleInformPayment = async () => {
     const message = `Olá sou ${user?.nome}, e gostaria de informar o pagamento do WPSender para o email ${user?.email} com o plano ${plan === 1 ? 'Mensal R$ 10,00' : plan === 2 ? 'Semestral de R$ 60,00 por R$ 50,00' : plan === 3 ? 'Anual de R$ 120,00 por R$ 100,00' : ''}`
@@ -163,7 +165,6 @@ export default function Settings() {
           {add(new Date(user?.paymentDate), { months: user?.selectedPlan }).toLocaleString('pt-BR')}
         </span>
       </Typography>
-      { }
       {
         differenceInCalendarDays(add(new Date(user?.paymentDate), { months: user?.selectedPlan }), Date.now()) < 15 && (
           <Box sx={{ mt: 2, mb: 2 }}>
@@ -177,6 +178,16 @@ export default function Settings() {
       <Typography variant="body1">
         Configuração do aplicativo
       </Typography>
+
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        w: '100%',
+      }}>
+        <Button onClick={() => navigate('/onboarding')} variant="contained" sx={{ maxWidth:'240px', mt: 2 }}>Configuração inicial</Button>
+        <Typography variant="caption">Refaça os passos da configuração inicial</Typography>
+      </Box>
+
       <Box sx={{ mt: 4 }}>
         <Typography variant="h6">
           Tempos de espera

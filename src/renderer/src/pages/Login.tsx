@@ -77,7 +77,8 @@ export default function Login() {
           if (result.data.data.assinantes[0].isActive) {
             localStorage.setItem("@remember", formValues.remember)
             localStorage.setItem("@user-info", JSON.stringify(result.data.data.assinantes[0]))
-            navigate('/envio-mensagens')
+
+            localStorage.getItem('@show-onboarding') === null ? navigate('/onboarding') : navigate('/envio-mensagens')
           } else {
             alert("Seu acesso não está ativo ainda.")
             setWaitingActivation(true)

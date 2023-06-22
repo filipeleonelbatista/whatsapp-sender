@@ -80,7 +80,8 @@ function Home() {
     start: 5000,
     initiate_send: 8000,
     check_error: 2000,
-    send_message: 1000,
+    send_message: 3000,
+    send_attachment: 3000,
     finalize_send: 5000,
   })
 
