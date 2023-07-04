@@ -101,7 +101,7 @@ contextBridge.exposeInMainWorld('electron', {
   closeGlobalInstanceOfDriver: async () => {
     await GlobalDriver.quit();
   },
-  sendMessage: async (contact: Contact, message: string, attachments: File[], config: TimerConfiguration) => {
+  sendMessage: async (contact: Contact, message: string, attachments: any[], config: TimerConfiguration) => {
     try {
       let finalMessage = message.replaceAll("{primeiroNome}", contact.name.split(" ")[0])
         .replaceAll("{nomeCompleto}", contact.name)
@@ -146,8 +146,14 @@ contextBridge.exposeInMainWorld('electron', {
 
           await delay(config.send_message);
 
-          const selectButtonByTypes = (file.type === 'image/png' || file.type === 'image/jpg') ? "button[aria-label='Fotos e vídeos']" : "button[aria-label='Documento']"
+          const tiposImagemSuportados = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'tiff', 'webp'];
+          const tiposVideoSuportados = ['mp4', 'mov', 'avi', '3gp', 'wmv', 'mkv'];
 
+          const isImageOrVideo = tiposImagemSuportados.includes(file.name.split('.').pop().toLowerCase()) || tiposVideoSuportados.includes(file.name.split('.').pop().toLowerCase())
+          console.log("TO AQUI", isImageOrVideo, file)
+          const selectButtonByTypes = isImageOrVideo ? "button[aria-label='Fotos e vídeos']" : "button[aria-label='Documento']"
+
+          log(`BOTÃO SELECIONADO: ${selectButtonByTypes}, é imagem ou video? ${file.isImageOrVideo}`)
           log("Procurando botão de anexar o tipo")
           const attachButton = await GlobalDriver.wait(until.elementLocated(By.css(selectButtonByTypes)));
           log("Inserindo anexo")

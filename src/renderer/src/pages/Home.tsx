@@ -27,7 +27,9 @@ import EmojiPicker from 'emoji-picker-react';
 import { useFormik } from 'formik';
 import React from 'react';
 import { FaEdit, FaFile, FaFilePdf, FaPlay, FaTrash } from 'react-icons/fa';
-import { BsFiletypeJpg, BsFiletypePng, BsFiletypeMp3, BsFiletypeWav } from 'react-icons/bs';
+import { BsCardImage } from 'react-icons/bs';
+import { GoVideo } from 'react-icons/go';
+import { PiFileAudioLight } from 'react-icons/pi';
 import { v4 as uuidv4 } from 'uuid';
 import * as Yup from 'yup';
 import DrawerComponent from '../components/DrawerComponent';
@@ -568,7 +570,7 @@ function Home() {
               <input
                 id="uploadImages"
                 hidden
-                accept=".pdf,.jpg,.png,.mp3,.wav"
+                accept=".pdf,.mp3,.wav,.ogg,.jpeg,.jpg,.png,.gif,.bmp,.tiff,.webp,.mp4,.mov,.avi,.3gp,.wmv,.mkv"
                 multiple
                 type="file"
                 onChange={(event) => handleLoadAttachments(event)}
@@ -601,16 +603,13 @@ function Home() {
                       item.type === 'application/pdf' && <Typography><FaFilePdf size={28} /></Typography>
                     }
                     {
-                      item.type === 'image/jpg' && <Typography><BsFiletypeJpg size={28} /></Typography>
+                      item.type.includes('image') && <Typography><BsCardImage size={28} /></Typography>
                     }
                     {
-                      item.type === 'image/png' && <Typography><BsFiletypePng size={28} /></Typography>
+                      item.type.includes('video') && <Typography><GoVideo size={28} /></Typography>
                     }
                     {
-                      item.type === 'audio/mpeg' && <Typography><BsFiletypeMp3 size={28} /></Typography>
-                    }
-                    {
-                      item.type === 'audio/wav' && <Typography><BsFiletypeWav size={28} /></Typography>
+                      item.type.includes('audio') && <Typography><PiFileAudioLight size={28} /></Typography>
                     }
                     <Typography>{item.name.length > 20 ? item.name.substr(0, 20) + "..." : item.name}</Typography>
                     <Typography>{(item.size / (1024 * 1024)).toFixed(3)} Mb</Typography>
