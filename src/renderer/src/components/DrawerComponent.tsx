@@ -7,7 +7,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import MessageIcon from '@mui/icons-material/Message';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import { Avatar, ListItemButton, ListItemIcon, ListItemText, Tooltip, useMediaQuery } from '@mui/material';
+import { Avatar, ListItemButton, ListItemIcon, ListItemText, Tooltip, useMediaQuery, Modal, Button } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -29,6 +29,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { add, differenceInCalendarDays } from 'date-fns';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import ContactsIcon from '@mui/icons-material/Contacts';
+import { api, getVersions } from '../services/api';
+import { BsCloudDownload } from 'react-icons/bs'
 
 function Copyright() {
   return (
@@ -122,15 +124,53 @@ interface DrawerComponent {
 function DrawerComponent({ title, children }: DrawerComponent) {
   const navigate = useNavigate();
   const location = useLocation();
+  const currentVersion = "4.8.0";
+
   const [user, setUser] = React.useState()
 
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
   const [open, setOpen] = React.useState(false);
+  const [modalUpdate, setModalUpdate] = React.useState(false);
+  const [updateInfo, setUpdateInfo] = React.useState(null);
+
+  const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    backgroundColor: (theme) =>
+      theme.palette.mode === 'light'
+        ? theme.palette.grey[100]
+        : theme.palette.grey[900],
+    border: 'none',
+    borderRadius: 4,
+    boxShadow: 24,
+    p: 4,
+  };
+
+
   const [mode, setMode] = React.useState('light');
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  const handleOpenModalUpdate = async () => {
+    setModalUpdate(true)
+  }
+
+  const checkVersion = async () => {
+    const response = await api.post('', getVersions) as any;
+
+    const applicationVersionIndex = response.data.data.applicationVersions.findIndex((version: any) => {
+      return version.versionNumber === currentVersion
+    })
+
+    if (applicationVersionIndex >= 0) {
+      setUpdateInfo(response.data.data.applicationVersions[0])
+    }
+  }
 
   React.useEffect(() => {
     const userInfo = localStorage.getItem("@user-info")
@@ -144,6 +184,7 @@ function DrawerComponent({ title, children }: DrawerComponent) {
       localStorage.setItem("@dark-theme", prefersDarkMode ? 'dark' : 'light')
       setMode(prefersDarkMode ? 'dark' : 'light')
     }
+    checkVersion()
   }, [])
 
   const handleNavigate = (text) => {
@@ -152,6 +193,37 @@ function DrawerComponent({ title, children }: DrawerComponent) {
 
   return (
     <ThemeProvider theme={mode === 'light' ? mdTheme : mdThemeDark}>
+      <Modal
+        open={modalUpdate}
+        onClose={() => setModalUpdate(false)}
+        aria-labelledby="modal-update-title"
+        aria-describedby="modal-update-description"
+      >
+        <Box sx={style}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Uma nova versão está disponível para baixar
+          </Typography>
+          <Typography variant="body2" sx={{ mb: 2 }}>
+            Veja as novidades
+          </Typography>
+          <Typography
+            component="div"
+            sx={{
+              '& > img': {
+                width: "100%",
+                heigth: 'auto',
+                borderRadius: 2,
+                boxShadow: 2,
+              }
+            }}
+            variant="body2"
+            dangerouslySetInnerHTML={{
+              __html: updateInfo?.infos?.html
+            }}>
+          </Typography>
+          <Button variant={'contained'} fullWidth startIcon={<BsCloudDownload />} target="_blank" component="a" href={updateInfo?.versionUrl}>Baixe já a nova versão</Button>
+        </Box>
+      </Modal>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
@@ -192,7 +264,7 @@ function DrawerComponent({ title, children }: DrawerComponent) {
               )
             }
             <Typography variant="caption">
-              Ver. 4.8.0
+              Ver. {currentVersion}
             </Typography>
             <Tooltip title="Definir Modo Escuro/Claro">
               <IconButton sx={{ ml: 1 }} onClick={() => {
@@ -202,6 +274,15 @@ function DrawerComponent({ title, children }: DrawerComponent) {
                 {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
               </IconButton>
             </Tooltip>
+            {
+              !!updateInfo && (
+                <Tooltip title="Nova versão disponível">
+                  <IconButton sx={{ ml: 1 }} onClick={handleOpenModalUpdate} color="inherit">
+                    <BsCloudDownload />
+                  </IconButton>
+                </Tooltip>
+              )
+            }
             {false && (
               <Tooltip title="Perfil">
                 <IconButton onClick={() => handleNavigate("/perfil")}>

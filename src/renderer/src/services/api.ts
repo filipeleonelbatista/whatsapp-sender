@@ -17,6 +17,20 @@ api.interceptors.request.use(
   }
 )
 
+const getVersions = {
+  query: `
+      query getVersions {
+        applicationVersions(orderBy: versionNumber_DESC) {
+          versionNumber
+          versionUrl
+          infos {
+            html
+          }
+        }
+      }
+    `
+}
+
 const filterAssinantesByEmail = (email: string) => {
   return {
     query: `
@@ -151,5 +165,6 @@ export {
   createAssinante,
   listCategories,
   getLast5Posts,
-  getLast5PostsByCategory
+  getLast5PostsByCategory,
+  getVersions
 };
