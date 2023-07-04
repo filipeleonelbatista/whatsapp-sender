@@ -110,7 +110,7 @@ contextBridge.exposeInMainWorld('electron', {
         .replaceAll("{var2}", contact.var2)
         .replaceAll("{var3}", contact.var3)
 
-      await GlobalDriver.get(`https://web.whatsapp.com/send/?phone=%2B55${contact.phone.replace(/\D/g, "")}&text=${encodeURI(finalMessage)}&amp;text&amp;type=phone_number&amp;app_absent=0`)
+      await GlobalDriver.get(`https://web.whatsapp.com/send/?phone=%2B55${contact.phone.replace(/\D/g, "")}&text=${encodeURI(finalMessage).replace(/&/g, "%26").replace(/\+/g, "%2B")}&amp;text&amp;type=phone_number&amp;app_absent=0`)
 
       await delay(config.initiate_send);
       log("Verificando se tem mensagem de erro")

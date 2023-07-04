@@ -9,8 +9,9 @@ import { FaWhatsapp } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
 import * as Yup from 'yup';
 import emailjs from '@emailjs/browser'
-import { api, createAssinante } from '../services/api';
+import { api, createAssinante, getVersions } from '../services/api';
 import QRCode from 'react-qr-code';
+import { VERSION } from '../constants/application';
 
 export default function Register() {
 
@@ -64,6 +65,18 @@ export default function Register() {
       request_access_date: new Date(Date.now()).toISOString(),
       payment_date: null,
       is_active: false
+    }
+
+    const versionResponse = await api.post('', getVersions) as any;
+
+    const applicationVersionIndex = versionResponse.data.data.applicationVersions.findIndex((version: any) => {
+      return version.versionNumber === VERSION
+    })
+
+    if (applicationVersionIndex > 0) {
+      alert("A versão do seu aplicativo está desatualizada. Caso queira prosseguir, baixe a nova versão.")
+      window.open(versionResponse.data.data.applicationVersions[0].versionUrl, "_blank")
+      return;
     }
 
     try {
@@ -147,7 +160,7 @@ export default function Register() {
       email: '',
       password: '',
       confirm_password: '',
-      plan: null,
+      plan: 0,
       accept_terms: false,
     },
     validationSchema: formSchema,
@@ -184,7 +197,7 @@ export default function Register() {
 
   const handleInformPayment = async () => {
     const message = `Olá sou ${formik.values.name}, e gostaria de informar o pagamento do WPSender para o email ${formik.values.email} com o plano ${formik.values.plan === '0' ? 'Primeiro mês por R$ 10,00' : formik.values.plan === '1' ? 'Mensal R$ 19,90' : formik.values.plan === '6' ? 'Semestral de R$ 119,40 por R$ 79,90' : formik.values.plan === '12' ? 'Anual de R$ 238,80 por R$159,90' : ''}`
-    
+
     window.open(`https://web.whatsapp.com/send/?phone=%2B5551992736445}&text=${encodeURI(message)}&amp;text&amp;type=phone_number&amp;app_absent=0`, "_blank")
     setOpen(false)
     setQrCode('')

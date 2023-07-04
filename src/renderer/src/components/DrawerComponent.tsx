@@ -31,6 +31,7 @@ import NewspaperIcon from '@mui/icons-material/Newspaper';
 import ContactsIcon from '@mui/icons-material/Contacts';
 import { api, getVersions } from '../services/api';
 import { BsCloudDownload } from 'react-icons/bs'
+import { VERSION } from '../constants/application';
 
 function Copyright() {
   return (
@@ -124,7 +125,7 @@ interface DrawerComponent {
 function DrawerComponent({ title, children }: DrawerComponent) {
   const navigate = useNavigate();
   const location = useLocation();
-  const currentVersion = "4.8.0";
+  const currentVersion = VERSION;
 
   const [user, setUser] = React.useState()
 
@@ -167,7 +168,7 @@ function DrawerComponent({ title, children }: DrawerComponent) {
       return version.versionNumber === currentVersion
     })
 
-    if (applicationVersionIndex >= 0) {
+    if (applicationVersionIndex > 0) {
       setUpdateInfo(response.data.data.applicationVersions[0])
     }
   }
