@@ -19,6 +19,7 @@ interface TimerConfiguration {
   send_message: number,
   send_attachment: number,
   finalize_send: number,
+  new_whatsapp_send_button: boolean,
 }
 
 interface ExtractionObject {
@@ -138,27 +139,48 @@ contextBridge.exposeInMainWorld('electron', {
       sendButton.click();
 
       if (attachments.length > 0) {
-        log("Enviando arquivos")
+        log("Enviando arquivos")       
+  
+        const tiposImagemSuportados = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'tiff', 'webp'];
+        const tiposVideoSuportados = ['mp4', 'mov', 'avi', '3gp', 'wmv', 'mkv'];
+
         for (const file of attachments) {
-          log("Procurando botão clip")
-          const clipButton = await GlobalDriver.wait(until.elementLocated(By.css("div[data-testid='conversation-clip']")));
-          clipButton.click();
+          if(config.new_whatsapp_send_button){
+            log("Procurando novo botão drop up")
+            const attachMenuPlus = await GlobalDriver.wait(until.elementLocated(By.css("span[data-testid='attach-menu-plus']")));
+            attachMenuPlus.click();
 
-          await delay(config.send_message);
+            await delay(config.send_message);
 
-          const tiposImagemSuportados = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'tiff', 'webp'];
-          const tiposVideoSuportados = ['mp4', 'mov', 'avi', '3gp', 'wmv', 'mkv'];
+            const isImageOrVideo = tiposImagemSuportados.includes(file.name.split('.').pop().toLowerCase()) || tiposVideoSuportados.includes(file.name.split('.').pop().toLowerCase())
 
-          const isImageOrVideo = tiposImagemSuportados.includes(file.name.split('.').pop().toLowerCase()) || tiposVideoSuportados.includes(file.name.split('.').pop().toLowerCase())
-          console.log("TO AQUI", isImageOrVideo, file)
-          const selectButtonByTypes = isImageOrVideo ? "button[aria-label='Fotos e vídeos']" : "button[aria-label='Documento']"
-
-          log(`BOTÃO SELECIONADO: ${selectButtonByTypes}, é imagem ou video? ${file.isImageOrVideo}`)
-          log("Procurando botão de anexar o tipo")
-          const attachButton = await GlobalDriver.wait(until.elementLocated(By.css(selectButtonByTypes)));
-          log("Inserindo anexo")
-          const inputElement = await attachButton.findElement(By.css(`input`))
-          inputElement.sendKeys(file.path)
+            const selectButtonByTypes = isImageOrVideo ? "li[data-testid='mi-attach-media']" : "li[data-testid='mi-attach-document']"
+            
+            log(`BOTÃO SELECIONADO: ${selectButtonByTypes}, é imagem ou video? ${file.isImageOrVideo}`)
+            log("Procurando botão de anexar o tipo")
+            const attachButton = await GlobalDriver.wait(until.elementLocated(By.css(selectButtonByTypes)));
+            
+            log("Inserindo anexo")
+            const inputElement = await attachButton.findElement(By.css(`input`))
+            inputElement.sendKeys(file.path) 
+          }else{
+            log("Procurando botão clip")
+            const clipButton = await GlobalDriver.wait(until.elementLocated(By.css("div[data-testid='conversation-clip']")));
+            clipButton.click();
+  
+            await delay(config.send_message);
+  
+            const isImageOrVideo = tiposImagemSuportados.includes(file.name.split('.').pop().toLowerCase()) || tiposVideoSuportados.includes(file.name.split('.').pop().toLowerCase())
+            console.log("TO AQUI", isImageOrVideo, file)
+            const selectButtonByTypes = isImageOrVideo ? "button[aria-label='Fotos e vídeos']" : "button[aria-label='Documento']"
+  
+            log(`BOTÃO SELECIONADO: ${selectButtonByTypes}, é imagem ou video? ${file.isImageOrVideo}`)
+            log("Procurando botão de anexar o tipo")
+            const attachButton = await GlobalDriver.wait(until.elementLocated(By.css(selectButtonByTypes)));
+            log("Inserindo anexo")
+            const inputElement = await attachButton.findElement(By.css(`input`))
+            inputElement.sendKeys(file.path)            
+          }
 
           await delay(config.send_message);
 

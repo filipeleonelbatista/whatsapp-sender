@@ -1,4 +1,4 @@
-import { Button, Card, Typography, useMediaQuery } from '@mui/material';
+import { Button, Card, Checkbox, FormControlLabel, FormGroup, Typography, useMediaQuery } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import React from 'react';
@@ -191,6 +191,7 @@ export default function Onboarding() {
       send_message: 3000,
       send_attachment: 3000,
       finalize_send: 5000,
+      new_whatsapp_send_button: false,
     },
     validationSchema: formSchemaConfig,
     onSubmit: (values) => {
@@ -219,6 +220,7 @@ export default function Onboarding() {
       formikConfig.setFieldValue('send_message', config.send_message ?? 3000)
       formikConfig.setFieldValue('send_attachment', config.send_attachment ?? 3000)
       formikConfig.setFieldValue('finalize_send', config.finalize_send ?? 5000)
+      formikConfig.setFieldValue('new_whatsapp_send_button', config.new_whatsapp_send_button ?? false)
     } else {
       const config =
       {
@@ -228,6 +230,7 @@ export default function Onboarding() {
         send_message: 3000,
         send_attachment: 3000,
         finalize_send: 5000,
+        new_whatsapp_send_button: false,
       }
       localStorage.setItem("@config", JSON.stringify(config))
     }
@@ -667,6 +670,21 @@ export default function Onboarding() {
           </Typography>
 
           <Box component="form" onSubmit={formik.handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    id="new_whatsapp_send_button"
+                    name="new_whatsapp_send_button"
+                    checked={formik.values.new_whatsapp_send_button}
+                    onChange={formik.handleChange}
+                  />
+                }
+                label="Botão de anexo versão nova!"
+              />
+            </FormGroup>
+
             <TextField
               label="Nome"
               id="name"

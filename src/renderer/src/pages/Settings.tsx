@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Modal, Select, TextField, Typography } from '@mui/material';
+import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormHelperText, InputLabel, MenuItem, Modal, Select, TextField, Typography } from '@mui/material';
 import { add, differenceInCalendarDays } from "date-fns";
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
@@ -58,6 +58,7 @@ export default function Settings() {
       send_message: Yup.number().required(),
       send_attachment: Yup.number().required(),
       finalize_send: Yup.number().required(),
+      new_whatsapp_send_button: Yup.boolean(),
     });
   }, []);
 
@@ -69,6 +70,7 @@ export default function Settings() {
       send_message: 3000,
       send_attachment: 3000,
       finalize_send: 5000,
+      new_whatsapp_send_button: false,
     },
     validationSchema: formSchema,
     onSubmit: (values) => {
@@ -90,6 +92,8 @@ export default function Settings() {
       formik.setFieldValue('send_message', config.send_message ?? 3000)
       formik.setFieldValue('send_attachment', config.send_attachment ?? 3000)
       formik.setFieldValue('finalize_send', config.finalize_send ?? 5000)
+      formik.setFieldValue('new_whatsapp_send_button', config.new_whatsapp_send_button ?? false)
+
     } else {
       const config =
       {
@@ -99,6 +103,7 @@ export default function Settings() {
         send_message: 3000,
         send_attachment: 3000,
         finalize_send: 5000,
+        new_whatsapp_send_button: false,
       }
       localStorage.setItem("@config", JSON.stringify(config))
     }
@@ -184,8 +189,28 @@ export default function Settings() {
         flexDirection: 'column',
         w: '100%',
       }}>
-        <Button onClick={() => navigate('/onboarding')} variant="contained" sx={{ maxWidth:'240px', mt: 2 }}>Configuração inicial</Button>
+        <Button onClick={() => navigate('/onboarding')} variant="contained" sx={{ maxWidth: '240px', mt: 2 }}>Configuração inicial</Button>
         <Typography variant="caption">Refaça os passos da configuração inicial</Typography>
+      </Box>
+
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        w: '100%',
+      }}>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                id="new_whatsapp_send_button"
+                name="new_whatsapp_send_button"
+                checked={formik.values.new_whatsapp_send_button}
+                onChange={formik.handleChange}
+              />
+            }
+            label="Botão de anexo versão nova!"
+          />
+        </FormGroup>
       </Box>
 
       <Box sx={{ mt: 4 }}>

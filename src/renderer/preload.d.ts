@@ -7,6 +7,7 @@ declare global {
     check_error: number,
     send_message: number,
     finalize_send: number,
+    new_whatsapp_send_button: boolean,
   }
   interface Contact {
     name: string;
