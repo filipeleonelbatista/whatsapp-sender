@@ -7,7 +7,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import MessageIcon from '@mui/icons-material/Message';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import { Avatar, ListItemButton, ListItemIcon, ListItemText, Tooltip, useMediaQuery, Modal, Button } from '@mui/material';
+import { Avatar, ListItemButton, ListItemIcon, ListItemText, Tooltip, useMediaQuery, Modal, Button, Menu } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -31,7 +31,9 @@ import NewspaperIcon from '@mui/icons-material/Newspaper';
 import ContactsIcon from '@mui/icons-material/Contacts';
 import { api, getVersions } from '../services/api';
 import { BsCloudDownload } from 'react-icons/bs'
+import { BiBot } from 'react-icons/bi';
 import { VERSION } from '../constants/application';
+import IAComponent from './IAComponent';
 
 function Copyright() {
   return (
@@ -173,6 +175,18 @@ function DrawerComponent({ title, children }: DrawerComponent) {
     }
   }
 
+  const [anchorAi, setAnchorAi] = React.useState(null);
+
+  const openAiMenu = Boolean(anchorAi);
+
+  const handleClick = (event) => {
+    setAnchorAi(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorAi(null);
+  };
+
+
   React.useEffect(() => {
     const userInfo = localStorage.getItem("@user-info")
     if (userInfo !== null) {
@@ -264,6 +278,25 @@ function DrawerComponent({ title, children }: DrawerComponent) {
                 </Typography>
               )
             }
+
+            {/* <Tooltip title="Iniciar conversa com IA">
+              <IconButton sx={{ mx: 2 }} onClick={handleClick} color="inherit">
+                <BiBot />
+              </IconButton>
+            </Tooltip>
+
+            <Menu
+              id="ai-menu"
+              anchorEl={anchorAi}
+              open={openAiMenu}
+              onClose={handleClose}
+              MenuListProps={{
+                'aria-labelledby': 'ai-button',
+              }}
+            >
+              <IAComponent />
+            </Menu> */}
+
             <Typography variant="caption">
               Ver. {currentVersion}
             </Typography>
