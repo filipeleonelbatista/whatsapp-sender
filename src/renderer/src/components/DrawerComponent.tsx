@@ -1,52 +1,47 @@
 import Brightness4Icon from '@mui/icons-material/Brightness4'
 import Brightness7Icon from '@mui/icons-material/Brightness7'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
+import LogoutIcon from '@mui/icons-material/Logout'
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt'
 import MenuIcon from '@mui/icons-material/Menu'
 import MessageIcon from '@mui/icons-material/Message'
+import NewspaperIcon from '@mui/icons-material/Newspaper'
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd'
+import SettingsIcon from '@mui/icons-material/Settings'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import {
   Avatar,
+  Button,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Tooltip,
-  useMediaQuery,
   Modal,
-  Button,
-  Menu
+  Tooltip
 } from '@mui/material'
 import MuiAppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
-import CssBaseline from '@mui/material/CssBaseline'
 import Divider from '@mui/material/Divider'
 import MuiDrawer from '@mui/material/Drawer'
 import IconButton from '@mui/material/IconButton'
 import Link from '@mui/material/Link'
 import List from '@mui/material/List'
-import { createTheme, styled, ThemeProvider } from '@mui/material/styles'
+import Menu from '@mui/material/Menu'
+import { styled } from '@mui/material/styles'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import * as React from 'react'
-import StoriesIcon from './StoriesIcon'
-import VolumeUpIcon from '@mui/icons-material/VolumeUp'
-import SettingsIcon from '@mui/icons-material/Settings'
-import { useLocation, useNavigate } from 'react-router-dom'
-import LogoutIcon from '@mui/icons-material/Logout'
-import { add, differenceInCalendarDays } from 'date-fns'
-import NewspaperIcon from '@mui/icons-material/Newspaper'
-import ContactsIcon from '@mui/icons-material/Contacts'
-import { api, getVersions } from '../services/api'
-import { BsCloudDownload } from 'react-icons/bs'
-import { BiBot } from 'react-icons/bi'
-import { VERSION } from '../constants/application'
-import IAComponent from './IAComponent'
 import { useCurrentTheme } from '@renderer/hooks/useCurrentTheme'
+import { add, differenceInCalendarDays } from 'date-fns'
+import * as React from 'react'
+import { BiBot } from 'react-icons/bi'
+import { BsCloudDownload } from 'react-icons/bs'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { VERSION } from '../constants/application'
+import { api, getVersions } from '../services/api'
+import IAComponent from './IAComponent'
 
-function Copyright() {
+function Copyright(): JSX.Element {
   return (
     <Box sx={{ mt: 4 }}>
       <Typography variant="body2" color="text.secondary" align="center">
@@ -138,19 +133,19 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
     p: 4
   }
 
-  const toggleDrawer = () => {
+  const toggleDrawer = (): void => {
     setOpen(!open)
   }
 
-  const handleOpenModalUpdate = async () => {
+  const handleOpenModalUpdate = async (): Promise<void> => {
     setModalUpdate(true)
   }
 
-  const checkVersion = async () => {
-    const response = (await api.post('', getVersions)) as any
+  const checkVersion = async (): Promise<void> => {
+    const response = (await api.post('', getVersions)) as object
 
     const applicationVersionIndex = response.data.data.applicationVersions.findIndex(
-      (version: any) => {
+      (version: object): boolean => {
         return version.versionNumber === currentVersion
       }
     )
@@ -164,10 +159,10 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
 
   const openAiMenu = Boolean(anchorAi)
 
-  const handleClick = (event) => {
+  const handleClick = (event: object): void => {
     setAnchorAi(event.currentTarget)
   }
-  const handleClose = () => {
+  const handleClose = (): void => {
     setAnchorAi(null)
   }
 
@@ -179,7 +174,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
     checkVersion()
   }, [])
 
-  const handleNavigate = (text) => {
+  const handleNavigate = (text: string): void => {
     return navigate(text)
   }
 
@@ -187,7 +182,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
     <>
       <Modal
         open={modalUpdate}
-        onClose={() => setModalUpdate(false)}
+        onClose={(): void => setModalUpdate(false)}
         aria-labelledby="modal-update-title"
         aria-describedby="modal-update-description"
       >
@@ -229,7 +224,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
         <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
-              pr: '24px' // keep right padding when drawer closed
+              pr: '24px'
             }}
           >
             <Tooltip title="Expandir Menu">
@@ -253,17 +248,17 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
               add(new Date(user?.paymentDate), { months: user?.selectedPlan }),
               Date.now()
             ) < 15 && (
-                <Typography>
-                  Licença expira em{' '}
-                  {differenceInCalendarDays(
-                    add(new Date(user?.paymentDate), { months: user?.selectedPlan }),
-                    Date.now()
-                  )}{' '}
-                  dias
-                </Typography>
-              )}
+              <Typography sx={{ mx: 2 }}>
+                Licença expira em{' '}
+                {differenceInCalendarDays(
+                  add(new Date(user?.paymentDate), { months: user?.selectedPlan }),
+                  Date.now()
+                )}{' '}
+                dias
+              </Typography>
+            )}
 
-            {/* <Tooltip title="Iniciar conversa com IA">
+            <Tooltip title="Iniciar conversa com IA">
               <IconButton sx={{ mx: 2 }} onClick={handleClick} color="inherit">
                 <BiBot />
               </IconButton>
@@ -275,17 +270,17 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
               open={openAiMenu}
               onClose={handleClose}
               MenuListProps={{
-                'aria-labelledby': 'ai-button',
+                'aria-labelledby': 'ai-button'
               }}
             >
               <IAComponent />
-            </Menu> */}
+            </Menu>
 
             <Typography variant="caption">Ver. {currentVersion}</Typography>
             <Tooltip title="Definir Modo Escuro/Claro">
               <IconButton
                 sx={{ ml: 1 }}
-                onClick={() => {
+                onClick={(): void => {
                   toggleMode()
                   localStorage.setItem('@dark-theme', mode === 'dark' ? 'light' : 'dark')
                 }}
@@ -296,14 +291,14 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
             </Tooltip>
             {!!updateInfo && (
               <Tooltip title="Nova versão disponível">
-                <IconButton sx={{ ml: 1 }} onClick={handleOpenModalUpdate} color="inherit">
+                <IconButton sx={{ mx: 2 }} onClick={handleOpenModalUpdate} color="inherit">
                   <BsCloudDownload />
                 </IconButton>
               </Tooltip>
             )}
             {false && (
               <Tooltip title="Perfil">
-                <IconButton onClick={() => handleNavigate('/perfil')}>
+                <IconButton sx={{ mx: 2 }} onClick={(): void => handleNavigate('/perfil')}>
                   <Avatar alt="Filipe" src="https://github.com/filipeleonelbatista.png" />
                 </IconButton>
               </Tooltip>
@@ -343,7 +338,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
             <Tooltip placement="right" title="Envio de mensagens">
               <ListItemButton
                 selected={location.pathname === '/envio-mensagens'}
-                onClick={() => handleNavigate('/envio-mensagens')}
+                onClick={(): void => handleNavigate('/envio-mensagens')}
               >
                 <ListItemIcon>
                   <MarkUnreadChatAltIcon />
@@ -354,7 +349,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
             <Tooltip placement="right" title="Modelos de mensagens">
               <ListItemButton
                 selected={location.pathname === '/modelos-de-mensagem'}
-                onClick={() => handleNavigate('/modelos-de-mensagem')}
+                onClick={(): void => handleNavigate('/modelos-de-mensagem')}
               >
                 <ListItemIcon>
                   <MessageIcon />
@@ -365,7 +360,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
             <Tooltip placement="right" title="Listas de envio">
               <ListItemButton
                 selected={location.pathname === '/listas-de-contatos'}
-                onClick={() => handleNavigate('/listas-de-contatos')}
+                onClick={(): void => handleNavigate('/listas-de-contatos')}
               >
                 <ListItemIcon>
                   <PlaylistAddIcon />
@@ -386,7 +381,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
                 <Tooltip placement="right" title="Perfil">
                   <ListItemButton
                     selected={location.pathname === '/perfil'}
-                    onClick={() => handleNavigate('/perfil')}
+                    onClick={(): void => handleNavigate('/perfil')}
                   >
                     <ListItemIcon>
                       <ManageAccountsIcon />
@@ -403,7 +398,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
                 <Tooltip placement="right" title="Blog">
                   <ListItemButton
                     selected={location.pathname === '/blog'}
-                    onClick={() => handleNavigate('/blog')}
+                    onClick={(): void => handleNavigate('/blog')}
                   >
                     <ListItemIcon>
                       <NewspaperIcon />
@@ -417,7 +412,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
             <Tooltip placement="right" title="Configurações">
               <ListItemButton
                 selected={location.pathname === '/configuracoes'}
-                onClick={() => handleNavigate('/configuracoes')}
+                onClick={(): void => handleNavigate('/configuracoes')}
               >
                 <ListItemIcon>
                   <SettingsIcon />
@@ -428,7 +423,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
             <Tooltip placement="right" title="Histórico de envios">
               <ListItemButton
                 selected={location.pathname === '/historico-de-envios'}
-                onClick={() => handleNavigate('/historico-de-envios')}
+                onClick={(): void => handleNavigate('/historico-de-envios')}
               >
                 <ListItemIcon>
                   <PlaylistAddIcon />
@@ -439,7 +434,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
             <Tooltip placement="right" title="Sair">
               <ListItemButton
                 selected={location.pathname === '/'}
-                onClick={() => {
+                onClick={(): void => {
                   if (window.confirm('Deseja realmente sair do sistema?')) {
                     localStorage.removeItem('@user-info')
                     handleNavigate('/')
@@ -477,7 +472,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
             >
               {children}
             </Box>
-            <Copyright sx={{ pt: 4 }} />
+            <Copyright />
           </Container>
         </Box>
       </Box>

@@ -2,7 +2,6 @@ import AccountCircle from '@mui/icons-material/AccountCircle'
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto'
 import CancelIcon from '@mui/icons-material/Cancel'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import DeleteIcon from '@mui/icons-material/Delete'
 import SendIcon from '@mui/icons-material/Send'
 import TableChartIcon from '@mui/icons-material/TableChart'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
@@ -22,10 +21,7 @@ import {
   Typography
 } from '@mui/material'
 import { pink } from '@mui/material/colors'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import FormGroup from '@mui/material/FormGroup'
 import Snackbar from '@mui/material/Snackbar'
-import Switch from '@mui/material/Switch'
 import {
   DataGrid,
   GridCsvExportMenuItem,
@@ -36,8 +32,8 @@ import {
 import EmojiPicker from 'emoji-picker-react'
 import { useFormik } from 'formik'
 import React from 'react'
-import { FaEdit, FaFile, FaFilePdf, FaPlay, FaTrash } from 'react-icons/fa'
 import { BsCardImage } from 'react-icons/bs'
+import { FaEdit, FaFilePdf, FaPlay, FaTrash } from 'react-icons/fa'
 import { GoVideo } from 'react-icons/go'
 import { PiFileAudioLight } from 'react-icons/pi'
 import { v4 as uuidv4 } from 'uuid'
@@ -45,7 +41,7 @@ import * as Yup from 'yup'
 import DrawerComponent from '../components/DrawerComponent'
 import celular from '../utils/masks'
 
-const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
+const GridToolbarExport = ({ csvOptions, printOptions, ...other }: object): JSX.Element => (
   <GridToolbarExportContainer {...other}>
     <GridCsvExportMenuItem
       options={{
@@ -67,7 +63,7 @@ const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
   </GridToolbarExportContainer>
 )
 
-function Home() {
+function Home(): JSX.Element {
   const [isLoading, setisLoading] = React.useState(false)
   const [isEditable, setisEditable] = React.useState(false)
 
@@ -78,17 +74,18 @@ function Home() {
     severity: 'error'
   })
 
-  const handleClick = () => {
+  const handleClick = (): void => {
     setOpenSnackBar(true)
   }
 
-  const handleClose = (event, reason) => {
+  const handleClose = (_event: object, reason: string): void => {
     if (reason === 'clickaway') {
       return
     }
 
     setOpenSnackBar(false)
   }
+
   const [config, setConfig] = React.useState({
     start: 5000,
     initiate_send: 8000,
@@ -108,7 +105,7 @@ function Home() {
   const [selectionStart, setSelectionStart] = React.useState()
   const inputMessageRef = React.useRef()
 
-  const registerLog = (initiated_at, currentRows) => {
+  const registerLog = (initiated_at: Date, currentRows: Array<object>): void => {
     const results = {
       rows: currentRows,
       message,
@@ -129,7 +126,7 @@ function Home() {
     }, 3000)
   }
 
-  const handleSubmitForm = (formValues) => {
+  const handleSubmitForm = (formValues: object): void => {
     if (isEditable) {
       const newRowsArray = rows.filter((row) => row.id !== editableContact.id)
       newRowsArray.push({
@@ -142,7 +139,7 @@ function Home() {
       setisEditable(false)
       formik.resetForm()
     } else {
-      setRows((state) => [
+      setRows((state: never[]): never[] => [
         ...state,
         {
           id: uuidv4(),
@@ -157,7 +154,7 @@ function Home() {
     }
   }
 
-  const handleSendSingleMessage = async (contact) => {
+  const handleSendSingleMessage = async (contact: object): Promise<void> => {
     if (message === '') return alert('Você não digitou a mensagem ainda')
 
     try {
@@ -187,7 +184,7 @@ function Home() {
         status: request.status
       }
 
-      setRows((prevState) =>
+      setRows((prevState: never[]): never[] =>
         prevState.map((contact) =>
           contact.id === updatedRow.id ? { ...contact, ...updatedRow } : contact
         )
@@ -216,7 +213,7 @@ function Home() {
     }
   }
 
-  const handleSendMessages = async () => {
+  const handleSendMessages = async (): Promise<void> => {
     if (message === '') return alert('Você não digitou a mensagem ainda')
     if (rows.length === 0) return alert('Você não incluiu contatos para o envio das mensagens')
 
@@ -245,7 +242,7 @@ function Home() {
           status: request.status
         }
 
-        setRows((prevState) =>
+        setRows((prevState: never[]): never[] =>
           prevState.map((contact) =>
             contact.id === updatedRow.id ? { ...contact, ...updatedRow } : contact
           )
@@ -290,12 +287,12 @@ function Home() {
     }
   }
 
-  const removeAttachment = (index) => {
-    const newArray = attachments.filter((item, arrIndex) => arrIndex !== index)
+  const removeAttachment = (index: number): void => {
+    const newArray = attachments.filter((_item, arrIndex) => arrIndex !== index)
     setAttachments(newArray)
   }
 
-  const csvFileToArray = (string) => {
+  const csvFileToArray = (string: string): void => {
     const csvRows = string.slice(0, string.lastIndexOf('\n')).split('\n')
     const array = csvRows.map((i) => {
       return {
@@ -310,20 +307,20 @@ function Home() {
       }
     })
 
-    setRows((state) => [...state, ...array])
+    setRows((state: never[]): never[] => [...state, ...array])
   }
 
-  const handleLoadAttachments = (event) => {
+  const handleLoadAttachments = (event: object): void => {
     event.stopPropagation()
     const newItensAdded = Array.from(event.target.files)
     setAttachments([...attachments, ...newItensAdded])
   }
 
-  const handleLoadCsv = (event) => {
+  const handleLoadCsv = (event: object): void => {
     const fileReader = new FileReader()
     const file = event.target.files[0]
     if (file) {
-      fileReader.onload = (event) => {
+      fileReader.onload = (event: object): void => {
         const text = event.target.result
         csvFileToArray(text)
       }
@@ -362,7 +359,7 @@ function Home() {
       headerName: 'Status',
       align: 'center',
       width: 80,
-      renderCell: (params) => {
+      renderCell: (params: object): JSX.Element => {
         if (!params.value) {
           return <CancelIcon sx={{ color: pink[500] }} />
         }
@@ -374,8 +371,8 @@ function Home() {
       headerName: 'Ações',
       align: 'center',
       width: 140,
-      renderCell: (params) => {
-        const onClick = (e) => {
+      renderCell: (params: object): JSX.Element => {
+        const onClick = (e: object): void => {
           e.stopPropagation()
 
           setEditableContact(params.row)
@@ -387,7 +384,7 @@ function Home() {
           return
         }
 
-        const handleDelete = (e) => {
+        const handleDelete = (e: object): void => {
           e.stopPropagation()
 
           if (confirm(`Deseja remover este contato?\n${params.row.name} - ${params.row.phone}`)) {
@@ -414,7 +411,7 @@ function Home() {
             <Tooltip title="Enviar somente para este contato">
               <IconButton
                 color="success"
-                onClick={(event) => {
+                onClick={(event: object): void => {
                   event.stopPropagation()
                   handleSendSingleMessage(params.row)
                 }}
@@ -452,7 +449,7 @@ function Home() {
         autoHideDuration={snackbarMessage.severity === 'error' ? 30000 : 6000}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        TransitionComponent={(props) => <Slide {...props} direction="left" />}
+        TransitionComponent={(props): void => <Slide {...props} direction="left" />}
       >
         <Alert
           onClose={handleClose}
@@ -505,18 +502,18 @@ function Home() {
               label="Mensagem"
               id="message"
               name="message"
-              onSelect={(event) => {
+              onSelect={(): void => {
                 setSelectionStart(inputMessageRef?.current?.selectionStart)
               }}
               multiline
               rows={6}
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(e: object): void => setMessage(e.target.value)}
             />
             <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 2, mb: 2, gap: 1 }}>
               <Button
                 variant="contained"
-                onClick={() => {
+                onClick={(): void => {
                   setMessage(
                     [
                       message.slice(0, selectionStart),
@@ -530,7 +527,7 @@ function Home() {
               </Button>
               <Button
                 variant="contained"
-                onClick={() => {
+                onClick={(): void => {
                   setMessage(
                     [
                       message.slice(0, selectionStart),
@@ -544,7 +541,7 @@ function Home() {
               </Button>
               <Button
                 variant="contained"
-                onClick={() => {
+                onClick={(): void => {
                   setMessage(
                     [
                       message.slice(0, selectionStart),
@@ -558,7 +555,7 @@ function Home() {
               </Button>
               <Button
                 variant="contained"
-                onClick={() => {
+                onClick={(): void => {
                   setMessage(
                     [
                       message.slice(0, selectionStart),
@@ -572,7 +569,7 @@ function Home() {
               </Button>
               <Button
                 variant="contained"
-                onClick={() => {
+                onClick={(): void => {
                   setMessage(
                     [
                       message.slice(0, selectionStart),
@@ -586,7 +583,7 @@ function Home() {
               </Button>
               <Button
                 variant="contained"
-                onClick={() => {
+                onClick={(): void => {
                   setMessage(
                     [
                       message.slice(0, selectionStart),
@@ -600,7 +597,7 @@ function Home() {
               </Button>
               <Button
                 variant="contained"
-                onClick={() => {
+                onClick={(): void => {
                   setOpenEmoji(!openEmoji)
                 }}
               >
@@ -612,7 +609,7 @@ function Home() {
                   height="25em"
                   searchPlaceHolder="Pesquisar emojis..."
                   emojiVersion="3.0"
-                  onEmojiClick={(emoji) => {
+                  onEmojiClick={(emoji: object): void => {
                     setMessage(
                       [
                         message.slice(0, selectionStart),
@@ -644,7 +641,7 @@ function Home() {
                 accept=".pdf,.mp3,.wav,.ogg,.jpeg,.jpg,.png,.gif,.bmp,.tiff,.webp,.mp4,.mov,.avi,.3gp,.wmv,.mkv"
                 multiple
                 type="file"
-                onChange={(event) => handleLoadAttachments(event)}
+                onChange={(event: object): void => handleLoadAttachments(event)}
               />
             </Button>
             <Box
@@ -694,7 +691,7 @@ function Home() {
                       {item.name.length > 20 ? item.name.substr(0, 20) + '...' : item.name}
                     </Typography>
                     <Typography>{(item.size / (1024 * 1024)).toFixed(3)} Mb</Typography>
-                    <IconButton color="error" onClick={() => removeAttachment(index)}>
+                    <IconButton color="error" onClick={(): void => removeAttachment(index)}>
                       <FaTrash size={20} />
                     </IconButton>
                   </Box>
@@ -738,11 +735,11 @@ function Home() {
               name="phone"
               inputProps={{ maxLength: 15 }}
               value={formik.values.phone}
-              onChange={(e) => {
+              onChange={(e: object): void => {
                 e.target.value = celular(e.target.value)
                 formik.handleChange(e)
               }}
-              onBlur={(e) => {
+              onBlur={(e: object): void => {
                 e.target.value = celular(e.target.value)
                 formik.handleBlur(e)
               }}
@@ -761,7 +758,7 @@ function Home() {
             </Button>
             {isEditable && (
               <Button
-                onClick={() => {
+                onClick={(): void => {
                   formik.resetForm()
                   setisEditable(false)
                 }}
@@ -783,7 +780,7 @@ function Home() {
               accept=".csv"
               multiple
               type="file"
-              onChange={(event) => handleLoadCsv(event)}
+              onChange={(event: object): void => handleLoadCsv(event)}
             />
           </Button>
           {rows.length > 0 && (
@@ -792,7 +789,7 @@ function Home() {
                 variant="contained"
                 color="error"
                 startIcon={<FaTrash size={16} />}
-                onClick={() => {
+                onClick={(): void => {
                   if (confirm('Deseja remover todos os contatos da tabela de envios?')) {
                     setRows([])
                   }
@@ -804,7 +801,7 @@ function Home() {
                 variant="contained"
                 color="warning"
                 startIcon={<FaTrash size={16} />}
-                onClick={() => {
+                onClick={(): void => {
                   if (
                     confirm(
                       'Deseja remover todos os contatos que receberam mensagens da tabela de envios?'
@@ -823,7 +820,7 @@ function Home() {
 
         <Box sx={{ height: 500, w: '100%', mt: 4 }}>
           <DataGrid
-            onCellFocusOut={() => {}}
+            onCellFocusOut={(): void => console.log('Olha')}
             columnVisibilityModel={{
               id: false
             }}

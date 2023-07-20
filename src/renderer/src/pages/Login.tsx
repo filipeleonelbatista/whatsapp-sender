@@ -21,24 +21,24 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material'
-import { Box } from '@mui/system'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { Box } from '@mui/system'
+import { add, differenceInCalendarDays } from 'date-fns'
 import { useFormik } from 'formik'
 import React from 'react'
-import * as Yup from 'yup'
 import { FaWhatsapp } from 'react-icons/fa'
-import { useNavigate } from 'react-router'
-import { api, filterAssinantesByEmail } from '../services/api'
-import { add, differenceInCalendarDays } from 'date-fns'
 import QRCode from 'react-qr-code'
+import { useNavigate } from 'react-router'
+import * as Yup from 'yup'
+import { api, filterAssinantesByEmail } from '../services/api'
 
-export default function Login() {
+export default function Login(): JSX.Element {
   const [open, setOpen] = React.useState(false)
   const [QrCode, setQrCode] = React.useState('')
   const [plan, setPlan] = React.useState(0)
   const [licenseExpiration, setLicenseExpiration] = React.useState(false)
 
-  const handleInformPaymentReactivation = async () => {
+  const handleInformPaymentReactivation = async (): Promise<void> => {
     const message = `Olá gostaria de informar o pagamento do WPSender para o email ${
       formik.values.email
     } com o plano ${
@@ -63,7 +63,7 @@ export default function Login() {
     setQrCode('')
   }
 
-  const handleChangeQrCode = async (event) => {
+  const handleChangeQrCode = async (event: object): Promise<void> => {
     if (event.target.value === 0) {
       setQrCode(
         '00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b520400005303986540520.005802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062250521eN2bHtVplcyggdJ13l5he6304D991'
@@ -92,12 +92,12 @@ export default function Login() {
   const [mode, setMode] = React.useState('light')
 
   const [showPassword, setShowPassword] = React.useState(false)
-  const handleClickShowPassword = () => setShowPassword((show) => !show)
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClickShowPassword = (): void => setShowPassword((show) => !show)
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>): void => {
     event.preventDefault()
   }
 
-  const handleInformPayment = async () => {
+  const handleInformPayment = async (): Promise<void> => {
     const message = `Olá sou ${
       formik.values.name
     }, e gostaria de informar o pagamento do WPSender para o email ${
@@ -122,7 +122,7 @@ export default function Login() {
     )
   }
 
-  const handleSubmitForm = async (formValues) => {
+  const handleSubmitForm = async (formValues: object): Promise<void> => {
     try {
       setisLoading(true)
       const filterAssinantesByEmailObject = filterAssinantesByEmail(formValues.email)
@@ -164,6 +164,7 @@ export default function Login() {
       }
       console.log()
     } catch (error) {
+      console.log('erro', error)
     } finally {
       setisLoading(false)
     }
@@ -198,7 +199,6 @@ export default function Login() {
     const rememberInfo = localStorage.getItem('@remember')
     if (userInfo !== null) {
       if (rememberInfo !== null) {
-        const rememberStatus = rememberInfo
         if (rememberInfo === 'true') {
           const user = JSON.parse(userInfo)
           handleSubmitForm({ email: user.email, senha: user.senha, remember: true })
@@ -262,7 +262,7 @@ export default function Login() {
     <ThemeProvider theme={mode === 'light' ? mdTheme : mdThemeDark}>
       <Modal
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={(): void => setOpen(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -465,7 +465,7 @@ export default function Login() {
               <Typography variant="caption" sx={{ w: '100%', textAlign: 'center' }}>
                 Gostaria de ter acesso a aplicação?
               </Typography>
-              <Button type="button" onClick={() => navigate('/cadastrar')}>
+              <Button type="button" onClick={(): void => navigate('/cadastrar')}>
                 Quero me cadastrar!
               </Button>
               {waitingActivation && (
@@ -483,7 +483,7 @@ export default function Login() {
                   <Typography variant="caption" sx={{ w: '100%', textAlign: 'center' }}>
                     Faça sua renovação clicando no botão abaixo
                   </Typography>
-                  <Button type="button" variant="contained" onClick={() => setOpen(true)}>
+                  <Button type="button" variant="contained" onClick={(): void => setOpen(true)}>
                     Quero renovar
                   </Button>
                 </>

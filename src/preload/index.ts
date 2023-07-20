@@ -37,18 +37,20 @@ function delay(time: number): Promise<unknown> {
   })
 }
 
-let GlobalDriver: any
+let GlobalDriver: object
 
 // Custom APIs for renderer
 const api = {
   checkFilePath: (path: string): boolean => {
     return fs.existsSync(path)
   },
-  extractContacts: async (group_name: string, config: TimerConfiguration) => {
+  extractContacts: async (
+    group_name: string,
+    config: TimerConfiguration
+  ): Promise<ExtractionObject> => {
     const contacts_extracted: ExtractionObject[] = []
 
     log('Iniciando instancia do navegador')
-    const initiated_at = Date.now()
     const driver = await new Builder().forBrowser(Browser.CHROME).build()
 
     log('Abrindo Login Whatsapp')
@@ -56,9 +58,7 @@ const api = {
 
     try {
       log('Aguardando Validar a página de inicio')
-      const result = await driver.wait(
-        until.elementLocated(By.css("h1[data-testid='intro-title']"))
-      )
+      await driver.wait(until.elementLocated(By.css("h1[data-testid='intro-title']")))
 
       log('Autenticado')
       await delay(config.start)
@@ -86,14 +86,16 @@ const api = {
       const pq = await participants.getAttribute('value')
       console.log('participants', participants)
       log(`Aqui está o total de participantes ${pq}`)
-    } catch (error) {}
+    } catch (error) {
+      console.log('error', error)
+    }
 
     return contacts_extracted
   },
-  createGlobalInstanceOfDriver: async () => {
+  createGlobalInstanceOfDriver: async (): Promise<void> => {
     GlobalDriver = new Builder().forBrowser(Browser.CHROME).build()
   },
-  loginWhatsapp: async (config: TimerConfiguration) => {
+  loginWhatsapp: async (config: TimerConfiguration): Promise<void> => {
     log('Abrindo Login Whatsapp')
     await GlobalDriver.get(`https://web.whatsapp.com/`)
 
@@ -102,15 +104,18 @@ const api = {
     log('Autenticado')
     await delay(config.start)
   },
-  closeGlobalInstanceOfDriver: async () => {
+  closeGlobalInstanceOfDriver: async (): Promise<void> => {
     await GlobalDriver.quit()
   },
   sendMessage: async (
     contact: Contact,
     message: string,
-    attachments: any[],
+    attachments: Array<object>,
     config: TimerConfiguration
-  ) => {
+  ): Promise<{
+    status: boolean
+    error: string
+  }> => {
     try {
       const finalMessage = message
         .replaceAll('{primeiroNome}', contact.name.split(' ')[0])
@@ -241,12 +246,12 @@ const api = {
     }
   },
   initiateSendProcess: async (
-    rows: any[],
+    rows: Array<object>,
     message: string,
-    images: any[],
+    images: Array<object>,
     isNewLineReturnCharacter: boolean,
     config: TimerConfiguration
-  ) => {
+  ): Promise<object> => {
     log('Iniciando instancia do navegador')
     const initiated_at = Date.now()
 

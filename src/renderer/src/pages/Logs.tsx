@@ -1,15 +1,14 @@
-import { Box, IconButton, Typography } from '@mui/material'
-import { DataGrid, ptBR } from '@mui/x-data-grid'
-import React from 'react'
-import { FaEdit, FaEye, FaTrash } from 'react-icons/fa'
-import DrawerComponent from '../components/DrawerComponent'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import CancelIcon from '@mui/icons-material/Cancel'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import { Tooltip } from '@mui/material'
+import { Box, IconButton, Tooltip, Typography } from '@mui/material'
 import { pink } from '@mui/material/colors'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import { DataGrid, ptBR } from '@mui/x-data-grid'
+import React from 'react'
+import { FaEye } from 'react-icons/fa'
+import DrawerComponent from '../components/DrawerComponent'
 
-export default function Logs() {
+export default function Logs(): JSX.Element {
   const [isView, setIsView] = React.useState(false)
   const [rows, setRows] = React.useState([])
   const [selectedHistory, setSelectedHistory] = React.useState()
@@ -27,7 +26,7 @@ export default function Logs() {
       headerName: 'Status',
       align: 'center',
       width: 80,
-      renderCell: (params) => {
+      renderCell: (params: object): JSX.Element => {
         if (!params.value) {
           return <CancelIcon sx={{ color: pink[500] }} />
         }
@@ -44,7 +43,7 @@ export default function Logs() {
       field: 'initiated_at',
       headerName: 'Data de inicio',
       flex: 1,
-      renderCell: (params) => (
+      renderCell: (params: object): JSX.Element => (
         <Typography>
           {new Date(params.row.initiated_at).toLocaleDateString('pt-br', {
             year: 'numeric',
@@ -61,7 +60,7 @@ export default function Logs() {
       field: 'finalized_at',
       headerName: 'Data de termino',
       flex: 1,
-      renderCell: (params) => (
+      renderCell: (params: object): JSX.Element => (
         <Typography>
           {new Date(params.row.finalized_at).toLocaleDateString('pt-br', {
             year: 'numeric',
@@ -86,7 +85,7 @@ export default function Logs() {
       headerName: 'Status',
       align: 'center',
       width: 80,
-      renderCell: (params) => {
+      renderCell: (params: object): JSX.Element => {
         if (!params.value) {
           return <CancelIcon sx={{ color: pink[500] }} />
         }
@@ -98,8 +97,8 @@ export default function Logs() {
       headerName: 'Ações',
       align: 'center',
       width: 120,
-      renderCell: (params) => {
-        const onClick = (e) => {
+      renderCell: (params: object): JSX.Element => {
+        const onClick = (e: object): void => {
           e.stopPropagation()
           console.log('Log', params.row)
           setRows(params.row.rows)
@@ -119,7 +118,7 @@ export default function Logs() {
   ]
 
   React.useEffect(() => {
-    const executeAsync = async () => {
+    const executeAsync = async (): Promise<void> => {
       const response = localStorage.getItem('@logs')
 
       if (response === null) {
@@ -136,7 +135,7 @@ export default function Logs() {
       {isView ? (
         <>
           <IconButton
-            onClick={() => {
+            onClick={(): void => {
               setIsView(false)
               setRows([])
               setSelectedHistory(null)
@@ -180,7 +179,7 @@ export default function Logs() {
           <Typography variant="body1">Mensagem: {selectedHistory.message}</Typography>
           <Box sx={{ height: 400, w: '100%', mt: 4 }}>
             <DataGrid
-              onCellFocusOut={() => {}}
+              onCellFocusOut={(): void => console.log('Olha')}
               columnVisibilityModel={{
                 id: false
               }}
@@ -201,7 +200,7 @@ export default function Logs() {
 
           <Box sx={{ height: 400, w: '100%', mt: 4 }}>
             <DataGrid
-              onCellFocusOut={() => {}}
+              onCellFocusOut={(): void => console.log('Olha')}
               columnVisibilityModel={{
                 id: false
               }}

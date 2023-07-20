@@ -1,5 +1,3 @@
-import AddAPhotoIcon from '@mui/icons-material/AddAPhoto'
-import DeleteIcon from '@mui/icons-material/Delete'
 import SendIcon from '@mui/icons-material/Send'
 import { Box, Button, Grid, IconButton, TextField, Tooltip, Typography } from '@mui/material'
 import { DataGrid, ptBR } from '@mui/x-data-grid'
@@ -12,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid'
 import * as Yup from 'yup'
 import DrawerComponent from '../components/DrawerComponent'
 
-export default function MessageModels() {
+export default function MessageModels(): JSX.Element {
   const navigate = useNavigate()
 
   const [isEditable, setisEditable] = React.useState(false)
@@ -23,7 +21,7 @@ export default function MessageModels() {
   const [selectionStart, setSelectionStart] = React.useState()
   const inputMessageRef = React.useRef()
 
-  const handleSubmitForm = (formValues) => {
+  const handleSubmitForm = (formValues: object): void => {
     if (isEditable) {
       const newRowsArray = rows.filter((row) => row.id !== selectedEditableRow.id)
       newRowsArray.push({
@@ -77,8 +75,8 @@ export default function MessageModels() {
       headerName: 'Ações',
       align: 'center',
       width: 110,
-      renderCell: (params) => {
-        const onClick = (e) => {
+      renderCell: (params: object): JSX.Element => {
+        const onClick = (e: object): void => {
           e.stopPropagation()
           setisEditable(true)
           setSelectedEditableRow(params.row)
@@ -86,7 +84,7 @@ export default function MessageModels() {
           formik.setFieldValue('message', params.row.message)
         }
 
-        const handleDelete = (e) => {
+        const handleDelete = (e: object): void => {
           e.stopPropagation()
 
           if (confirm(`Deseja remover este modelo?`)) {
@@ -96,7 +94,7 @@ export default function MessageModels() {
           }
         }
 
-        const handleSelectedModel = (e) => {
+        const handleSelectedModel = (e: object): void => {
           e.stopPropagation()
           localStorage.setItem('@selected-messages-template', JSON.stringify(params.row))
           navigate('/envio-mensagens')
@@ -126,7 +124,7 @@ export default function MessageModels() {
   ]
 
   React.useState(() => {
-    const executeAsync = async () => {
+    const executeAsync = async (): Promise<void> => {
       const response = localStorage.getItem('@messages-template')
 
       if (response === null) {
@@ -165,7 +163,7 @@ export default function MessageModels() {
               label="Mensagem"
               id="message"
               name="message"
-              onSelect={(event) => {
+              onSelect={(): void => {
                 setSelectionStart(inputMessageRef?.current?.selectionStart)
               }}
               multiline
@@ -182,7 +180,7 @@ export default function MessageModels() {
             <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 2, mb: 2, gap: 1 }}>
               <Button
                 variant="contained"
-                onClick={() => {
+                onClick={(): void => {
                   formik.setFieldValue(
                     'message',
                     [
@@ -197,7 +195,7 @@ export default function MessageModels() {
               </Button>
               <Button
                 variant="contained"
-                onClick={() => {
+                onClick={(): void => {
                   formik.setFieldValue(
                     'message',
                     [
@@ -212,7 +210,7 @@ export default function MessageModels() {
               </Button>
               <Button
                 variant="contained"
-                onClick={() => {
+                onClick={(): void => {
                   formik.setFieldValue(
                     'message',
                     [
@@ -227,7 +225,7 @@ export default function MessageModels() {
               </Button>
               <Button
                 variant="contained"
-                onClick={() => {
+                onClick={(): void => {
                   formik.setFieldValue(
                     'message',
                     [
@@ -242,7 +240,7 @@ export default function MessageModels() {
               </Button>
               <Button
                 variant="contained"
-                onClick={() => {
+                onClick={(): void => {
                   formik.setFieldValue(
                     'message',
                     [
@@ -257,7 +255,7 @@ export default function MessageModels() {
               </Button>
               <Button
                 variant="contained"
-                onClick={() => {
+                onClick={(): void => {
                   formik.setFieldValue(
                     'message',
                     [
@@ -272,7 +270,7 @@ export default function MessageModels() {
               </Button>
               <Button
                 variant="contained"
-                onClick={() => {
+                onClick={(): void => {
                   setOpenEmoji(!openEmoji)
                 }}
               >
@@ -284,7 +282,7 @@ export default function MessageModels() {
                   height="25em"
                   searchPlaceHolder="Pesquisar emojis..."
                   emojiVersion="3.0"
-                  onEmojiClick={(emoji) => {
+                  onEmojiClick={(emoji: object): void => {
                     formik.setFieldValue(
                       'message',
                       [
@@ -322,7 +320,7 @@ export default function MessageModels() {
 
       <Box sx={{ height: 400, w: '100%', mt: 4 }}>
         <DataGrid
-          onCellFocusOut={() => {}}
+          onCellFocusOut={(): void => console.log('olha')}
           columnVisibilityModel={{
             id: false
           }}

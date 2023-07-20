@@ -2,7 +2,7 @@ import SyncIcon from '@mui/icons-material/Sync'
 import { Avatar, Box, Button, Typography } from '@mui/material'
 import DrawerComponent from '../components/DrawerComponent'
 
-export default function Profile() {
+export default function Profile(): JSX.Element {
   return (
     <DrawerComponent title="Perfil">
       <Typography variant="h4">Perfil</Typography>
@@ -36,7 +36,7 @@ export default function Profile() {
             </Typography>
 
             <Button
-              onClick={() => {}}
+              onClick={(): void => console.log('Necas de pitibiriba')}
               sx={{ width: '100%', mt: 2 }}
               variant="contained"
               startIcon={<SyncIcon />}

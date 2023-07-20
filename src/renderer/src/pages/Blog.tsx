@@ -1,23 +1,29 @@
-import { Button, CardMedia, Divider, Paper, Typography } from '@mui/material'
+import {
+  CardMedia,
+  Divider,
+  ListItemButton,
+  ListItemText,
+  Tooltip,
+  Typography
+} from '@mui/material'
+import List from '@mui/material/List'
 import { Box } from '@mui/system'
+import { format } from 'date-fns'
 import React from 'react'
 import DrawerComponent from '../components/DrawerComponent'
 import { api, getLast5Posts, getLast5PostsByCategory, listCategories } from '../services/api'
-import List from '@mui/material/List'
-import { ListItemButton, ListItemIcon, ListItemText, Tooltip } from '@mui/material'
-import { format } from 'date-fns'
 
-export default function Blog() {
+export default function Blog(): JSX.Element {
   const [categories, setCategories] = React.useState([])
   const [posts, setPosts] = React.useState([])
 
-  const handleLoadPostsByCategory = async (id) => {
+  const handleLoadPostsByCategory = async (id: string): Promise<void> => {
     const postsResponse = await api.post('', getLast5PostsByCategory(id))
     setPosts(postsResponse.data.data.categoria.posts)
   }
 
   React.useEffect(() => {
-    const executeAsync = async () => {
+    const executeAsync = async (): Promise<void> => {
       const categoriesResponse = await api.post('', listCategories)
       setCategories(categoriesResponse.data.data.categorias)
 
@@ -42,7 +48,7 @@ export default function Blog() {
           <List component="nav">
             {categories.map((cat) => (
               <Tooltip key={cat.id} placement="right" title={cat.nome}>
-                <ListItemButton onClick={() => handleLoadPostsByCategory(cat.id)}>
+                <ListItemButton onClick={(): void => handleLoadPostsByCategory(cat.id)}>
                   <ListItemText primary={cat.nome} />
                 </ListItemButton>
               </Tooltip>
@@ -56,57 +62,61 @@ export default function Blog() {
               <Typography variant="body1">Em breva você verá conteúdos de valor aqui!</Typography>
             </Box>
           )}
-          {posts.map((post) => (
-            <Box
-              key={post.id}
-              sx={{
-                width: '100%',
-                p: 2,
-                mt: 4,
-                boxShadow: 3,
-                backgroundColor: (theme) =>
-                  theme.palette.mode === 'light'
-                    ? theme.palette.grey[100]
-                    : theme.palette.grey[900],
-                borderRadius: 2
-              }}
-            >
-              <Typography variant="h4">{post.title}</Typography>
-              <Divider />
-              <Box sx={{ mt: 1, mb: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                <Typography variant="caption">
-                  <b>Publicado em:</b> {format(new Date(post.publishedAt), 'dd/MM/yyyy HH:mm')}
-                </Typography>
-                <Typography variant="caption">
-                  <b>Categorias:</b>{' '}
-                  {post.categorias?.map((cat) => (
-                    <span style={{ marginRight: '8px' }} key={cat.id}>
-                      {cat.nome}
-                    </span>
-                  ))}
-                </Typography>
-              </Box>
-              <CardMedia
-                image={post.featuredImage.url}
-                style={{ borderRadius: 4, width: '100%', height: 350 }}
-              />
-              <Typography
-                component="div"
+          {posts.map(
+            (post: object): JSX.Element => (
+              <Box
+                key={post.id}
                 sx={{
-                  '& > img': {
-                    width: '100%',
-                    heigth: 'auto',
-                    borderRadius: 2,
-                    boxShadow: 2
-                  }
+                  width: '100%',
+                  p: 2,
+                  mt: 4,
+                  boxShadow: 3,
+                  backgroundColor: (theme) =>
+                    theme.palette.mode === 'light'
+                      ? theme.palette.grey[100]
+                      : theme.palette.grey[900],
+                  borderRadius: 2
                 }}
-                variant="body2"
-                dangerouslySetInnerHTML={{
-                  __html: post.content.html
-                }}
-              ></Typography>
-            </Box>
-          ))}
+              >
+                <Typography variant="h4">{post.title}</Typography>
+                <Divider />
+                <Box sx={{ mt: 1, mb: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                  <Typography variant="caption">
+                    <b>Publicado em:</b> {format(new Date(post.publishedAt), 'dd/MM/yyyy HH:mm')}
+                  </Typography>
+                  <Typography variant="caption">
+                    <b>Categorias:</b>{' '}
+                    {post.categorias?.map(
+                      (cat: object): JSX.Element => (
+                        <span style={{ marginRight: '8px' }} key={cat.id}>
+                          {cat.nome}
+                        </span>
+                      )
+                    )}
+                  </Typography>
+                </Box>
+                <CardMedia
+                  image={post.featuredImage.url}
+                  style={{ borderRadius: 4, width: '100%', height: 350 }}
+                />
+                <Typography
+                  component="div"
+                  sx={{
+                    '& > img': {
+                      width: '100%',
+                      heigth: 'auto',
+                      borderRadius: 2,
+                      boxShadow: 2
+                    }
+                  }}
+                  variant="body2"
+                  dangerouslySetInnerHTML={{
+                    __html: post.content.html
+                  }}
+                ></Typography>
+              </Box>
+            )
+          )}
         </Box>
       </Box>
     </DrawerComponent>

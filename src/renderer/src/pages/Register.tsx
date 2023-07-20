@@ -33,7 +33,7 @@ import { api, createAssinante, getVersions } from '../services/api'
 import QRCode from 'react-qr-code'
 import { VERSION } from '../constants/application'
 
-export default function Register() {
+export default function Register(): JSX.Element {
   const [isLoading, setisLoading] = React.useState(false)
   const navigate = useNavigate()
   const [mode, setMode] = React.useState('light')
@@ -41,15 +41,15 @@ export default function Register() {
   const [open, setOpen] = React.useState(false)
   const [QrCode, setQrCode] = React.useState('')
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show)
+  const handleClickShowPassword = (): void => setShowPassword((show) => !show)
 
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>): void => {
     event.preventDefault()
   }
 
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false)
 
-  const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show)
+  const handleClickShowConfirmPassword = (): void => setShowConfirmPassword((show) => !show)
 
   const style = {
     position: 'absolute' as const,
@@ -57,7 +57,7 @@ export default function Register() {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 400,
-    backgroundColor: (theme) =>
+    backgroundColor: (theme): void =>
       theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
     border: 'none',
     borderRadius: 4,
@@ -65,7 +65,7 @@ export default function Register() {
     p: 4
   }
 
-  const handleSubmitForm = async (formValues) => {
+  const handleSubmitForm = async (formValues): Promise<void> => {
     if (!formValues.accept_terms) {
       alert('Para acessar é necessário aceitar os Termos e Condições do app!')
       return
@@ -84,10 +84,10 @@ export default function Register() {
       is_active: false
     }
 
-    const versionResponse = (await api.post('', getVersions)) as any
+    const versionResponse = (await api.post('', getVersions)) as object
 
     const applicationVersionIndex = versionResponse.data.data.applicationVersions.findIndex(
-      (version: any) => {
+      (version: object) => {
         return version.versionNumber === VERSION
       }
     )
@@ -247,7 +247,7 @@ export default function Register() {
     }
   })
 
-  const handleInformPayment = async () => {
+  const handleInformPayment = async (): Promise<void> => {
     const message = `Olá sou ${
       formik.values.name
     }, e gostaria de informar o pagamento do WPSender para o email ${
@@ -319,7 +319,7 @@ export default function Register() {
       )}
       <Modal
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={(): void => setOpen(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -519,7 +519,7 @@ export default function Register() {
                 <Typography variant="caption" sx={{ w: '100%', textAlign: 'center' }}>
                   Já tem login?
                 </Typography>
-                <Button type="button" onClick={() => navigate('/')}>
+                <Button type="button" onClick={(): void => navigate('/')}>
                   Entrar no sistema!
                 </Button>
               </form>

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import {
   Button,
   Card,
@@ -42,7 +44,7 @@ import Snackbar from '@mui/material/Snackbar'
 
 import celular from '../utils/masks'
 
-export default function Onboarding() {
+export default function Onboarding(): JSX.Element {
   const navigate = useNavigate()
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
   const [mode, setMode] = React.useState('light')
@@ -56,11 +58,11 @@ export default function Onboarding() {
     severity: 'error'
   })
 
-  const handleClick = () => {
+  const handleClick = (): void => {
     setOpenSnackBar(true)
   }
 
-  const handleClose = (event, reason) => {
+  const handleClose = (_event: object, reason: string): void => {
     if (reason === 'clickaway') {
       return
     }
@@ -72,7 +74,7 @@ export default function Onboarding() {
     localStorage.setItem('@onboarding-step', JSON.stringify(stepPosition))
   }, [stepPosition])
 
-  const finishConfig = async () => {
+  const finishConfig = async (): Promise<void> => {
     localStorage.setItem('@show-onboarding', JSON.stringify(true))
     localStorage.setItem('@onboarding-step', '0')
     navigate('/envio-mensagens')
@@ -87,7 +89,7 @@ export default function Onboarding() {
     finalize_send: 5000
   })
 
-  const handleSubmitForm = async (formValues: any) => {
+  const handleSubmitForm = async (formValues: object): Promise<void> => {
     const message = 'Estou enviando um teste do meu app WhatsApp Sender Bot'
     const contact = {
       id: '1',
@@ -242,13 +244,13 @@ export default function Onboarding() {
     }
   }, [])
 
-  const handleNext = () => {
+  const handleNext = (): void => {
     if (stepPosition + 1 > steps.length - 1) return
 
     setStepPosition(stepPosition + 1)
   }
 
-  const handlePrevious = () => {
+  const handlePrevious = (): void => {
     if (stepPosition - 1 < 0) return
     setStepPosition(stepPosition - 1)
   }
@@ -827,11 +829,11 @@ export default function Onboarding() {
               name="phone"
               inputProps={{ maxLength: 15 }}
               value={formik.values.phone}
-              onChange={(e) => {
+              onChange={(e): void => {
                 e.target.value = celular(e.target.value)
                 formik.handleChange(e)
               }}
-              onBlur={(e) => {
+              onBlur={(e): void => {
                 e.target.value = celular(e.target.value)
                 formik.handleBlur(e)
               }}
@@ -1018,7 +1020,7 @@ export default function Onboarding() {
         autoHideDuration={snackbarMessage.severity === 'error' ? 30000 : 6000}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        TransitionComponent={(props) => <Slide {...props} direction="left" />}
+        TransitionComponent={(props): Element => <Slide {...props} direction="left" />}
       >
         <Alert
           onClose={handleClose}

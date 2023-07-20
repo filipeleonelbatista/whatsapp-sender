@@ -21,17 +21,18 @@ import * as Yup from 'yup'
 import DrawerComponent from '../components/DrawerComponent'
 import { useNavigate } from 'react-router-dom'
 
-export default function Settings() {
+export default function Settings(): JSX.Element {
   const [user, setUser] = useState()
   const [open, setOpen] = useState(false)
   const [QrCode, setQrCode] = useState('')
   const [plan, setPlan] = useState(0)
   const navigate = useNavigate()
 
-  const handleInformPayment = async () => {
+  const handleInformPayment = async (): Promise<void> => {
     const message = `Olá sou ${
       user?.nome
-    }, e gostaria de informar o pagamento do WPSender para o email ${user?.email} com o plano ${
+    }, e gostaria de informar o pagamento do WPSender para o email ${user?.email} com o plano 
+    ${
       plan === 1
         ? 'Mensal R$ 10,00'
         : plan === 2
@@ -51,7 +52,7 @@ export default function Settings() {
     setQrCode('')
   }
 
-  const handleChangeQrCode = async (event) => {
+  const handleChangeQrCode = async (event): Promise<void> => {
     if (Number(event.target.value) === 1) {
       setQrCode(
         '00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b520400005303986540510.005802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062160512NUbJF4xOYcz56304C81C'
@@ -144,7 +145,7 @@ export default function Settings() {
     <DrawerComponent title="Configurações">
       <Modal
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={(): void => setOpen(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -234,7 +235,12 @@ export default function Settings() {
             Sua licença está prestes a expirar, adiquira já uma nova licensa e evite ficar sem
             enviar mensagens.
           </Typography>
-          <Button type="button" variant="contained" color="primary" onClick={() => setOpen(true)}>
+          <Button
+            type="button"
+            variant="contained"
+            color="primary"
+            onClick={(): void => setOpen(true)}
+          >
             Renovar licença
           </Button>
         </Box>
@@ -249,7 +255,7 @@ export default function Settings() {
         }}
       >
         <Button
-          onClick={() => navigate('/onboarding')}
+          onClick={(): void => navigate('/onboarding')}
           variant="contained"
           sx={{ maxWidth: '240px', mt: 2 }}
         >

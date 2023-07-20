@@ -31,7 +31,7 @@ const getVersions = {
     `
 }
 
-const filterAssinantesByEmail = (email: string) => {
+const filterAssinantesByEmail = (email: string): object => {
   return {
     query: `
       query filterAssinantesByEmail {
@@ -81,7 +81,7 @@ const createAssinante = (
   selectedPlan: number,
   isActive: boolean,
   paymentDate: string | null
-) => {
+): object => {
   return {
     query: `mutation {
                 createAssinante(
@@ -139,7 +139,7 @@ const getLast5Posts = {
   `
 }
 
-const getLast5PostsByCategory = (id: string) => {
+const getLast5PostsByCategory = (id: string): object => {
   return {
     query: `
       query getLast5PostsByCategory {

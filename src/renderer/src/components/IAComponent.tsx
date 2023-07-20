@@ -1,25 +1,25 @@
 import {
-  IconButton,
-  Tooltip,
   Box,
-  TextField,
   Button,
-  Typography,
-  CircularProgress
+  CircularProgress,
+  IconButton,
+  TextField,
+  Tooltip,
+  Typography
 } from '@mui/material'
-import { GoPaperAirplane } from 'react-icons/go'
+import { useState } from 'react'
 import { BiBot } from 'react-icons/bi'
 import { FiUser } from 'react-icons/fi'
-import { useState } from 'react'
+import { GoPaperAirplane } from 'react-icons/go'
 
 import { Configuration, OpenAIApi } from 'openai'
 
-export default function IAComponent() {
+export default function IAComponent(): JSX.Element {
   const [inputText, setInputText] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const [data, setData] = useState<any>([])
+  const [data, setData] = useState<Array<object>>([])
 
   const configuration = new Configuration({
     apiKey: ''
@@ -27,7 +27,7 @@ export default function IAComponent() {
 
   const openai = new OpenAIApi(configuration)
 
-  const openaiErrorHandler = (error) => {
+  const openaiErrorHandler = (error: object): string => {
     // https://platform.openai.com/docs/guides/error-codes/api-errors
     switch (error.response.status) {
       case 400:
@@ -45,7 +45,7 @@ export default function IAComponent() {
     }
   }
 
-  const handleAskToAi = async () => {
+  const handleAskToAi = async (): Promise<void> => {
     try {
       setIsLoading(true)
 
@@ -277,14 +277,14 @@ export default function IAComponent() {
           label="Digite sua pergunta aqui..."
           variant="outlined"
           value={inputText}
-          onChange={(event) => setInputText(event.target.value)}
+          onChange={(event: object): void => setInputText(event.target.value)}
           helperText={error}
           error={!!error}
         />
         <Tooltip title="Enviar mensagem">
           <IconButton
             size={'large'}
-            onClick={() => {
+            onClick={(): void => {
               if (inputText.length === 0) {
                 setError('Precisa digitar uma mensagem antes de enivar.')
               } else {

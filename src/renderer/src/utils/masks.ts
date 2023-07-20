@@ -1,4 +1,4 @@
-export default function celular(value: any): string {
+export default function celular(value: string): string {
   const valueNumber = parseInt(value.replace(/\D/g, ''))
   let newValue = valueNumber.toString().replace(/\D/g, '')
   newValue = newValue.replace(/^(\d{2})(\d)/g, '($1) $2')
