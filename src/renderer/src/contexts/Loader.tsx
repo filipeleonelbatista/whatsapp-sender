@@ -1,12 +1,10 @@
-import * as React from 'react';
+import * as React from 'react'
 
 export interface LoaderContextData {
-  addLoader(): void;
-  removeLoader(): void;
+  addLoader(): void
+  removeLoader(): void
 }
 
-const LoaderContext = React.createContext<LoaderContextData>(
-  {} as LoaderContextData
-);
+const LoaderContext = React.createContext<LoaderContextData>({} as LoaderContextData)
 
-export default LoaderContext;
+export default LoaderContext

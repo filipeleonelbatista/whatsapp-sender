@@ -1,31 +1,28 @@
-import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd'
+import { Box, Button, IconButton, Typography } from '@mui/material'
+import { DataGrid, ptBR } from '@mui/x-data-grid'
+import React from 'react'
+import { FaEdit, FaPlay, FaTrash } from 'react-icons/fa'
+import DrawerComponent from '../components/DrawerComponent'
+
+import AccountCircle from '@mui/icons-material/AccountCircle'
+import CancelIcon from '@mui/icons-material/Cancel'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import TableChartIcon from '@mui/icons-material/TableChart'
+import WhatsAppIcon from '@mui/icons-material/WhatsApp'
+import { InputAdornment, TextField, Tooltip } from '@mui/material'
+import { pink } from '@mui/material/colors'
 import {
-  Box,
-  Button, IconButton, Typography
-} from '@mui/material';
-import { DataGrid, ptBR } from '@mui/x-data-grid';
-import React from 'react';
-import { FaEdit, FaPlay, FaTrash } from 'react-icons/fa';
-import DrawerComponent from "../components/DrawerComponent";
+  GridCsvExportMenuItem,
+  GridPrintExportMenuItem,
+  GridToolbarExportContainer
+} from '@mui/x-data-grid'
+import { useFormik } from 'formik'
+import { v4 as uuidv4 } from 'uuid'
+import * as Yup from 'yup'
 
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import TableChartIcon from '@mui/icons-material/TableChart';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import {
-  InputAdornment, TextField, Tooltip
-} from '@mui/material';
-import { pink } from '@mui/material/colors';
-import { GridCsvExportMenuItem, GridPrintExportMenuItem, GridToolbarExportContainer } from '@mui/x-data-grid';
-import { useFormik } from 'formik';
-import { v4 as uuidv4 } from 'uuid';
-import * as Yup from 'yup';
-
-
-import celular from '../utils/masks';
-import { useNavigate } from 'react-router-dom';
-
+import celular from '../utils/masks'
+import { useNavigate } from 'react-router-dom'
 
 const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
   <GridToolbarExportContainer {...other}>
@@ -34,43 +31,44 @@ const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
         ...csvOptions,
         fileName: 'customerDataBase',
         delimiter: ';',
-        utf8WithBom: true,
-      }} />
+        utf8WithBom: true
+      }}
+    />
     <GridPrintExportMenuItem
       options={{
         ...printOptions,
         hideFooter: true,
         hideToolbar: true,
-        pageStyle: '.MuiDataGrid-root .MuiDataGrid-main { color: rgba(0, 0, 0, 0.87); padding: 2px }',
+        pageStyle:
+          '.MuiDataGrid-root .MuiDataGrid-main { color: rgba(0, 0, 0, 0.87); padding: 2px }'
       }}
     />
   </GridToolbarExportContainer>
-);
+)
 
 export default function ContactLists() {
   const navigate = useNavigate()
 
-  const [rows, setRows] = React.useState([]);
-  const [selectedListForEdition, setSelectedListForEdition] = React.useState();
+  const [rows, setRows] = React.useState([])
+  const [selectedListForEdition, setSelectedListForEdition] = React.useState()
 
-  const [title, setTitle] = React.useState("");
+  const [title, setTitle] = React.useState('')
 
-  const [open, setOpen] = React.useState(false);
-  const [isEditable, setisEditable] = React.useState(false);
+  const [open, setOpen] = React.useState(false)
+  const [isEditable, setisEditable] = React.useState(false)
 
   const handleSubmitForm = (formValues) => {
     if (isEditable) {
-      const newRowsArray = rows.filter(row => row.id !== editableContact.id)
+      const newRowsArray = rows.filter((row) => row.id !== editableContact.id)
       newRowsArray.push({
         ...editableContact,
         name: formValues.name,
         phone: formValues.phone
       })
 
-      setRows(newRowsArray);
-      setisEditable(false);
-      formik.resetForm();
-
+      setRows(newRowsArray)
+      setisEditable(false)
+      formik.resetForm()
     } else {
       setRows((state) => [
         ...state,
@@ -79,16 +77,16 @@ export default function ContactLists() {
           name: formValues.name,
           phone: formValues.phone,
           status: false,
-          statusInfo: 'Aguardando envio',
-        },
-      ]);
+          statusInfo: 'Aguardando envio'
+        }
+      ])
 
-      formik.resetForm();
+      formik.resetForm()
     }
-  };
+  }
 
   const csvFileToArray = (string) => {
-    const csvRows = string.slice(0, string.lastIndexOf('\n')).split('\n');
+    const csvRows = string.slice(0, string.lastIndexOf('\n')).split('\n')
     const array = csvRows.map((i) => {
       return {
         id: uuidv4(),
@@ -98,45 +96,42 @@ export default function ContactLists() {
         var2: i.replace('\r', '').split(';')[3],
         var3: i.replace('\r', '').split(';')[4],
         status: false,
-        statusInfo: 'Aguardando envio',
-      };
-    });
+        statusInfo: 'Aguardando envio'
+      }
+    })
 
-    setRows((state) => [...state, ...array]);
-  };
+    setRows((state) => [...state, ...array])
+  }
 
   const handleLoadCsv = (event) => {
-    const fileReader = new FileReader();
-    const file = event.target.files[0];
+    const fileReader = new FileReader()
+    const file = event.target.files[0]
     if (file) {
       fileReader.onload = (event) => {
-        const text = event.target.result;
-        csvFileToArray(text);
-      };
-      fileReader.readAsText(file);
+        const text = event.target.result
+        csvFileToArray(text)
+      }
+      fileReader.readAsText(file)
     }
-  };
+  }
 
   const formSchema = React.useMemo(() => {
     return Yup.object().shape({
       name: Yup.string().required('Nome é obrigatório!').label('Nome'),
-      phone: Yup.string()
-        .required('Whatsapp é obrigatório!')
-        .label('WhatsApp')
-        .min(14),
-    });
-  }, []);
+      phone: Yup.string().required('Whatsapp é obrigatório!').label('WhatsApp').min(14)
+    })
+  }, [])
 
   const formik = useFormik({
     initialValues: {
       name: '',
-      phone: '',
+      phone: ''
     },
     validationSchema: formSchema,
     onSubmit: (values) => {
-      handleSubmitForm(values);
-    },
-  });
+      handleSubmitForm(values)
+    }
+  })
 
   const columns = [
     { field: 'id', headerName: 'Id', flex: 1 },
@@ -153,10 +148,10 @@ export default function ContactLists() {
       width: 80,
       renderCell: (params) => {
         if (!params.value) {
-          return <CancelIcon sx={{ color: pink[500] }} />;
+          return <CancelIcon sx={{ color: pink[500] }} />
         }
-        return <CheckCircleIcon color="success" />;
-      },
+        return <CheckCircleIcon color="success" />
+      }
     },
     {
       field: 'actions',
@@ -165,27 +160,27 @@ export default function ContactLists() {
       width: 80,
       renderCell: (params) => {
         const onClick = (e) => {
-          e.stopPropagation();
+          e.stopPropagation()
 
           setEditableContact(params.row)
           setisEditable(true)
 
-          formik.setFieldValue("name", params.row.name)
-          formik.setFieldValue("phone", params.row.phone)
+          formik.setFieldValue('name', params.row.name)
+          formik.setFieldValue('phone', params.row.phone)
 
-          return;
-        };
+          return
+        }
 
         const handleDelete = (e) => {
-          e.stopPropagation();
+          e.stopPropagation()
 
           if (confirm(`Deseja remover este contato?\n${params.row.name} - ${params.row.phone}`)) {
-            const newRowsArray = rows.filter(row => row.id !== params.row.id)
+            const newRowsArray = rows.filter((row) => row.id !== params.row.id)
             setRows(newRowsArray)
           }
 
-          return;
-        };
+          return
+        }
 
         return (
           <>
@@ -200,12 +195,12 @@ export default function ContactLists() {
               </IconButton>
             </Tooltip>
           </>
-        );
-      },
-    },
-  ];
+        )
+      }
+    }
+  ]
 
-  const [contactLists, setContactLists] = React.useState([]);
+  const [contactLists, setContactLists] = React.useState([])
 
   const columnsList = [
     { field: 'id', headerName: 'Id', flex: 1 },
@@ -214,11 +209,7 @@ export default function ContactLists() {
       field: 'rows',
       headerName: 'Qtd Contatos',
       flex: 1,
-      renderCell: (params) => (
-        <Typography>
-          {params.row.rows.length}
-        </Typography>
-      )
+      renderCell: (params) => <Typography>{params.row.rows.length}</Typography>
     },
     {
       field: 'actions',
@@ -227,29 +218,29 @@ export default function ContactLists() {
       width: 120,
       renderCell: (params) => {
         const onClick = (e) => {
-          e.stopPropagation();
+          e.stopPropagation()
 
           setSelectedListForEdition(params.row)
           setRows(params.row.rows)
           setTitle(params.row.title)
           setOpen(true)
-        };
+        }
 
         const handleDelete = (e) => {
-          e.stopPropagation();
+          e.stopPropagation()
 
           if (confirm(`Deseja remover esta lista de contatos contato?\n${params.row.title}`)) {
-            const newRowsArray = contactLists.filter(row => row.id !== params.row.id)
+            const newRowsArray = contactLists.filter((row) => row.id !== params.row.id)
             setContactLists(newRowsArray)
             localStorage.setItem('@contact-lists', JSON.stringify(newRowsArray))
           }
-        };
+        }
 
         const handleSelectedModel = (e) => {
-          e.stopPropagation();
-          localStorage.setItem("@selected-contact-list", JSON.stringify(params.row.rows))
-          navigate("/envio-mensagens")
-        };
+          e.stopPropagation()
+          localStorage.setItem('@selected-contact-list', JSON.stringify(params.row.rows))
+          navigate('/envio-mensagens')
+        }
 
         return (
           <>
@@ -269,17 +260,17 @@ export default function ContactLists() {
               </IconButton>
             </Tooltip>
           </>
-        );
-      },
-    },
-  ];
+        )
+      }
+    }
+  ]
 
   React.useEffect(() => {
     const executeAsync = async () => {
-      const response = localStorage.getItem("@contact-lists")
+      const response = localStorage.getItem('@contact-lists')
 
       if (response === null) {
-        localStorage.setItem("@contact-lists", JSON.stringify([]))
+        localStorage.setItem('@contact-lists', JSON.stringify([]))
       } else {
         setContactLists(JSON.parse(response))
       }
@@ -288,14 +279,11 @@ export default function ContactLists() {
   }, [])
 
   return (
-
-    <DrawerComponent title={open ? "Criar lista de contatos" : "Listas de contatos"}>
+    <DrawerComponent title={open ? 'Criar lista de contatos' : 'Listas de contatos'}>
       {open ? (
         <>
           <Typography variant="h4">Criar lista de contatos</Typography>
-          <Typography variant="body1">
-            Crie sua lista de contatos conforme desejar
-          </Typography>
+          <Typography variant="body1">Crie sua lista de contatos conforme desejar</Typography>
           <Box sx={{ display: 'flex', mt: 4, mb: 4, gap: 2 }}>
             <TextField
               label="Nome da lista"
@@ -304,7 +292,9 @@ export default function ContactLists() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               error={title === ''}
-              helperText={title === '' ? "Coloque nome na lista de contatos" : "Nome da lista de contatos"}
+              helperText={
+                title === '' ? 'Coloque nome na lista de contatos' : 'Nome da lista de contatos'
+              }
             />
           </Box>
           <Box sx={{ display: 'flex', mt: 4, mb: 4, gap: 2 }}>
@@ -316,7 +306,7 @@ export default function ContactLists() {
                 const data = {
                   id: uuidv4(),
                   title: title === '' ? 'Lista de contatos' : title,
-                  rows,
+                  rows
                 }
 
                 setContactLists([...contactLists, data])
@@ -356,7 +346,7 @@ export default function ContactLists() {
                     <InputAdornment position="start">
                       <AccountCircle />
                     </InputAdornment>
-                  ),
+                  )
                 }}
               />
               <TextField
@@ -366,12 +356,12 @@ export default function ContactLists() {
                 inputProps={{ maxLength: 15 }}
                 value={formik.values.phone}
                 onChange={(e) => {
-                  e.target.value = celular(e.target.value);
-                  formik.handleChange(e);
+                  e.target.value = celular(e.target.value)
+                  formik.handleChange(e)
                 }}
                 onBlur={(e) => {
-                  e.target.value = celular(e.target.value);
-                  formik.handleBlur(e);
+                  e.target.value = celular(e.target.value)
+                  formik.handleBlur(e)
                 }}
                 error={!!formik.errors.phone}
                 helperText={formik.errors.phone}
@@ -380,17 +370,22 @@ export default function ContactLists() {
                     <InputAdornment position="start">
                       <WhatsAppIcon />
                     </InputAdornment>
-                  ),
+                  )
                 }}
               />
               <Button type="submit" variant="contained">
                 {isEditable ? 'Salvar' : 'Adicionar'}
               </Button>
               {isEditable && (
-                <Button onClick={() => {
-                  formik.resetForm()
-                  setisEditable(false)
-                }} type="button" color="error" variant="contained">
+                <Button
+                  onClick={() => {
+                    formik.resetForm()
+                    setisEditable(false)
+                  }}
+                  type="button"
+                  color="error"
+                  variant="contained"
+                >
                   Cancelar
                 </Button>
               )}
@@ -398,11 +393,7 @@ export default function ContactLists() {
           </form>
 
           <Box sx={{ display: 'flex', mt: 4, gap: 4 }}>
-            <Button
-              variant="contained"
-              component="label"
-              startIcon={<TableChartIcon />}
-            >
+            <Button variant="contained" component="label" startIcon={<TableChartIcon />}>
               Carregar CSV
               <input
                 hidden
@@ -417,7 +408,7 @@ export default function ContactLists() {
               color="error"
               startIcon={<FaTrash size={16} />}
               onClick={() => {
-                if (confirm("Deseja remover todos os contatos da tabela de envios?")) {
+                if (confirm('Deseja remover todos os contatos da tabela de envios?')) {
                   setRows([])
                 }
               }}
@@ -428,9 +419,9 @@ export default function ContactLists() {
 
           <Box sx={{ height: 400, w: '100%', mt: 4 }}>
             <DataGrid
-              onCellFocusOut={() => { }}
+              onCellFocusOut={() => {}}
               columnVisibilityModel={{
-                id: false,
+                id: false
               }}
               columns={columns}
               rows={rows}
@@ -442,8 +433,8 @@ export default function ContactLists() {
               components={{ Toolbar: GridToolbarExport }}
               sx={{
                 '@media print': {
-                  '.MuiDataGrid-main': { color: 'rgba(0, 0, 0, 0.87)' },
-                },
+                  '.MuiDataGrid-main': { color: 'rgba(0, 0, 0, 0.87)' }
+                }
               }}
             />
           </Box>
@@ -451,9 +442,7 @@ export default function ContactLists() {
       ) : (
         <>
           <Typography variant="h4">Listas de contatos</Typography>
-          <Typography variant="body1">
-            Crie listas para usar no envio de mensagens
-          </Typography>
+          <Typography variant="body1">Crie listas para usar no envio de mensagens</Typography>
           <Box sx={{ display: 'flex', mt: 4, gap: 4 }}>
             <Button
               variant="contained"
@@ -471,9 +460,9 @@ export default function ContactLists() {
           </Box>
           <Box sx={{ height: 400, w: '100%', mt: 4 }}>
             <DataGrid
-              onCellFocusOut={() => { }}
+              onCellFocusOut={() => {}}
               columnVisibilityModel={{
-                id: false,
+                id: false
               }}
               columns={columnsList}
               rows={contactLists}
@@ -484,10 +473,8 @@ export default function ContactLists() {
               localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
             />
           </Box>
-
         </>
-      )
-      }
-    </DrawerComponent >
-  );
+      )}
+    </DrawerComponent>
+  )
 }

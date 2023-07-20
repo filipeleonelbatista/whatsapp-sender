@@ -1,14 +1,14 @@
-import { useContext } from 'react';
-import LoaderContext, { LoaderContextData } from '../contexts/Loader';
+import { useContext } from 'react'
+import LoaderContext, { LoaderContextData } from '../contexts/Loader'
 
 const useLoader = (): LoaderContextData => {
-  const context = useContext(LoaderContext);
+  const context = useContext(LoaderContext)
 
   if (!context) {
-    throw new Error("Contexto do loader nao foi criado");
+    throw new Error('Contexto do loader nao foi criado')
   }
 
-  return context;
-};
+  return context
+}
 
-export default useLoader;
+export default useLoader

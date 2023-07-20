@@ -1,11 +1,11 @@
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import CancelIcon from '@mui/icons-material/Cancel';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SendIcon from '@mui/icons-material/Send';
-import TableChartIcon from '@mui/icons-material/TableChart';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import AccountCircle from '@mui/icons-material/AccountCircle'
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto'
+import CancelIcon from '@mui/icons-material/Cancel'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import DeleteIcon from '@mui/icons-material/Delete'
+import SendIcon from '@mui/icons-material/Send'
+import TableChartIcon from '@mui/icons-material/TableChart'
+import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import {
   Alert,
   AlertTitle,
@@ -15,25 +15,35 @@ import {
   circularProgressClasses,
   Grid,
   IconButton,
-  InputAdornment, Slide, TextField, Tooltip, Typography
-} from '@mui/material';
-import { pink } from '@mui/material/colors';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
-import Snackbar from '@mui/material/Snackbar';
-import Switch from '@mui/material/Switch';
-import { DataGrid, GridCsvExportMenuItem, GridPrintExportMenuItem, GridToolbarExportContainer, ptBR } from '@mui/x-data-grid';
-import EmojiPicker from 'emoji-picker-react';
-import { useFormik } from 'formik';
-import React from 'react';
-import { FaEdit, FaFile, FaFilePdf, FaPlay, FaTrash } from 'react-icons/fa';
-import { BsCardImage } from 'react-icons/bs';
-import { GoVideo } from 'react-icons/go';
-import { PiFileAudioLight } from 'react-icons/pi';
-import { v4 as uuidv4 } from 'uuid';
-import * as Yup from 'yup';
-import DrawerComponent from '../components/DrawerComponent';
-import celular from '../utils/masks';
+  InputAdornment,
+  Slide,
+  TextField,
+  Tooltip,
+  Typography
+} from '@mui/material'
+import { pink } from '@mui/material/colors'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormGroup from '@mui/material/FormGroup'
+import Snackbar from '@mui/material/Snackbar'
+import Switch from '@mui/material/Switch'
+import {
+  DataGrid,
+  GridCsvExportMenuItem,
+  GridPrintExportMenuItem,
+  GridToolbarExportContainer,
+  ptBR
+} from '@mui/x-data-grid'
+import EmojiPicker from 'emoji-picker-react'
+import { useFormik } from 'formik'
+import React from 'react'
+import { FaEdit, FaFile, FaFilePdf, FaPlay, FaTrash } from 'react-icons/fa'
+import { BsCardImage } from 'react-icons/bs'
+import { GoVideo } from 'react-icons/go'
+import { PiFileAudioLight } from 'react-icons/pi'
+import { v4 as uuidv4 } from 'uuid'
+import * as Yup from 'yup'
+import DrawerComponent from '../components/DrawerComponent'
+import celular from '../utils/masks'
 
 const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
   <GridToolbarExportContainer {...other}>
@@ -42,60 +52,61 @@ const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
         ...csvOptions,
         fileName: 'customerDataBase',
         delimiter: ';',
-        utf8WithBom: true,
-      }} />
+        utf8WithBom: true
+      }}
+    />
     <GridPrintExportMenuItem
       options={{
         ...printOptions,
         hideFooter: true,
         hideToolbar: true,
-        pageStyle: '.MuiDataGrid-root .MuiDataGrid-main { color: rgba(0, 0, 0, 0.87); padding: 2px }',
+        pageStyle:
+          '.MuiDataGrid-root .MuiDataGrid-main { color: rgba(0, 0, 0, 0.87); padding: 2px }'
       }}
     />
   </GridToolbarExportContainer>
-);
+)
 
 function Home() {
+  const [isLoading, setisLoading] = React.useState(false)
+  const [isEditable, setisEditable] = React.useState(false)
 
-  const [isLoading, setisLoading] = React.useState(false);
-  const [isEditable, setisEditable] = React.useState(false);
-
-  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [openSnackBar, setOpenSnackBar] = React.useState(false)
   const [snackbarMessage, setSnackbarMessage] = React.useState({
     message: '',
     title: '',
     severity: 'error'
-  });
+  })
 
   const handleClick = () => {
-    setOpenSnackBar(true);
-  };
+    setOpenSnackBar(true)
+  }
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
-      return;
+      return
     }
 
-    setOpenSnackBar(false);
-  };
+    setOpenSnackBar(false)
+  }
   const [config, setConfig] = React.useState({
     start: 5000,
     initiate_send: 8000,
     check_error: 2000,
     send_message: 3000,
     send_attachment: 3000,
-    finalize_send: 5000,
+    finalize_send: 5000
   })
 
-  const [rows, setRows] = React.useState([]);
-  const [editableContact, setEditableContact] = React.useState();
-  const [attachments, setAttachments] = React.useState([]);
-  const [message, setMessage] = React.useState('');
-  const [isLoadingButton, setIsLoadingButton] = React.useState(false);
-  const [openEmoji, setOpenEmoji] = React.useState(false);
+  const [rows, setRows] = React.useState([])
+  const [editableContact, setEditableContact] = React.useState()
+  const [attachments, setAttachments] = React.useState([])
+  const [message, setMessage] = React.useState('')
+  const [isLoadingButton, setIsLoadingButton] = React.useState(false)
+  const [openEmoji, setOpenEmoji] = React.useState(false)
 
-  const [selectionStart, setSelectionStart] = React.useState();
-  const inputMessageRef = React.useRef();
+  const [selectionStart, setSelectionStart] = React.useState()
+  const inputMessageRef = React.useRef()
 
   const registerLog = (initiated_at, currentRows) => {
     const results = {
@@ -107,30 +118,29 @@ function Home() {
     }
 
     setTimeout(() => {
-      const dataLog = localStorage.getItem("@logs")
+      const dataLog = localStorage.getItem('@logs')
 
       if (dataLog !== null) {
         const logs = JSON.parse(dataLog)
-        localStorage.setItem("@logs", JSON.stringify([{ id: uuidv4(), ...results }, ...logs]))
+        localStorage.setItem('@logs', JSON.stringify([{ id: uuidv4(), ...results }, ...logs]))
       } else {
-        localStorage.setItem("@logs", JSON.stringify([{ id: uuidv4(), ...results }]))
+        localStorage.setItem('@logs', JSON.stringify([{ id: uuidv4(), ...results }]))
       }
     }, 3000)
   }
 
   const handleSubmitForm = (formValues) => {
     if (isEditable) {
-      const newRowsArray = rows.filter(row => row.id !== editableContact.id)
+      const newRowsArray = rows.filter((row) => row.id !== editableContact.id)
       newRowsArray.push({
         ...editableContact,
         name: formValues.name,
         phone: formValues.phone
       })
 
-      setRows(newRowsArray);
-      setisEditable(false);
-      formik.resetForm();
-
+      setRows(newRowsArray)
+      setisEditable(false)
+      formik.resetForm()
     } else {
       setRows((state) => [
         ...state,
@@ -139,27 +149,27 @@ function Home() {
           name: formValues.name,
           phone: formValues.phone,
           status: false,
-          statusInfo: 'Aguardando envio',
-        },
-      ]);
+          statusInfo: 'Aguardando envio'
+        }
+      ])
 
-      formik.resetForm();
+      formik.resetForm()
     }
-  };
+  }
 
   const handleSendSingleMessage = async (contact) => {
-    if (message === "") return alert("Você não digitou a mensagem ainda")
+    if (message === '') return alert('Você não digitou a mensagem ainda')
 
     try {
       setIsLoadingButton(true)
       setisLoading(true)
       const initiated_at = Date.now()
 
-      await window.electron.createGlobalInstanceOfDriver();
+      await window.api.createGlobalInstanceOfDriver()
 
-      await window.electron.loginWhatsapp(config)
+      await window.api.loginWhatsapp(config)
 
-      const request = await window.electron.sendMessage(contact, message, attachments, config)
+      const request = await window.api.sendMessage(contact, message, attachments, config)
 
       if (!request.status) {
         setSnackbarMessage({
@@ -173,13 +183,17 @@ function Home() {
 
       const updatedRow = {
         ...contact,
-        statusInfo: request.status ? "Mensagem Enviada" : request.error,
-        status: request.status,
+        statusInfo: request.status ? 'Mensagem Enviada' : request.error,
+        status: request.status
       }
 
-      setRows(prevState => prevState.map(contact => contact.id === updatedRow.id ? { ...contact, ...updatedRow } : contact))
+      setRows((prevState) =>
+        prevState.map((contact) =>
+          contact.id === updatedRow.id ? { ...contact, ...updatedRow } : contact
+        )
+      )
 
-      await window.electron.closeGlobalInstanceOfDriver();
+      await window.api.closeGlobalInstanceOfDriver()
 
       registerLog(initiated_at, rows)
 
@@ -189,7 +203,6 @@ function Home() {
         severity: 'success'
       })
       handleClick()
-
     } catch (error) {
       setSnackbarMessage({
         message: `Houve um erro ao tentar enviar as mensagens. \nContate o administrador. \n\n${error}`,
@@ -204,19 +217,19 @@ function Home() {
   }
 
   const handleSendMessages = async () => {
-    if (message === "") return alert("Você não digitou a mensagem ainda")
-    if (rows.length === 0) return alert("Você não incluiu contatos para o envio das mensagens")
+    if (message === '') return alert('Você não digitou a mensagem ainda')
+    if (rows.length === 0) return alert('Você não incluiu contatos para o envio das mensagens')
 
     try {
       setIsLoadingButton(true)
       const initiated_at = Date.now()
 
-      await window.electron.createGlobalInstanceOfDriver();
+      await window.api.createGlobalInstanceOfDriver()
 
-      await window.electron.loginWhatsapp(config)
+      await window.api.loginWhatsapp(config)
 
       for (const contact of rows) {
-        const request = await window.electron.sendMessage(contact, message, attachments, config)
+        const request = await window.api.sendMessage(contact, message, attachments, config)
 
         if (!request.status) {
           setSnackbarMessage({
@@ -228,15 +241,18 @@ function Home() {
 
         const updatedRow = {
           ...contact,
-          statusInfo: request.status ? "Mensagem Enviada" : request.error,
-          status: request.status,
+          statusInfo: request.status ? 'Mensagem Enviada' : request.error,
+          status: request.status
         }
 
-        setRows(prevState => prevState.map(contact => contact.id === updatedRow.id ? { ...contact, ...updatedRow } : contact))
-
+        setRows((prevState) =>
+          prevState.map((contact) =>
+            contact.id === updatedRow.id ? { ...contact, ...updatedRow } : contact
+          )
+        )
       }
 
-      await window.electron.closeGlobalInstanceOfDriver();
+      await window.api.closeGlobalInstanceOfDriver()
 
       registerLog(initiated_at, rows)
 
@@ -247,16 +263,15 @@ function Home() {
       })
       handleClick()
 
-      if (localStorage.getItem("@selected-messages-template") !== null) {
-        localStorage.removeItem("@selected-messages-template")
+      if (localStorage.getItem('@selected-messages-template') !== null) {
+        localStorage.removeItem('@selected-messages-template')
       }
 
-      if (localStorage.getItem("@selected-contact-list") !== null) {
-        localStorage.removeItem("@selected-contact-list")
+      if (localStorage.getItem('@selected-contact-list') !== null) {
+        localStorage.removeItem('@selected-contact-list')
       }
-
     } catch (error) {
-      if (String(error).includes("ChromeDriver could not be found")) {
+      if (String(error).includes('ChromeDriver could not be found')) {
         setSnackbarMessage({
           message: `O Chromedriver não está instalado ou configurado. Faça a instalação corretamente ou\nContate o administrador.`,
           title: 'Tivemos um problema',
@@ -273,15 +288,15 @@ function Home() {
     } finally {
       setIsLoadingButton(false)
     }
-  };
+  }
 
   const removeAttachment = (index) => {
     const newArray = attachments.filter((item, arrIndex) => arrIndex !== index)
-    setAttachments(newArray);
-  };
+    setAttachments(newArray)
+  }
 
   const csvFileToArray = (string) => {
-    const csvRows = string.slice(0, string.lastIndexOf('\n')).split('\n');
+    const csvRows = string.slice(0, string.lastIndexOf('\n')).split('\n')
     const array = csvRows.map((i) => {
       return {
         id: uuidv4(),
@@ -291,51 +306,48 @@ function Home() {
         var2: i.replace('\r', '').split(';')[3],
         var3: i.replace('\r', '').split(';')[4],
         status: false,
-        statusInfo: 'Aguardando envio',
-      };
-    });
+        statusInfo: 'Aguardando envio'
+      }
+    })
 
-    setRows((state) => [...state, ...array]);
-  };
+    setRows((state) => [...state, ...array])
+  }
 
   const handleLoadAttachments = (event) => {
     event.stopPropagation()
     const newItensAdded = Array.from(event.target.files)
-    setAttachments([...attachments, ...newItensAdded]);
-  };
+    setAttachments([...attachments, ...newItensAdded])
+  }
 
   const handleLoadCsv = (event) => {
-    const fileReader = new FileReader();
-    const file = event.target.files[0];
+    const fileReader = new FileReader()
+    const file = event.target.files[0]
     if (file) {
       fileReader.onload = (event) => {
-        const text = event.target.result;
-        csvFileToArray(text);
-      };
-      fileReader.readAsText(file);
+        const text = event.target.result
+        csvFileToArray(text)
+      }
+      fileReader.readAsText(file)
     }
-  };
+  }
 
   const formSchema = React.useMemo(() => {
     return Yup.object().shape({
       name: Yup.string().required('Nome é obrigatório!').label('Nome'),
-      phone: Yup.string()
-        .required('Whatsapp é obrigatório!')
-        .label('WhatsApp')
-        .min(14),
-    });
-  }, []);
+      phone: Yup.string().required('Whatsapp é obrigatório!').label('WhatsApp').min(14)
+    })
+  }, [])
 
   const formik = useFormik({
     initialValues: {
       name: '',
-      phone: '',
+      phone: ''
     },
     validationSchema: formSchema,
     onSubmit: (values) => {
-      handleSubmitForm(values);
-    },
-  });
+      handleSubmitForm(values)
+    }
+  })
 
   const columns = [
     { field: 'id', headerName: 'Id', flex: 1 },
@@ -352,10 +364,10 @@ function Home() {
       width: 80,
       renderCell: (params) => {
         if (!params.value) {
-          return <CancelIcon sx={{ color: pink[500] }} />;
+          return <CancelIcon sx={{ color: pink[500] }} />
         }
-        return <CheckCircleIcon color="success" />;
-      },
+        return <CheckCircleIcon color="success" />
+      }
     },
     {
       field: 'actions',
@@ -364,27 +376,27 @@ function Home() {
       width: 140,
       renderCell: (params) => {
         const onClick = (e) => {
-          e.stopPropagation();
+          e.stopPropagation()
 
           setEditableContact(params.row)
           setisEditable(true)
 
-          formik.setFieldValue("name", params.row.name)
-          formik.setFieldValue("phone", params.row.phone)
+          formik.setFieldValue('name', params.row.name)
+          formik.setFieldValue('phone', params.row.phone)
 
-          return;
-        };
+          return
+        }
 
         const handleDelete = (e) => {
-          e.stopPropagation();
+          e.stopPropagation()
 
           if (confirm(`Deseja remover este contato?\n${params.row.name} - ${params.row.phone}`)) {
-            const newRowsArray = rows.filter(row => row.id !== params.row.id)
+            const newRowsArray = rows.filter((row) => row.id !== params.row.id)
             setRows(newRowsArray)
           }
 
-          return;
-        };
+          return
+        }
 
         return (
           <>
@@ -400,31 +412,34 @@ function Home() {
             </Tooltip>
 
             <Tooltip title="Enviar somente para este contato">
-              <IconButton color="success" onClick={(event) => {
-                event.stopPropagation()
-                handleSendSingleMessage(params.row)
-              }}>
+              <IconButton
+                color="success"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  handleSendSingleMessage(params.row)
+                }}
+              >
                 <FaPlay size={16} />
               </IconButton>
             </Tooltip>
           </>
-        );
-      },
-    },
-  ];
+        )
+      }
+    }
+  ]
 
   React.useEffect(() => {
-    if (localStorage.getItem("@selected-messages-template") !== null) {
-      const selectedMessage = JSON.parse(localStorage.getItem("@selected-messages-template"))
+    if (localStorage.getItem('@selected-messages-template') !== null) {
+      const selectedMessage = JSON.parse(localStorage.getItem('@selected-messages-template'))
       setMessage(selectedMessage.message)
     }
-    if (localStorage.getItem("@selected-contact-list") !== null) {
-      const selectedContactsRows = JSON.parse(localStorage.getItem("@selected-contact-list"))
+    if (localStorage.getItem('@selected-contact-list') !== null) {
+      const selectedContactsRows = JSON.parse(localStorage.getItem('@selected-contact-list'))
       setRows(selectedContactsRows)
     }
 
-    if (localStorage.getItem("@config") !== null) {
-      const configStorage = JSON.parse(localStorage.getItem("@config"))
+    if (localStorage.getItem('@config') !== null) {
+      const configStorage = JSON.parse(localStorage.getItem('@config'))
       setConfig(configStorage)
     }
   }, [])
@@ -439,40 +454,44 @@ function Home() {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         TransitionComponent={(props) => <Slide {...props} direction="left" />}
       >
-        <Alert onClose={handleClose} severity={snackbarMessage.severity} sx={{ maxWidth: '400px', width: '100%' }}>
+        <Alert
+          onClose={handleClose}
+          severity={snackbarMessage.severity}
+          sx={{ maxWidth: '400px', width: '100%' }}
+        >
           <AlertTitle>{snackbarMessage.title}</AlertTitle>
           {snackbarMessage.message}
         </Alert>
       </Snackbar>
-      {
-        isLoading && (
-          <Box sx={{
+      {isLoading && (
+        <Box
+          sx={{
             position: 'absolute',
-            width: "100vw",
+            width: '100vw',
             height: '100vh',
             zIndex: 10000,
-            backgroundColor: "#00000064",
-            overflow: "hidden",
+            backgroundColor: '#00000064',
+            overflow: 'hidden',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: "center"
-          }}>
-            <CircularProgress
-              variant="indeterminate"
-              disableShrink
-              color='primary'
-              sx={{
-                animationDuration: '550ms',
-                [`& .${circularProgressClasses.circle}`]: {
-                  strokeLinecap: 'round',
-                },
-              }}
-              size={50}
-              thickness={6}
-            />
-          </Box>
-        )
-      }
+            justifyContent: 'center'
+          }}
+        >
+          <CircularProgress
+            variant="indeterminate"
+            disableShrink
+            color="primary"
+            sx={{
+              animationDuration: '550ms',
+              [`& .${circularProgressClasses.circle}`]: {
+                strokeLinecap: 'round'
+              }
+            }}
+            size={50}
+            thickness={6}
+          />
+        </Box>
+      )}
       <DrawerComponent title="Envio de mensagens">
         <Typography variant="h4">Mensagem</Typography>
         <Typography variant="body1">
@@ -496,67 +515,119 @@ function Home() {
             />
             <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 2, mb: 2, gap: 1 }}>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  setMessage([message.slice(0, selectionStart), "{primeiroNome}", message.slice(selectionStart)].join(''))
-                }}>
+                  setMessage(
+                    [
+                      message.slice(0, selectionStart),
+                      '{primeiroNome}',
+                      message.slice(selectionStart)
+                    ].join('')
+                  )
+                }}
+              >
                 {`{primeiroNome}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  setMessage([message.slice(0, selectionStart), "{nomeCompleto}", message.slice(selectionStart)].join(''))
-                }}>
+                  setMessage(
+                    [
+                      message.slice(0, selectionStart),
+                      '{nomeCompleto}',
+                      message.slice(selectionStart)
+                    ].join('')
+                  )
+                }}
+              >
                 {`{nomeCompleto}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  setMessage([message.slice(0, selectionStart), "{telefone}", message.slice(selectionStart)].join(''))
-                }}>
+                  setMessage(
+                    [
+                      message.slice(0, selectionStart),
+                      '{telefone}',
+                      message.slice(selectionStart)
+                    ].join('')
+                  )
+                }}
+              >
                 {`{telefone}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  setMessage([message.slice(0, selectionStart), "{var1}", message.slice(selectionStart)].join(''))
-                }}>
+                  setMessage(
+                    [
+                      message.slice(0, selectionStart),
+                      '{var1}',
+                      message.slice(selectionStart)
+                    ].join('')
+                  )
+                }}
+              >
                 {`{var1}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  setMessage([message.slice(0, selectionStart), "{var2}", message.slice(selectionStart)].join(''))
-                }}>
+                  setMessage(
+                    [
+                      message.slice(0, selectionStart),
+                      '{var2}',
+                      message.slice(selectionStart)
+                    ].join('')
+                  )
+                }}
+              >
                 {`{var2}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  setMessage([message.slice(0, selectionStart), "{var3}", message.slice(selectionStart)].join(''))
-                }}>
+                  setMessage(
+                    [
+                      message.slice(0, selectionStart),
+                      '{var3}',
+                      message.slice(selectionStart)
+                    ].join('')
+                  )
+                }}
+              >
                 {`{var3}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
                   setOpenEmoji(!openEmoji)
-                }}>
+                }}
+              >
                 Emojis
               </Button>
-              {
-                openEmoji && (
-                  <EmojiPicker
-                    width="100%" height="25em"
-                    searchPlaceHolder="Pesquisar emojis..."
-                    emojiVersion="3.0"
-                    onEmojiClick={(emoji) => {
-                      setMessage([message.slice(0, selectionStart), `${emoji.emoji}`, message.slice(selectionStart)].join(''))
-                    }}
-                    theme={localStorage.getItem("@dark-theme") === null ? 'light' : localStorage.getItem("@dark-theme")}
-                  />
-                )
-              }
+              {openEmoji && (
+                <EmojiPicker
+                  width="100%"
+                  height="25em"
+                  searchPlaceHolder="Pesquisar emojis..."
+                  emojiVersion="3.0"
+                  onEmojiClick={(emoji) => {
+                    setMessage(
+                      [
+                        message.slice(0, selectionStart),
+                        `${emoji.emoji}`,
+                        message.slice(selectionStart)
+                      ].join('')
+                    )
+                  }}
+                  theme={
+                    localStorage.getItem('@dark-theme') === null
+                      ? 'light'
+                      : localStorage.getItem('@dark-theme')
+                  }
+                />
+              )}
             </Box>
           </Grid>
           <Grid item xs={6}>
@@ -580,7 +651,7 @@ function Home() {
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'center',
+                justifyContent: 'center'
               }}
             >
               {attachments.length > 0 ? (
@@ -596,22 +667,32 @@ function Home() {
                       border: '1px solid #CCC',
                       display: 'flex',
                       justifyContent: 'space-between',
-                      alignItems: 'center',
+                      alignItems: 'center'
                     }}
                   >
-                    {
-                      item.type === 'application/pdf' && <Typography><FaFilePdf size={28} /></Typography>
-                    }
-                    {
-                      item.type.includes('image') && <Typography><BsCardImage size={28} /></Typography>
-                    }
-                    {
-                      item.type.includes('video') && <Typography><GoVideo size={28} /></Typography>
-                    }
-                    {
-                      item.type.includes('audio') && <Typography><PiFileAudioLight size={28} /></Typography>
-                    }
-                    <Typography>{item.name.length > 20 ? item.name.substr(0, 20) + "..." : item.name}</Typography>
+                    {item.type === 'application/pdf' && (
+                      <Typography>
+                        <FaFilePdf size={28} />
+                      </Typography>
+                    )}
+                    {item.type.includes('image') && (
+                      <Typography>
+                        <BsCardImage size={28} />
+                      </Typography>
+                    )}
+                    {item.type.includes('video') && (
+                      <Typography>
+                        <GoVideo size={28} />
+                      </Typography>
+                    )}
+                    {item.type.includes('audio') && (
+                      <Typography>
+                        <PiFileAudioLight size={28} />
+                      </Typography>
+                    )}
+                    <Typography>
+                      {item.name.length > 20 ? item.name.substr(0, 20) + '...' : item.name}
+                    </Typography>
                     <Typography>{(item.size / (1024 * 1024)).toFixed(3)} Mb</Typography>
                     <IconButton color="error" onClick={() => removeAttachment(index)}>
                       <FaTrash size={20} />
@@ -648,7 +729,7 @@ function Home() {
                   <InputAdornment position="start">
                     <AccountCircle />
                   </InputAdornment>
-                ),
+                )
               }}
             />
             <TextField
@@ -658,12 +739,12 @@ function Home() {
               inputProps={{ maxLength: 15 }}
               value={formik.values.phone}
               onChange={(e) => {
-                e.target.value = celular(e.target.value);
-                formik.handleChange(e);
+                e.target.value = celular(e.target.value)
+                formik.handleChange(e)
               }}
               onBlur={(e) => {
-                e.target.value = celular(e.target.value);
-                formik.handleBlur(e);
+                e.target.value = celular(e.target.value)
+                formik.handleBlur(e)
               }}
               error={!!formik.errors.phone}
               helperText={formik.errors.phone}
@@ -672,17 +753,22 @@ function Home() {
                   <InputAdornment position="start">
                     <WhatsAppIcon />
                   </InputAdornment>
-                ),
+                )
               }}
             />
             <Button type="submit" variant="contained">
               {isEditable ? 'Salvar' : 'Adicionar'}
             </Button>
             {isEditable && (
-              <Button onClick={() => {
-                formik.resetForm()
-                setisEditable(false)
-              }} type="button" color="error" variant="contained">
+              <Button
+                onClick={() => {
+                  formik.resetForm()
+                  setisEditable(false)
+                }}
+                type="button"
+                color="error"
+                variant="contained"
+              >
                 Cancelar
               </Button>
             )}
@@ -690,11 +776,7 @@ function Home() {
         </form>
 
         <Box sx={{ display: 'flex', mt: 4, gap: 1 }}>
-          <Button
-            variant="contained"
-            component="label"
-            startIcon={<TableChartIcon />}
-          >
+          <Button variant="contained" component="label" startIcon={<TableChartIcon />}>
             Carregar CSV
             <input
               hidden
@@ -704,44 +786,46 @@ function Home() {
               onChange={(event) => handleLoadCsv(event)}
             />
           </Button>
-          {
-            rows.length > 0 && (
-              <>
-                <Button
-                  variant="contained"
-                  color="error"
-                  startIcon={<FaTrash size={16} />}
-                  onClick={() => {
-                    if (confirm("Deseja remover todos os contatos da tabela de envios?")) {
-                      setRows([])
-                    }
-                  }}
-                >
-                  Limpar tabela
-                </Button>
-                <Button
-                  variant="contained"
-                  color="warning"
-                  startIcon={<FaTrash size={16} />}
-                  onClick={() => {
-                    if (confirm("Deseja remover todos os contatos que receberam mensagens da tabela de envios?")) {
-                      const newArray = rows.filter(row => !row.status)
-                      setRows(newArray)
-                    }
-                  }}
-                >
-                  Remover enviados
-                </Button>
-              </>
-            )
-          }
+          {rows.length > 0 && (
+            <>
+              <Button
+                variant="contained"
+                color="error"
+                startIcon={<FaTrash size={16} />}
+                onClick={() => {
+                  if (confirm('Deseja remover todos os contatos da tabela de envios?')) {
+                    setRows([])
+                  }
+                }}
+              >
+                Limpar tabela
+              </Button>
+              <Button
+                variant="contained"
+                color="warning"
+                startIcon={<FaTrash size={16} />}
+                onClick={() => {
+                  if (
+                    confirm(
+                      'Deseja remover todos os contatos que receberam mensagens da tabela de envios?'
+                    )
+                  ) {
+                    const newArray = rows.filter((row) => !row.status)
+                    setRows(newArray)
+                  }
+                }}
+              >
+                Remover enviados
+              </Button>
+            </>
+          )}
         </Box>
 
         <Box sx={{ height: 500, w: '100%', mt: 4 }}>
           <DataGrid
-            onCellFocusOut={() => { }}
+            onCellFocusOut={() => {}}
             columnVisibilityModel={{
-              id: false,
+              id: false
             }}
             columns={columns}
             rows={rows}
@@ -753,8 +837,8 @@ function Home() {
             components={{ Toolbar: GridToolbarExport }}
             sx={{
               '@media print': {
-                '.MuiDataGrid-main': { color: 'rgba(0, 0, 0, 0.87)' },
-              },
+                '.MuiDataGrid-main': { color: 'rgba(0, 0, 0, 0.87)' }
+              }
             }}
           />
         </Box>
@@ -764,19 +848,19 @@ function Home() {
           sx={{
             width: '100%',
             mt: 4,
-            mb: 4,
+            mb: 4
           }}
           variant="contained"
           disabled={isLoadingButton}
-          startIcon={isLoadingButton ? <CircularProgress size={22} color="inherit" /> : <SendIcon />}
-        >
-          {
-            isLoadingButton ? "Aguarde, Enviando Mensagens" : "Enviar mensagens"
+          startIcon={
+            isLoadingButton ? <CircularProgress size={22} color="inherit" /> : <SendIcon />
           }
+        >
+          {isLoadingButton ? 'Aguarde, Enviando Mensagens' : 'Enviar mensagens'}
         </Button>
       </DrawerComponent>
     </>
-  );
+  )
 }
 
-export default Home;
+export default Home

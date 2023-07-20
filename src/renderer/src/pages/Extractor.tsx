@@ -1,23 +1,20 @@
+import { Box, Button, IconButton, Typography } from '@mui/material'
+import { DataGrid, ptBR } from '@mui/x-data-grid'
+import React from 'react'
+import { FaTrash } from 'react-icons/fa'
+import DrawerComponent from '../components/DrawerComponent'
+
+import AccountCircle from '@mui/icons-material/AccountCircle'
+import { InputAdornment, TextField, Tooltip } from '@mui/material'
 import {
-  Box,
-  Button, IconButton, Typography
-} from '@mui/material';
-import { DataGrid, ptBR } from '@mui/x-data-grid';
-import React from 'react';
-import { FaTrash } from 'react-icons/fa';
-import DrawerComponent from "../components/DrawerComponent";
+  GridCsvExportMenuItem,
+  GridPrintExportMenuItem,
+  GridToolbarExportContainer
+} from '@mui/x-data-grid'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import {
-  InputAdornment, TextField, Tooltip
-} from '@mui/material';
-import { GridCsvExportMenuItem, GridPrintExportMenuItem, GridToolbarExportContainer } from '@mui/x-data-grid';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-
-
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom'
 
 const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
   <GridToolbarExportContainer {...other}>
@@ -26,18 +23,20 @@ const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
         ...csvOptions,
         fileName: 'customerDataBase',
         delimiter: ';',
-        utf8WithBom: true,
-      }} />
+        utf8WithBom: true
+      }}
+    />
     <GridPrintExportMenuItem
       options={{
         ...printOptions,
         hideFooter: true,
         hideToolbar: true,
-        pageStyle: '.MuiDataGrid-root .MuiDataGrid-main { color: rgba(0, 0, 0, 0.87); padding: 2px }',
+        pageStyle:
+          '.MuiDataGrid-root .MuiDataGrid-main { color: rgba(0, 0, 0, 0.87); padding: 2px }'
       }}
     />
   </GridToolbarExportContainer>
-);
+)
 
 export default function Extractor() {
   const navigate = useNavigate()
@@ -47,36 +46,35 @@ export default function Extractor() {
     initiate_send: 8000,
     check_error: 2000,
     send_message: 1000,
-    finalize_send: 5000,
+    finalize_send: 5000
   })
 
-  const [rows, setRows] = React.useState([]);
-  const [contactList, setContactList] = React.useState([]);
+  const [rows, setRows] = React.useState([])
+  const [contactList, setContactList] = React.useState([])
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false)
 
   const handleSubmitForm = (formValues) => {
+    window.api.extractContacts(formValues.name, config)
 
-    window.electron.extractContacts(formValues.name, config)
-
-    formik.resetForm();
+    formik.resetForm()
   }
 
   const formSchema = React.useMemo(() => {
     return Yup.object().shape({
-      name: Yup.string().required('Nome é obrigatório!').label('Nome'),
-    });
-  }, []);
+      name: Yup.string().required('Nome é obrigatório!').label('Nome')
+    })
+  }, [])
 
   const formik = useFormik({
     initialValues: {
-      name: '❤Família Batista❤',
+      name: '❤Família Batista❤'
     },
     validationSchema: formSchema,
     onSubmit: (values) => {
-      handleSubmitForm(values);
-    },
-  });
+      handleSubmitForm(values)
+    }
+  })
 
   const columns = [
     { field: 'id', headerName: 'Id', flex: 1 },
@@ -89,15 +87,15 @@ export default function Extractor() {
       width: 80,
       renderCell: (params) => {
         const handleDelete = (e) => {
-          e.stopPropagation();
+          e.stopPropagation()
 
           if (confirm(`Deseja remover este contato?\n${params.row.name} - ${params.row.phone}`)) {
-            const newRowsArray = rows.filter(row => row.id !== params.row.id)
+            const newRowsArray = rows.filter((row) => row.id !== params.row.id)
             setRows(newRowsArray)
           }
 
-          return;
-        };
+          return
+        }
 
         return (
           <Tooltip title="Excluir">
@@ -105,23 +103,23 @@ export default function Extractor() {
               <FaTrash size={16} />
             </IconButton>
           </Tooltip>
-        );
-      },
-    },
-  ];
+        )
+      }
+    }
+  ]
 
   React.useEffect(() => {
     const executeAsync = async () => {
-      const response = localStorage.getItem("@contact-lists")
+      const response = localStorage.getItem('@contact-lists')
 
       if (response === null) {
-        localStorage.setItem("@contact-lists", JSON.stringify([]))
+        localStorage.setItem('@contact-lists', JSON.stringify([]))
       } else {
         setContactList(JSON.parse(response))
       }
 
-      if (localStorage.getItem("@config") !== null) {
-        const configStorage = JSON.parse(localStorage.getItem("@config"))
+      if (localStorage.getItem('@config') !== null) {
+        const configStorage = JSON.parse(localStorage.getItem('@config'))
         setConfig(configStorage)
       }
     }
@@ -129,8 +127,7 @@ export default function Extractor() {
   }, [])
 
   return (
-    <DrawerComponent title={"Extrator de contatos"}>
-
+    <DrawerComponent title={'Extrator de contatos'}>
       <Typography variant="h4">Extrator de contatos</Typography>
       <Typography variant="body1" sx={{ mb: 2 }}>
         Extrai contatos de grupos específicos no seu WhatsApp
@@ -145,7 +142,11 @@ export default function Extractor() {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             error={!!formik.errors.name}
-            helperText={formik.errors.name ? formik.errors.name : "Digite o nome exatamente como está no WhatsApp"}
+            helperText={
+              formik.errors.name
+                ? formik.errors.name
+                : 'Digite o nome exatamente como está no WhatsApp'
+            }
           />
 
           <Button type="submit" variant="contained">
@@ -156,9 +157,9 @@ export default function Extractor() {
 
       <Box sx={{ height: 400, w: '100%', mt: 4 }}>
         <DataGrid
-          onCellFocusOut={() => { }}
+          onCellFocusOut={() => {}}
           columnVisibilityModel={{
-            id: false,
+            id: false
           }}
           columns={columns}
           rows={rows}
@@ -170,12 +171,11 @@ export default function Extractor() {
           components={{ Toolbar: GridToolbarExport }}
           sx={{
             '@media print': {
-              '.MuiDataGrid-main': { color: 'rgba(0, 0, 0, 0.87)' },
-            },
+              '.MuiDataGrid-main': { color: 'rgba(0, 0, 0, 0.87)' }
+            }
           }}
         />
       </Box>
-
-    </DrawerComponent >
-  );
+    </DrawerComponent>
+  )
 }

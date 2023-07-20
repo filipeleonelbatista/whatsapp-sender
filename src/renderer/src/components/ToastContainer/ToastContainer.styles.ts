@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const Wrapper = styled.div`
   position: fixed;
@@ -11,6 +11,6 @@ const Wrapper = styled.div`
   @media (min-width: 768px) {
     padding: 30px;
   }
-`;
+`
 
-export default Wrapper;
+export default Wrapper

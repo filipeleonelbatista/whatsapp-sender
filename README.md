@@ -1,35 +1,34 @@
-<img src=".erb/img/erb-banner.svg" width="100%" />
+# whatsapp-sender
 
-<br>
+An Electron application with React and TypeScript
 
-<p>
-  Electron React Boilerplate uses <a href="https://electron.atom.io/">Electron</a>, <a href="https://facebook.github.io/react/">React</a>, <a href="https://github.com/reactjs/react-router">React Router</a>, <a href="https://webpack.js.org/">Webpack</a> and <a href="https://www.npmjs.com/package/react-refresh">React Fast Refresh</a>.
-</p>
+## Recommended IDE Setup
 
-<br>
+- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 
-## Install
+## Project Setup
 
-Clone the repo and install dependencies:
+### Install
 
 ```bash
-git clone --depth 1 --branch main https://github.com/electron-react-boilerplate/electron-react-boilerplate.git your-project-name
-cd your-project-name
-npm install
+$ npm install
 ```
 
-## Starting Development
-
-Start the app in the `dev` environment:
+### Development
 
 ```bash
-npm start
+$ npm run dev
 ```
 
-## Packaging for Production
-
-To package apps for the local platform:
+### Build
 
 ```bash
-npm run package
+# For windows
+$ npm run build:win
+
+# For macOS
+$ npm run build:mac
+
+# For Linux
+$ npm run build:linux
 ```

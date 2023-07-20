@@ -1,52 +1,49 @@
-import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SendIcon from '@mui/icons-material/Send';
-import {
-  Box,
-  Button, Grid,
-  IconButton, TextField,
-  Tooltip,
-  Typography
-} from '@mui/material';
-import { DataGrid, ptBR } from '@mui/x-data-grid';
-import EmojiPicker from 'emoji-picker-react';
-import { useFormik } from 'formik';
-import React from 'react';
-import { FaEdit, FaPlay, FaTrash } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
-import * as Yup from 'yup';
-import DrawerComponent from '../components/DrawerComponent';
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto'
+import DeleteIcon from '@mui/icons-material/Delete'
+import SendIcon from '@mui/icons-material/Send'
+import { Box, Button, Grid, IconButton, TextField, Tooltip, Typography } from '@mui/material'
+import { DataGrid, ptBR } from '@mui/x-data-grid'
+import EmojiPicker from 'emoji-picker-react'
+import { useFormik } from 'formik'
+import React from 'react'
+import { FaEdit, FaPlay, FaTrash } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
+import { v4 as uuidv4 } from 'uuid'
+import * as Yup from 'yup'
+import DrawerComponent from '../components/DrawerComponent'
 
 export default function MessageModels() {
   const navigate = useNavigate()
 
-  const [isEditable, setisEditable] = React.useState(false);
-  const [selectedEditableRow, setSelectedEditableRow] = React.useState(false);
-  const [rows, setRows] = React.useState([]);
-  const [openEmoji, setOpenEmoji] = React.useState(false);
+  const [isEditable, setisEditable] = React.useState(false)
+  const [selectedEditableRow, setSelectedEditableRow] = React.useState(false)
+  const [rows, setRows] = React.useState([])
+  const [openEmoji, setOpenEmoji] = React.useState(false)
 
-  const [selectionStart, setSelectionStart] = React.useState();
-  const inputMessageRef = React.useRef();
+  const [selectionStart, setSelectionStart] = React.useState()
+  const inputMessageRef = React.useRef()
 
   const handleSubmitForm = (formValues) => {
     if (isEditable) {
-      const newRowsArray = rows.filter(row => row.id !== selectedEditableRow.id)
+      const newRowsArray = rows.filter((row) => row.id !== selectedEditableRow.id)
       newRowsArray.push({
         ...selectedEditableRow,
         name: formValues.name,
-        message: formValues.message,
+        message: formValues.message
       })
-      localStorage.setItem("@messages-template", JSON.stringify(newRowsArray))
+      localStorage.setItem('@messages-template', JSON.stringify(newRowsArray))
       setRows(newRowsArray)
       setisEditable(false)
     } else {
-      const data = [...rows, {
-        id: uuidv4(),
-        name: formValues.name,
-        message: formValues.message,
-      }]
-      localStorage.setItem("@messages-template", JSON.stringify(data))
+      const data = [
+        ...rows,
+        {
+          id: uuidv4(),
+          name: formValues.name,
+          message: formValues.message
+        }
+      ]
+      localStorage.setItem('@messages-template', JSON.stringify(data))
       setRows(data)
     }
 
@@ -56,20 +53,20 @@ export default function MessageModels() {
   const formSchema = React.useMemo(() => {
     return Yup.object().shape({
       name: Yup.string().required('É Obrigado inserir um nome para o modelo!').label('Nome'),
-      message: Yup.string().required('É obrigatório preencher a mensagem!').label('WhatsApp'),
-    });
-  }, []);
+      message: Yup.string().required('É obrigatório preencher a mensagem!').label('WhatsApp')
+    })
+  }, [])
 
   const formik = useFormik({
     initialValues: {
       name: '',
-      message: '',
+      message: ''
     },
     validationSchema: formSchema,
     onSubmit: (values) => {
-      handleSubmitForm(values);
-    },
-  });
+      handleSubmitForm(values)
+    }
+  })
 
   const columns = [
     { field: 'id', headerName: 'Id', flex: 1 },
@@ -82,28 +79,28 @@ export default function MessageModels() {
       width: 110,
       renderCell: (params) => {
         const onClick = (e) => {
-          e.stopPropagation();
+          e.stopPropagation()
           setisEditable(true)
           setSelectedEditableRow(params.row)
-          formik.setFieldValue("name", params.row.name)
-          formik.setFieldValue("message", params.row.message)
-        };
+          formik.setFieldValue('name', params.row.name)
+          formik.setFieldValue('message', params.row.message)
+        }
 
         const handleDelete = (e) => {
-          e.stopPropagation();
+          e.stopPropagation()
 
           if (confirm(`Deseja remover este modelo?`)) {
-            const newRowsArray = rows.filter(row => row.id !== params.row.id)
-            localStorage.setItem("@messages-template", JSON.stringify(newRowsArray))
+            const newRowsArray = rows.filter((row) => row.id !== params.row.id)
+            localStorage.setItem('@messages-template', JSON.stringify(newRowsArray))
             setRows(newRowsArray)
           }
-        };
+        }
 
         const handleSelectedModel = (e) => {
-          e.stopPropagation();
-          localStorage.setItem("@selected-messages-template", JSON.stringify(params.row))
-          navigate("/envio-mensagens")
-        };
+          e.stopPropagation()
+          localStorage.setItem('@selected-messages-template', JSON.stringify(params.row))
+          navigate('/envio-mensagens')
+        }
 
         return (
           <>
@@ -123,23 +120,23 @@ export default function MessageModels() {
               </IconButton>
             </Tooltip>
           </>
-        );
-      },
-    },
-  ];
+        )
+      }
+    }
+  ]
 
   React.useState(() => {
     const executeAsync = async () => {
-      const response = localStorage.getItem("@messages-template")
+      const response = localStorage.getItem('@messages-template')
 
       if (response === null) {
-        localStorage.setItem("@messages-template", JSON.stringify([]))
+        localStorage.setItem('@messages-template', JSON.stringify([]))
       } else {
         setRows(JSON.parse(response))
       }
     }
     executeAsync()
-  }, []);
+  }, [])
 
   return (
     <DrawerComponent title="Modelos de mensagem">
@@ -163,7 +160,7 @@ export default function MessageModels() {
               sx={{ mb: 2 }}
             />
             <TextField
-              fullWidth              
+              fullWidth
               inputRef={inputMessageRef}
               label="Mensagem"
               id="message"
@@ -181,72 +178,129 @@ export default function MessageModels() {
             />
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="h6">
-              Variáveis da mensagem
-            </Typography>
+            <Typography variant="h6">Variáveis da mensagem</Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 2, mb: 2, gap: 1 }}>
-            <Button
-                variant='contained'
+              <Button
+                variant="contained"
                 onClick={() => {
-                  formik.setFieldValue('message', [formik.values.message.slice(0, selectionStart), "{primeiroNome}", formik.values.message.slice(selectionStart)].join(''))
-                }}>
+                  formik.setFieldValue(
+                    'message',
+                    [
+                      formik.values.message.slice(0, selectionStart),
+                      '{primeiroNome}',
+                      formik.values.message.slice(selectionStart)
+                    ].join('')
+                  )
+                }}
+              >
                 {`{primeiroNome}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  formik.setFieldValue('message', [formik.values.message.slice(0, selectionStart), "{nomeCompleto}", formik.values.message.slice(selectionStart)].join(''))
-                }}>
+                  formik.setFieldValue(
+                    'message',
+                    [
+                      formik.values.message.slice(0, selectionStart),
+                      '{nomeCompleto}',
+                      formik.values.message.slice(selectionStart)
+                    ].join('')
+                  )
+                }}
+              >
                 {`{nomeCompleto}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  formik.setFieldValue('message', [formik.values.message.slice(0, selectionStart), "{telefone}", formik.values.message.slice(selectionStart)].join(''))
-                }}>
+                  formik.setFieldValue(
+                    'message',
+                    [
+                      formik.values.message.slice(0, selectionStart),
+                      '{telefone}',
+                      formik.values.message.slice(selectionStart)
+                    ].join('')
+                  )
+                }}
+              >
                 {`{telefone}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  formik.setFieldValue('message', [formik.values.message.slice(0, selectionStart), "{var1}", formik.values.message.slice(selectionStart)].join(''))
-                }}>
+                  formik.setFieldValue(
+                    'message',
+                    [
+                      formik.values.message.slice(0, selectionStart),
+                      '{var1}',
+                      formik.values.message.slice(selectionStart)
+                    ].join('')
+                  )
+                }}
+              >
                 {`{var1}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  formik.setFieldValue('message', [formik.values.message.slice(0, selectionStart), "{var2}", formik.values.message.slice(selectionStart)].join(''))
-                }}>
+                  formik.setFieldValue(
+                    'message',
+                    [
+                      formik.values.message.slice(0, selectionStart),
+                      '{var2}',
+                      formik.values.message.slice(selectionStart)
+                    ].join('')
+                  )
+                }}
+              >
                 {`{var2}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  formik.setFieldValue('message', [formik.values.message.slice(0, selectionStart), "{var3}", formik.values.message.slice(selectionStart)].join(''))
-                }}>
+                  formik.setFieldValue(
+                    'message',
+                    [
+                      formik.values.message.slice(0, selectionStart),
+                      '{var3}',
+                      formik.values.message.slice(selectionStart)
+                    ].join('')
+                  )
+                }}
+              >
                 {`{var3}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
                   setOpenEmoji(!openEmoji)
-                }}>
+                }}
+              >
                 Emojis
               </Button>
-              {
-                openEmoji && (
-                  <EmojiPicker
-                    width="100%" height="25em"
-                    searchPlaceHolder="Pesquisar emojis..."
-                    emojiVersion="3.0"
-                    onEmojiClick={(emoji) => {
-                      formik.setFieldValue('message', [formik.values.message.slice(0, selectionStart), `${emoji.emoji}`, formik.values.message.slice(selectionStart)].join(''))
-                    }}
-                    theme={localStorage.getItem("@dark-theme") === null ? 'light' : localStorage.getItem("@dark-theme")}
-                  />
-                )
-              }
+              {openEmoji && (
+                <EmojiPicker
+                  width="100%"
+                  height="25em"
+                  searchPlaceHolder="Pesquisar emojis..."
+                  emojiVersion="3.0"
+                  onEmojiClick={(emoji) => {
+                    formik.setFieldValue(
+                      'message',
+                      [
+                        formik.values.message.slice(0, selectionStart),
+                        `${emoji.emoji}`,
+                        formik.values.message.slice(selectionStart)
+                      ].join('')
+                    )
+                  }}
+                  theme={
+                    localStorage.getItem('@dark-theme') === null
+                      ? 'light'
+                      : localStorage.getItem('@dark-theme')
+                  }
+                />
+              )}
             </Box>
           </Grid>
         </Grid>
@@ -266,12 +320,11 @@ export default function MessageModels() {
         Adicione mensagens acima para salvar na sua lista de modelos.
       </Typography>
 
-
       <Box sx={{ height: 400, w: '100%', mt: 4 }}>
         <DataGrid
-          onCellFocusOut={() => { }}
+          onCellFocusOut={() => {}}
           columnVisibilityModel={{
-            id: false,
+            id: false
           }}
           columns={columns}
           rows={rows}

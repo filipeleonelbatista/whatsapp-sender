@@ -1,5 +1,5 @@
 import { ReactComponent as Story } from '../assets/story.svg'
-import { SvgIcon } from '@mui/material';
+import { SvgIcon } from '@mui/material'
 
 export default function StoriesIcon(props) {
   return (

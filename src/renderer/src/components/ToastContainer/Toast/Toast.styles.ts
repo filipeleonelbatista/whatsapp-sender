@@ -1,9 +1,9 @@
-import styled, { css } from 'styled-components';
-import { animated } from 'react-spring';
+import styled, { css } from 'styled-components'
+import { animated } from 'react-spring'
 
 interface ToastWrapperProps {
-  type?: 'success' | 'error' | 'info';
-  hasdescription?: boolean;
+  type?: 'success' | 'error' | 'info'
+  hasdescription?: boolean
 }
 
 const toastTypeVariations = {
@@ -18,8 +18,8 @@ const toastTypeVariations = {
   error: css`
     background: #fddede;
     color: #c53030;
-  `,
-};
+  `
+}
 
 const ToastWrapper = styled(animated.div)<ToastWrapperProps>`
   position: relative;
@@ -66,6 +66,6 @@ const ToastWrapper = styled(animated.div)<ToastWrapperProps>`
         margin-top: 0;
       }
     `}
-`;
+`
 
-export default ToastWrapper;
+export default ToastWrapper

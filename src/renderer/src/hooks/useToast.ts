@@ -1,16 +1,14 @@
-import { useContext } from 'react';
-import ToastContext, {
-  ToastContextData,
-} from '../contexts/Toast';
+import { useContext } from 'react'
+import ToastContext, { ToastContextData } from '../contexts/Toast'
 
 const useToast = (): ToastContextData => {
-  const context = useContext(ToastContext);
+  const context = useContext(ToastContext)
 
   if (!context) {
-    throw new Error("Toast não foi criado");
+    throw new Error('Toast não foi criado')
   }
 
-  return context;
-};
+  return context
+}
 
-export default useToast;
+export default useToast
