@@ -1,3 +1,4 @@
+import emailjs from '@emailjs/browser'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import {
@@ -18,25 +19,23 @@ import {
   OutlinedInput,
   Select,
   TextField,
-  Typography,
-  useMediaQuery
+  Typography
 } from '@mui/material'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { Box } from '@mui/system'
+import { useCurrentTheme } from '@renderer/hooks/useCurrentTheme'
 import { useFormik } from 'formik'
 import React from 'react'
 import { FaWhatsapp } from 'react-icons/fa'
+import QRCode from 'react-qr-code'
 import { useNavigate } from 'react-router'
 import * as Yup from 'yup'
-import emailjs from '@emailjs/browser'
-import { api, createAssinante, getVersions } from '../services/api'
-import QRCode from 'react-qr-code'
 import { VERSION } from '../constants/application'
+import { api, createAssinante, getVersions } from '../services/api'
 
 export default function Register(): JSX.Element {
+  const { mode } = useCurrentTheme()
   const [isLoading, setisLoading] = React.useState(false)
   const navigate = useNavigate()
-  const [mode, setMode] = React.useState('light')
   const [showPassword, setShowPassword] = React.useState(false)
   const [open, setOpen] = React.useState(false)
   const [QrCode, setQrCode] = React.useState('')
@@ -221,32 +220,6 @@ export default function Register(): JSX.Element {
     }
   })
 
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
-
-  const mdTheme = createTheme({
-    palette: {
-      mode: 'light',
-      primary: {
-        main: '#128C7E',
-        dark: '#075E54',
-        light: '#25D366',
-        contrastText: '#FFF'
-      }
-    }
-  })
-
-  const mdThemeDark = createTheme({
-    palette: {
-      mode: 'dark',
-      primary: {
-        main: '#128C7E',
-        dark: '#075E54',
-        light: '#25D366',
-        contrastText: '#FFF'
-      }
-    }
-  })
-
   const handleInformPayment = async (): Promise<void> => {
     const message = `Olá sou ${
       formik.values.name
@@ -275,19 +248,8 @@ export default function Register(): JSX.Element {
     navigate('/')
   }
 
-  React.useEffect(() => {
-    const selectedTheme = localStorage.getItem('@dark-theme')
-
-    if (selectedTheme !== null) {
-      setMode(selectedTheme)
-    } else {
-      localStorage.setItem('@dark-theme', prefersDarkMode ? 'dark' : 'light')
-      setMode(prefersDarkMode ? 'dark' : 'light')
-    }
-  }, [])
-
   return (
-    <ThemeProvider theme={mode === 'light' ? mdTheme : mdThemeDark}>
+    <>
       {isLoading && (
         <Box
           sx={{
@@ -527,6 +489,6 @@ export default function Register(): JSX.Element {
           </Box>
         </Box>
       </Box>
-    </ThemeProvider>
+    </>
   )
 }

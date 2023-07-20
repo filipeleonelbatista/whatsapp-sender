@@ -18,10 +18,8 @@ import {
   OutlinedInput,
   Select,
   TextField,
-  Typography,
-  useMediaQuery
+  Typography
 } from '@mui/material'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { Box } from '@mui/system'
 import { add, differenceInCalendarDays } from 'date-fns'
 import { useFormik } from 'formik'
@@ -88,8 +86,6 @@ export default function Login(): JSX.Element {
   const [waitingActivation, setWaitingActivation] = React.useState(false)
   const [isLoading, setisLoading] = React.useState(false)
   const navigate = useNavigate()
-
-  const [mode, setMode] = React.useState('light')
 
   const [showPassword, setShowPassword] = React.useState(false)
   const handleClickShowPassword = (): void => setShowPassword((show) => !show)
@@ -207,43 +203,6 @@ export default function Login(): JSX.Element {
     }
   }, [])
 
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
-
-  const mdTheme = createTheme({
-    palette: {
-      mode: 'light',
-      primary: {
-        main: '#128C7E',
-        dark: '#075E54',
-        light: '#25D366',
-        contrastText: '#FFF'
-      }
-    }
-  })
-
-  const mdThemeDark = createTheme({
-    palette: {
-      mode: 'dark',
-      primary: {
-        main: '#128C7E',
-        dark: '#075E54',
-        light: '#25D366',
-        contrastText: '#FFF'
-      }
-    }
-  })
-
-  React.useEffect(() => {
-    const selectedTheme = localStorage.getItem('@dark-theme')
-
-    if (selectedTheme !== null) {
-      setMode(selectedTheme)
-    } else {
-      localStorage.setItem('@dark-theme', prefersDarkMode ? 'dark' : 'light')
-      setMode(prefersDarkMode ? 'dark' : 'light')
-    }
-  }, [])
-
   const style = {
     position: 'absolute' as const,
     top: '50%',
@@ -259,7 +218,7 @@ export default function Login(): JSX.Element {
   }
 
   return (
-    <ThemeProvider theme={mode === 'light' ? mdTheme : mdThemeDark}>
+    <>
       <Modal
         open={open}
         onClose={(): void => setOpen(false)}
@@ -375,8 +334,8 @@ export default function Login(): JSX.Element {
             top: 0,
             width: '100%',
             height: '15rem',
-            backgroundColor:
-              mode === 'light' ? mdTheme.palette.primary.main : mdThemeDark.palette.primary.main
+            backgroundColor: (theme) =>
+              theme.palette.mode === 'light' ? '#FFF' : theme.palette.grey[800]
           }}
         ></Box>
         <Box sx={{ zIndex: 10, position: 'absolute', top: 0, width: '100%' }}>
@@ -492,6 +451,6 @@ export default function Login(): JSX.Element {
           </Box>
         </Box>
       </Box>
-    </ThemeProvider>
+    </>
   )
 }

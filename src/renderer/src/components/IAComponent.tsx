@@ -22,7 +22,7 @@ export default function IAComponent(): JSX.Element {
   const [data, setData] = useState<Array<object>>([])
 
   const configuration = new Configuration({
-    apiKey: ''
+    apiKey: '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'
   })
 
   const openai = new OpenAIApi(configuration)
@@ -45,15 +45,15 @@ export default function IAComponent(): JSX.Element {
     }
   }
 
-  const handleAskToAi = async (): Promise<void> => {
+  const handleAskToAi = async (text?: string): Promise<void> => {
     try {
       setIsLoading(true)
 
-      setInputText('')
+      setInputText(text ?? '')
 
       const result = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
-        messages: [...data, { role: 'user', content: inputText }],
+        messages: [...data, { role: 'user', content: text ?? inputText }],
         temperature: 1,
         max_tokens: 2048,
         top_p: 1,
@@ -63,7 +63,7 @@ export default function IAComponent(): JSX.Element {
 
       setData([
         ...data,
-        { role: 'user', content: inputText },
+        { role: 'user', content: text ?? inputText },
         { role: 'assistant', content: result.data.choices[0].message.content }
       ])
     } catch (error) {
@@ -79,7 +79,8 @@ export default function IAComponent(): JSX.Element {
       height={600}
       position="relative"
       sx={{
-        backgroundColor: 'white',
+        backgroundColor: (theme) =>
+          theme.palette.mode === 'light' ? '#FFF' : theme.palette.grey[800],
         overflow: 'hidden'
       }}
     >
@@ -125,11 +126,30 @@ export default function IAComponent(): JSX.Element {
             <Typography variant="h5" mb={4}>
               Selecione uma opção abaixo
             </Typography>
-            <Button variant="contained">
+            <Button
+              variant="contained"
+              onClick={(): void => {
+                handleAskToAi(
+                  'Me mande idéias de mensagens de boas vindas para enviar para meus clientes'
+                )
+              }}
+            >
               Ideias de mensagens de boas vindas para meus clientes!
             </Button>
-            <Button variant="contained">Ideias de mensagens de Chama para a ação</Button>
-            <Button variant="contained">
+            <Button
+              variant="contained"
+              onClick={(): void => {
+                handleAskToAi('Me mande idéias de mensagens de Chama para a ação')
+              }}
+            >
+              Ideias de mensagens de Chama para a ação
+            </Button>
+            <Button
+              variant="contained"
+              onClick={(): void => {
+                handleAskToAi('Como enviar mensagens no WhatsApp sem ser bloqueado?')
+              }}
+            >
               Como enviar mensagens no WhatsApp sem ser bloqueado.
             </Button>
 
@@ -267,7 +287,8 @@ export default function IAComponent(): JSX.Element {
         position={'absolute'}
         bottom={0}
         sx={{
-          backgroundColor: 'white'
+          backgroundColor: (theme) =>
+            theme.palette.mode === 'light' ? '#FFF' : theme.palette.grey[800]
         }}
         alignItems="center"
       >

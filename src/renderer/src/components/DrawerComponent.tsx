@@ -248,7 +248,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
               add(new Date(user?.paymentDate), { months: user?.selectedPlan }),
               Date.now()
             ) < 15 && (
-              <Typography sx={{ mx: 2 }}>
+              <Typography sx={{ mx: 1 }}>
                 Licença expira em{' '}
                 {differenceInCalendarDays(
                   add(new Date(user?.paymentDate), { months: user?.selectedPlan }),
@@ -258,8 +258,11 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
               </Typography>
             )}
 
+            <Typography variant="caption" sx={{ mx: 1, mt: 0.5 }} alignItems="center">
+              Ver. {currentVersion}
+            </Typography>
             <Tooltip title="Iniciar conversa com IA">
-              <IconButton sx={{ mx: 2 }} onClick={handleClick} color="inherit">
+              <IconButton sx={{ mx: 1 }} onClick={handleClick} color="inherit">
                 <BiBot />
               </IconButton>
             </Tooltip>
@@ -276,7 +279,6 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
               <IAComponent />
             </Menu>
 
-            <Typography variant="caption">Ver. {currentVersion}</Typography>
             <Tooltip title="Definir Modo Escuro/Claro">
               <IconButton
                 sx={{ ml: 1 }}
@@ -291,14 +293,14 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
             </Tooltip>
             {!!updateInfo && (
               <Tooltip title="Nova versão disponível">
-                <IconButton sx={{ mx: 2 }} onClick={handleOpenModalUpdate} color="inherit">
+                <IconButton sx={{ mx: 1 }} onClick={handleOpenModalUpdate} color="inherit">
                   <BsCloudDownload />
                 </IconButton>
               </Tooltip>
             )}
             {false && (
               <Tooltip title="Perfil">
-                <IconButton sx={{ mx: 2 }} onClick={(): void => handleNavigate('/perfil')}>
+                <IconButton sx={{ mx: 1 }} onClick={(): void => handleNavigate('/perfil')}>
                   <Avatar alt="Filipe" src="https://github.com/filipeleonelbatista.png" />
                 </IconButton>
               </Tooltip>

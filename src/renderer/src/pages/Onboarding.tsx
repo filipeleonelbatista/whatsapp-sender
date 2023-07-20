@@ -1,26 +1,29 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import {
-  Button,
-  Card,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Typography,
-  useMediaQuery
-} from '@mui/material'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { Button, Card, Checkbox, FormControlLabel, FormGroup, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import React from 'react'
 import { FaWhatsapp, FaWindows } from 'react-icons/fa'
 import { useNavigate } from 'react-router'
 
+import AccountCircle from '@mui/icons-material/AccountCircle'
 import CheckmarkIcon from '@mui/icons-material/Check'
+import WhatsAppIcon from '@mui/icons-material/WhatsApp'
+import {
+  Alert,
+  AlertTitle,
+  CircularProgress,
+  circularProgressClasses,
+  InputAdornment,
+  Slide,
+  TextField
+} from '@mui/material'
 import CardMedia from '@mui/material/CardMedia'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
+import Snackbar from '@mui/material/Snackbar'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import ImageChrome from '../assets/chrome.png'
@@ -29,25 +32,13 @@ import ImageLista from '../assets/lista.png'
 import ImageNovoCaminho from '../assets/novocaminho.png'
 import ImageSistema from '../assets/sistema.png'
 import ImageVariaveis from '../assets/variaveis.png'
-import AccountCircle from '@mui/icons-material/AccountCircle'
-import WhatsAppIcon from '@mui/icons-material/WhatsApp'
-import {
-  Alert,
-  AlertTitle,
-  InputAdornment,
-  TextField,
-  CircularProgress,
-  circularProgressClasses,
-  Slide
-} from '@mui/material'
-import Snackbar from '@mui/material/Snackbar'
 
 import celular from '../utils/masks'
+import { useCurrentTheme } from '@renderer/hooks/useCurrentTheme'
 
 export default function Onboarding(): JSX.Element {
+  const { mode } = useCurrentTheme()
   const navigate = useNavigate()
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
-  const [mode, setMode] = React.useState('light')
   const [stepPosition, setStepPosition] = React.useState(0)
   const [isLoading, setisLoading] = React.useState(false)
 
@@ -86,7 +77,8 @@ export default function Onboarding(): JSX.Element {
     check_error: 2000,
     send_message: 3000,
     send_attachment: 3000,
-    finalize_send: 5000
+    finalize_send: 5000,
+    new_whatsapp_send_button: false
   })
 
   const handleSubmitForm = async (formValues: object): Promise<void> => {
@@ -154,30 +146,6 @@ export default function Onboarding(): JSX.Element {
     }
   })
 
-  const mdTheme = createTheme({
-    palette: {
-      mode: 'light',
-      primary: {
-        main: '#128C7E',
-        dark: '#075E54',
-        light: '#25D366',
-        contrastText: '#FFF'
-      }
-    }
-  })
-
-  const mdThemeDark = createTheme({
-    palette: {
-      mode: 'dark',
-      primary: {
-        main: '#128C7E',
-        dark: '#075E54',
-        light: '#25D366',
-        contrastText: '#FFF'
-      }
-    }
-  })
-
   const formSchemaConfig = React.useMemo(() => {
     return Yup.object().shape({
       start: Yup.number().required(),
@@ -209,13 +177,6 @@ export default function Onboarding(): JSX.Element {
   React.useEffect(() => {
     if (localStorage.getItem('@onboarding-step') !== null) {
       setStepPosition(JSON.parse(localStorage.getItem('@onboarding-step')))
-    }
-    if (localStorage.getItem('@dark-theme') !== null) {
-      const selectedTheme = localStorage.getItem('@dark-theme')
-      setMode(selectedTheme)
-    } else {
-      localStorage.setItem('@dark-theme', prefersDarkMode ? 'dark' : 'light')
-      setMode(prefersDarkMode ? 'dark' : 'light')
     }
 
     if (localStorage.getItem('@config') !== null) {
@@ -1013,7 +974,7 @@ export default function Onboarding(): JSX.Element {
   ]
 
   return (
-    <ThemeProvider theme={mode === 'light' ? mdTheme : mdThemeDark}>
+    <>
       <Snackbar
         sx={{ mt: 8 }}
         open={openSnackBar}
@@ -1113,6 +1074,6 @@ export default function Onboarding(): JSX.Element {
           </Box>
         </Box>
       </Box>
-    </ThemeProvider>
+    </>
   )
 }
