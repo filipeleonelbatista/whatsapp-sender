@@ -25,6 +25,7 @@ import {
   ptBR
 } from '@mui/x-data-grid'
 import { useSnack } from '@renderer/hooks/useSnack'
+import { useWaSocket } from '@renderer/hooks/useWaSocket'
 import EmojiPicker from 'emoji-picker-react'
 import { useFormik } from 'formik'
 import React from 'react'
@@ -61,6 +62,7 @@ const GridToolbarExport = ({ csvOptions, printOptions, ...other }: object): JSX.
 
 function Home(): JSX.Element {
   const { handleSetMessage } = useSnack()
+  const { hasSocket, list } = useWaSocket()
 
   // ----------------------------------------------------------------
   const [isEditable, setisEditable] = React.useState(false)
@@ -105,8 +107,6 @@ function Home(): JSX.Element {
 
   const handleSendSingleMessage = async (contact: object): Promise<void> => {
     if (message === '') return alert('Você não digitou a mensagem ainda')
-
-
   }
 
   const handleSendMessages = async (): Promise<void> => {
@@ -251,377 +251,400 @@ function Home(): JSX.Element {
       }
     }
   ]
-  
+
   return (
-    <>
-      <DrawerComponent title="Envio de mensagens">
-        <Typography variant="h4">Mensagem</Typography>
-        <Typography variant="body1">
-          Digite a mensagem que será enviada para os contatos do Whatsapp
-        </Typography>
-        <Grid container spacing={2} sx={{ mt: 2, mb: 4 }}>
-          <Grid item xs={6}>
-            <TextField
-              inputRef={inputMessageRef}
-              fullWidth
-              label="Mensagem"
-              id="message"
-              name="message"
-              onSelect={(): void => {
-                setSelectionStart(inputMessageRef?.current?.selectionStart)
-              }}
-              multiline
-              rows={6}
-              value={message}
-              onChange={(e: object): void => setMessage(e.target.value)}
-            />
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 2, mb: 2, gap: 1 }}>
-              <Button
-                variant="contained"
-                onClick={(): void => {
-                  setMessage(
-                    [
-                      message.slice(0, selectionStart),
-                      '{primeiroNome}',
-                      message.slice(selectionStart)
-                    ].join('')
-                  )
+    <DrawerComponent title="Envio de mensagens">
+      {!hasSocket ? (
+        <>
+          <Typography variant="h4">
+            Você ainda não possio um WhatsApp cadastrado no atendimento
+          </Typography>
+          <Typography variant="body1">Vamos começar</Typography>
+          <Typography variant="body2">
+            Para iniciar digite um nome para este WhatsApp que vai usar. Depois você poderá criar
+            outros clientes de WhatsApp para outros números se desejar.
+          </Typography>
+          <TextField
+            inputRef={inputMessageRef}
+            fullWidth
+            label="Nome do cliente do WP"
+            id="WaSocketName"
+            name="WaSocketName"
+            onSelect={(): void => {
+              setSelectionStart(inputMessageRef?.current?.selectionStart)
+            }}
+          />
+        </>
+      ) : (
+        <>
+          <Typography variant="h4">Mensagem</Typography>
+          <Typography variant="body1">
+            Digite a mensagem que será enviada para os contatos do Whatsapp
+          </Typography>
+          <Grid container spacing={2} sx={{ mt: 2, mb: 4 }}>
+            <Grid item xs={6}>
+              <TextField
+                inputRef={inputMessageRef}
+                fullWidth
+                label="Mensagem"
+                id="message"
+                name="message"
+                onSelect={(): void => {
+                  setSelectionStart(inputMessageRef?.current?.selectionStart)
                 }}
-              >
-                {`{primeiroNome}`}
-              </Button>
-              <Button
-                variant="contained"
-                onClick={(): void => {
-                  setMessage(
-                    [
-                      message.slice(0, selectionStart),
-                      '{nomeCompleto}',
-                      message.slice(selectionStart)
-                    ].join('')
-                  )
-                }}
-              >
-                {`{nomeCompleto}`}
-              </Button>
-              <Button
-                variant="contained"
-                onClick={(): void => {
-                  setMessage(
-                    [
-                      message.slice(0, selectionStart),
-                      '{telefone}',
-                      message.slice(selectionStart)
-                    ].join('')
-                  )
-                }}
-              >
-                {`{telefone}`}
-              </Button>
-              <Button
-                variant="contained"
-                onClick={(): void => {
-                  setMessage(
-                    [
-                      message.slice(0, selectionStart),
-                      '{var1}',
-                      message.slice(selectionStart)
-                    ].join('')
-                  )
-                }}
-              >
-                {`{var1}`}
-              </Button>
-              <Button
-                variant="contained"
-                onClick={(): void => {
-                  setMessage(
-                    [
-                      message.slice(0, selectionStart),
-                      '{var2}',
-                      message.slice(selectionStart)
-                    ].join('')
-                  )
-                }}
-              >
-                {`{var2}`}
-              </Button>
-              <Button
-                variant="contained"
-                onClick={(): void => {
-                  setMessage(
-                    [
-                      message.slice(0, selectionStart),
-                      '{var3}',
-                      message.slice(selectionStart)
-                    ].join('')
-                  )
-                }}
-              >
-                {`{var3}`}
-              </Button>
-              <Button
-                variant="contained"
-                onClick={(): void => {
-                  setOpenEmoji(!openEmoji)
-                }}
-              >
-                Emojis
-              </Button>
-              {openEmoji && (
-                <EmojiPicker
-                  width="100%"
-                  height="25em"
-                  searchPlaceHolder="Pesquisar emojis..."
-                  emojiVersion="3.0"
-                  onEmojiClick={(emoji: object): void => {
+                multiline
+                rows={6}
+                value={message}
+                onChange={(e: object): void => setMessage(e.target.value)}
+              />
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 2, mb: 2, gap: 1 }}>
+                <Button
+                  variant="contained"
+                  onClick={(): void => {
                     setMessage(
                       [
                         message.slice(0, selectionStart),
-                        `${emoji.emoji}`,
+                        '{primeiroNome}',
                         message.slice(selectionStart)
                       ].join('')
                     )
                   }}
-                  theme={
-                    localStorage.getItem('@dark-theme') === null
-                      ? 'light'
-                      : localStorage.getItem('@dark-theme')
-                  }
+                >
+                  {`{primeiroNome}`}
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={(): void => {
+                    setMessage(
+                      [
+                        message.slice(0, selectionStart),
+                        '{nomeCompleto}',
+                        message.slice(selectionStart)
+                      ].join('')
+                    )
+                  }}
+                >
+                  {`{nomeCompleto}`}
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={(): void => {
+                    setMessage(
+                      [
+                        message.slice(0, selectionStart),
+                        '{telefone}',
+                        message.slice(selectionStart)
+                      ].join('')
+                    )
+                  }}
+                >
+                  {`{telefone}`}
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={(): void => {
+                    setMessage(
+                      [
+                        message.slice(0, selectionStart),
+                        '{var1}',
+                        message.slice(selectionStart)
+                      ].join('')
+                    )
+                  }}
+                >
+                  {`{var1}`}
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={(): void => {
+                    setMessage(
+                      [
+                        message.slice(0, selectionStart),
+                        '{var2}',
+                        message.slice(selectionStart)
+                      ].join('')
+                    )
+                  }}
+                >
+                  {`{var2}`}
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={(): void => {
+                    setMessage(
+                      [
+                        message.slice(0, selectionStart),
+                        '{var3}',
+                        message.slice(selectionStart)
+                      ].join('')
+                    )
+                  }}
+                >
+                  {`{var3}`}
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={(): void => {
+                    setOpenEmoji(!openEmoji)
+                  }}
+                >
+                  Emojis
+                </Button>
+                {openEmoji && (
+                  <EmojiPicker
+                    width="100%"
+                    height="25em"
+                    searchPlaceHolder="Pesquisar emojis..."
+                    emojiVersion="3.0"
+                    onEmojiClick={(emoji: object): void => {
+                      setMessage(
+                        [
+                          message.slice(0, selectionStart),
+                          `${emoji.emoji}`,
+                          message.slice(selectionStart)
+                        ].join('')
+                      )
+                    }}
+                    theme={
+                      localStorage.getItem('@dark-theme') === null
+                        ? 'light'
+                        : localStorage.getItem('@dark-theme')
+                    }
+                  />
+                )}
+              </Box>
+            </Grid>
+            <Grid item xs={6}>
+              <Button
+                sx={{ width: '100%' }}
+                variant="contained"
+                component="label"
+                startIcon={<AddAPhotoIcon />}
+              >
+                Adicionar arquivos
+                <input
+                  id="uploadImages"
+                  hidden
+                  accept=".pdf,.mp3,.wav,.ogg,.jpeg,.jpg,.png,.gif,.bmp,.tiff,.webp,.mp4,.mov,.avi,.3gp,.wmv,.mkv"
+                  multiple
+                  type="file"
+                  onChange={(event: object): void => handleLoadAttachments(event)}
                 />
+              </Button>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center'
+                }}
+              >
+                {attachments.length > 0 ? (
+                  attachments.map((item, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        width: '100%',
+                        minHeight: 42,
+                        padding: 1,
+                        borderRadius: 1,
+                        marginTop: 1,
+                        border: '1px solid #CCC',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                      }}
+                    >
+                      {item.type === 'application/pdf' && (
+                        <Typography>
+                          <FaFilePdf size={28} />
+                        </Typography>
+                      )}
+                      {item.type.includes('image') && (
+                        <Typography>
+                          <BsCardImage size={28} />
+                        </Typography>
+                      )}
+                      {item.type.includes('video') && (
+                        <Typography>
+                          <GoVideo size={28} />
+                        </Typography>
+                      )}
+                      {item.type.includes('audio') && (
+                        <Typography>
+                          <PiFileAudioLight size={28} />
+                        </Typography>
+                      )}
+                      <Typography>
+                        {item.name.length > 20 ? item.name.substr(0, 20) + '...' : item.name}
+                      </Typography>
+                      <Typography>{(item.size / (1024 * 1024)).toFixed(3)} Mb</Typography>
+                      <IconButton color="error" onClick={(): void => removeAttachment(index)}>
+                        <FaTrash size={20} />
+                      </IconButton>
+                    </Box>
+                  ))
+                ) : (
+                  <Typography variant="body2" sx={{ mt: 4 }}>
+                    Nenhum arquivo enviado
+                  </Typography>
+                )}
+              </Box>
+            </Grid>
+          </Grid>
+
+          <Typography variant="h5">Lista de envio</Typography>
+          <Typography variant="body1" sx={{ mb: 4 }}>
+            Adicione contatos para enviar a mensagem definida acima.
+          </Typography>
+
+          <form onSubmit={formik.handleSubmit}>
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <TextField
+                label="Nome"
+                id="name"
+                name="name"
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={!!formik.errors.name}
+                helperText={formik.errors.name}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AccountCircle />
+                    </InputAdornment>
+                  )
+                }}
+              />
+              <TextField
+                label="WhatsApp"
+                id="phone"
+                name="phone"
+                inputProps={{ maxLength: 15 }}
+                value={formik.values.phone}
+                onChange={(e: object): void => {
+                  e.target.value = celular(e.target.value)
+                  formik.handleChange(e)
+                }}
+                onBlur={(e: object): void => {
+                  e.target.value = celular(e.target.value)
+                  formik.handleBlur(e)
+                }}
+                error={!!formik.errors.phone}
+                helperText={formik.errors.phone}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <WhatsAppIcon />
+                    </InputAdornment>
+                  )
+                }}
+              />
+              <Button type="submit" variant="contained">
+                {isEditable ? 'Salvar' : 'Adicionar'}
+              </Button>
+              {isEditable && (
+                <Button
+                  onClick={(): void => {
+                    formik.resetForm()
+                    setisEditable(false)
+                  }}
+                  type="button"
+                  color="error"
+                  variant="contained"
+                >
+                  Cancelar
+                </Button>
               )}
             </Box>
-          </Grid>
-          <Grid item xs={6}>
-            <Button
-              sx={{ width: '100%' }}
-              variant="contained"
-              component="label"
-              startIcon={<AddAPhotoIcon />}
-            >
-              Adicionar arquivos
+          </form>
+
+          <Box sx={{ display: 'flex', mt: 4, gap: 1 }}>
+            <Button variant="contained" component="label" startIcon={<TableChartIcon />}>
+              Carregar CSV
               <input
-                id="uploadImages"
                 hidden
-                accept=".pdf,.mp3,.wav,.ogg,.jpeg,.jpg,.png,.gif,.bmp,.tiff,.webp,.mp4,.mov,.avi,.3gp,.wmv,.mkv"
+                accept=".csv"
                 multiple
                 type="file"
-                onChange={(event: object): void => handleLoadAttachments(event)}
+                onChange={(event: object): void => handleLoadCsv(event)}
               />
             </Button>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center'
-              }}
-            >
-              {attachments.length > 0 ? (
-                attachments.map((item, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      width: '100%',
-                      minHeight: 42,
-                      padding: 1,
-                      borderRadius: 1,
-                      marginTop: 1,
-                      border: '1px solid #CCC',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}
-                  >
-                    {item.type === 'application/pdf' && (
-                      <Typography>
-                        <FaFilePdf size={28} />
-                      </Typography>
-                    )}
-                    {item.type.includes('image') && (
-                      <Typography>
-                        <BsCardImage size={28} />
-                      </Typography>
-                    )}
-                    {item.type.includes('video') && (
-                      <Typography>
-                        <GoVideo size={28} />
-                      </Typography>
-                    )}
-                    {item.type.includes('audio') && (
-                      <Typography>
-                        <PiFileAudioLight size={28} />
-                      </Typography>
-                    )}
-                    <Typography>
-                      {item.name.length > 20 ? item.name.substr(0, 20) + '...' : item.name}
-                    </Typography>
-                    <Typography>{(item.size / (1024 * 1024)).toFixed(3)} Mb</Typography>
-                    <IconButton color="error" onClick={(): void => removeAttachment(index)}>
-                      <FaTrash size={20} />
-                    </IconButton>
-                  </Box>
-                ))
-              ) : (
-                <Typography variant="body2" sx={{ mt: 4 }}>
-                  Nenhum arquivo enviado
-                </Typography>
-              )}
-            </Box>
-          </Grid>
-        </Grid>
-
-        <Typography variant="h5">Lista de envio</Typography>
-        <Typography variant="body1" sx={{ mb: 4 }}>
-          Adicione contatos para enviar a mensagem definida acima.
-        </Typography>
-
-        <form onSubmit={formik.handleSubmit}>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <TextField
-              label="Nome"
-              id="name"
-              name="name"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={!!formik.errors.name}
-              helperText={formik.errors.name}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <AccountCircle />
-                  </InputAdornment>
-                )
-              }}
-            />
-            <TextField
-              label="WhatsApp"
-              id="phone"
-              name="phone"
-              inputProps={{ maxLength: 15 }}
-              value={formik.values.phone}
-              onChange={(e: object): void => {
-                e.target.value = celular(e.target.value)
-                formik.handleChange(e)
-              }}
-              onBlur={(e: object): void => {
-                e.target.value = celular(e.target.value)
-                formik.handleBlur(e)
-              }}
-              error={!!formik.errors.phone}
-              helperText={formik.errors.phone}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <WhatsAppIcon />
-                  </InputAdornment>
-                )
-              }}
-            />
-            <Button type="submit" variant="contained">
-              {isEditable ? 'Salvar' : 'Adicionar'}
-            </Button>
-            {isEditable && (
-              <Button
-                onClick={(): void => {
-                  formik.resetForm()
-                  setisEditable(false)
-                }}
-                type="button"
-                color="error"
-                variant="contained"
-              >
-                Cancelar
-              </Button>
+            {rows.length > 0 && (
+              <>
+                <Button
+                  variant="contained"
+                  color="error"
+                  startIcon={<FaTrash size={16} />}
+                  onClick={(): void => {
+                    if (confirm('Deseja remover todos os contatos da tabela de envios?')) {
+                      setRows([])
+                    }
+                  }}
+                >
+                  Limpar tabela
+                </Button>
+                <Button
+                  variant="contained"
+                  color="warning"
+                  startIcon={<FaTrash size={16} />}
+                  onClick={(): void => {
+                    if (
+                      confirm(
+                        'Deseja remover todos os contatos que receberam mensagens da tabela de envios?'
+                      )
+                    ) {
+                      const newArray = rows.filter((row) => !row.status)
+                      setRows(newArray)
+                    }
+                  }}
+                >
+                  Remover enviados
+                </Button>
+              </>
             )}
           </Box>
-        </form>
 
-        <Box sx={{ display: 'flex', mt: 4, gap: 1 }}>
-          <Button variant="contained" component="label" startIcon={<TableChartIcon />}>
-            Carregar CSV
-            <input
-              hidden
-              accept=".csv"
-              multiple
-              type="file"
-              onChange={(event: object): void => handleLoadCsv(event)}
+          <Box sx={{ height: 500, w: '100%', mt: 4 }}>
+            <DataGrid
+              onCellFocusOut={(): void => console.log('Olha')}
+              columnVisibilityModel={{
+                id: false
+              }}
+              columns={columns}
+              rows={rows}
+              pageSize={10}
+              rowsPerPageOptions={[10]}
+              checkboxSelection={false}
+              disableSelectionOnClick={true}
+              localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
+              components={{ Toolbar: GridToolbarExport }}
+              sx={{
+                '@media print': {
+                  '.MuiDataGrid-main': { color: 'rgba(0, 0, 0, 0.87)' }
+                }
+              }}
             />
-          </Button>
-          {rows.length > 0 && (
-            <>
-              <Button
-                variant="contained"
-                color="error"
-                startIcon={<FaTrash size={16} />}
-                onClick={(): void => {
-                  if (confirm('Deseja remover todos os contatos da tabela de envios?')) {
-                    setRows([])
-                  }
-                }}
-              >
-                Limpar tabela
-              </Button>
-              <Button
-                variant="contained"
-                color="warning"
-                startIcon={<FaTrash size={16} />}
-                onClick={(): void => {
-                  if (
-                    confirm(
-                      'Deseja remover todos os contatos que receberam mensagens da tabela de envios?'
-                    )
-                  ) {
-                    const newArray = rows.filter((row) => !row.status)
-                    setRows(newArray)
-                  }
-                }}
-              >
-                Remover enviados
-              </Button>
-            </>
-          )}
-        </Box>
+          </Box>
 
-        <Box sx={{ height: 500, w: '100%', mt: 4 }}>
-          <DataGrid
-            onCellFocusOut={(): void => console.log('Olha')}
-            columnVisibilityModel={{
-              id: false
-            }}
-            columns={columns}
-            rows={rows}
-            pageSize={10}
-            rowsPerPageOptions={[10]}
-            checkboxSelection={false}
-            disableSelectionOnClick={true}
-            localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
-            components={{ Toolbar: GridToolbarExport }}
+          <Button
+            onClick={handleSendMessages}
             sx={{
-              '@media print': {
-                '.MuiDataGrid-main': { color: 'rgba(0, 0, 0, 0.87)' }
-              }
+              width: '100%',
+              mt: 4,
+              mb: 4
             }}
-          />
-        </Box>
-
-        <Button
-          onClick={handleSendMessages}
-          sx={{
-            width: '100%',
-            mt: 4,
-            mb: 4
-          }}
-          variant="contained"
-          disabled={isLoadingButton}
-          startIcon={
-            isLoadingButton ? <CircularProgress size={22} color="inherit" /> : <SendIcon />
-          }
-        >
-          {isLoadingButton ? 'Aguarde, Enviando Mensagens' : 'Enviar mensagens'}
-        </Button>
-      </DrawerComponent>
-    </>
+            variant="contained"
+            disabled={isLoadingButton}
+            startIcon={
+              isLoadingButton ? <CircularProgress size={22} color="inherit" /> : <SendIcon />
+            }
+          >
+            {isLoadingButton ? 'Aguarde, Enviando Mensagens' : 'Enviar mensagens'}
+          </Button>
+        </>
+      )}
+    </DrawerComponent>
   )
 }
 

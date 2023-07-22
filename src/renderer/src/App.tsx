@@ -3,6 +3,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 import { CurrentThemeProvider } from './contexts/CurrentThemeContext'
 import { LoaderContextProvider } from './contexts/LoaderContext'
 import { SnackContextProvider } from './contexts/SnackContext'
+import { WaSocketContextProvider } from './contexts/WaSocketContext'
 import { useCurrentTheme } from './hooks/useCurrentTheme'
 import Routes from './Routes'
 
@@ -13,11 +14,13 @@ function AppComponent(): JSX.Element {
     <>
       <ThemeProvider theme={currentTheme}>
         <CssBaseline />
-        <SnackContextProvider>
-          <LoaderContextProvider>
-            <Routes />
-          </LoaderContextProvider>
-        </SnackContextProvider>
+        <WaSocketContextProvider>
+          <SnackContextProvider>
+            <LoaderContextProvider>
+              <Routes />
+            </LoaderContextProvider>
+          </SnackContextProvider>
+        </WaSocketContextProvider>
       </ThemeProvider>
     </>
   )

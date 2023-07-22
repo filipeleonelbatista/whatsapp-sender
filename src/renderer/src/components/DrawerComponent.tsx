@@ -337,6 +337,17 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
           </Toolbar>
           <Divider />
           <List component="nav">
+            <Tooltip placement="right" title="Conexões">
+              <ListItemButton
+                selected={location.pathname === '/connections'}
+                onClick={(): void => handleNavigate('/connections')}
+              >
+                <ListItemIcon>
+                  <MarkUnreadChatAltIcon />
+                </ListItemIcon>
+                <ListItemText primary="Conexões" />
+              </ListItemButton>
+            </Tooltip>
             <Tooltip placement="right" title="Envio de mensagens">
               <ListItemButton
                 selected={location.pathname === '/envio-mensagens'}
@@ -348,7 +359,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
                 <ListItemText primary="Envio de mensagens" />
               </ListItemButton>
             </Tooltip>
-            <Tooltip placement="right" title="Modelos de mensagens">
+            {/* <Tooltip placement="right" title="Modelos de mensagens">
               <ListItemButton
                 selected={location.pathname === '/modelos-de-mensagem'}
                 onClick={(): void => handleNavigate('/modelos-de-mensagem')}
@@ -369,7 +380,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
                 </ListItemIcon>
                 <ListItemText primary="Listas de envios" />
               </ListItemButton>
-            </Tooltip>
+            </Tooltip> */}
             {/* <Tooltip placement="right" title="Extrator de contatos">
               <ListItemButton selected={location.pathname === "/extrator"} onClick={() => handleNavigate("/extrator")}>
                 <ListItemIcon>
@@ -378,7 +389,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
                 <ListItemText primary="Extrator de contatoss" />
               </ListItemButton>
             </Tooltip> */}
-            {false && (
+            {/* {false && (
               <>
                 <Tooltip placement="right" title="Perfil">
                   <ListItemButton
@@ -448,7 +459,7 @@ function DrawerComponent({ title, children }: DrawerComponent): JSX.Element {
                 </ListItemIcon>
                 <ListItemText primary="Sair" />
               </ListItemButton>
-            </Tooltip>
+            </Tooltip> */}
           </List>
         </Drawer>
         <Box

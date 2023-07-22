@@ -21,7 +21,13 @@ interface SnackProviderProps {
 export const SnackContext = createContext<SnackProps | null>(null)
 
 export function SnackContextProvider(props: SnackProviderProps): JSX.Element {
-  const [message, setMessage] = useState<SnackMessage>()
+  const [message, setMessage] = useState<SnackMessage>({
+    id: '',
+    title: '',
+    message: '',
+    severity: 'info',
+    duration: 5000
+  })
   const [open, setOpen] = useState<boolean>(false)
 
   const handleSetMessage = (props: SnackMessage): void => {
@@ -47,11 +53,7 @@ export function SnackContextProvider(props: SnackProviderProps): JSX.Element {
           severity={message.severity ?? 'info'}
           sx={{ maxWidth: '400px', width: '100%' }}
         >
-          {
-            !!message.title && (
-              <AlertTitle>{message.title}</AlertTitle>
-            )
-          }
+          {!!message.title && <AlertTitle>{message.title}</AlertTitle>}
           {message.message ?? ''}
         </Alert>
       </Snackbar>
