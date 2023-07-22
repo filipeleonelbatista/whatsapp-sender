@@ -6,22 +6,17 @@ import SendIcon from '@mui/icons-material/Send'
 import TableChartIcon from '@mui/icons-material/TableChart'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import {
-  Alert,
-  AlertTitle,
   Box,
   Button,
   CircularProgress,
-  circularProgressClasses,
   Grid,
   IconButton,
   InputAdornment,
-  Slide,
   TextField,
   Tooltip,
   Typography
 } from '@mui/material'
 import { pink } from '@mui/material/colors'
-import Snackbar from '@mui/material/Snackbar'
 import {
   DataGrid,
   GridCsvExportMenuItem,
@@ -29,6 +24,7 @@ import {
   GridToolbarExportContainer,
   ptBR
 } from '@mui/x-data-grid'
+import { useSnack } from '@renderer/hooks/useSnack'
 import EmojiPicker from 'emoji-picker-react'
 import { useFormik } from 'formik'
 import React from 'react'
@@ -64,36 +60,10 @@ const GridToolbarExport = ({ csvOptions, printOptions, ...other }: object): JSX.
 )
 
 function Home(): JSX.Element {
-  const [isLoading, setisLoading] = React.useState(false)
+  const { handleSetMessage } = useSnack()
+
+  // ----------------------------------------------------------------
   const [isEditable, setisEditable] = React.useState(false)
-
-  const [openSnackBar, setOpenSnackBar] = React.useState(false)
-  const [snackbarMessage, setSnackbarMessage] = React.useState({
-    message: '',
-    title: '',
-    severity: 'error'
-  })
-
-  const handleClick = (): void => {
-    setOpenSnackBar(true)
-  }
-
-  const handleClose = (_event: object, reason: string): void => {
-    if (reason === 'clickaway') {
-      return
-    }
-
-    setOpenSnackBar(false)
-  }
-
-  const [config, setConfig] = React.useState({
-    start: 5000,
-    initiate_send: 8000,
-    check_error: 2000,
-    send_message: 3000,
-    send_attachment: 3000,
-    finalize_send: 5000
-  })
 
   const [rows, setRows] = React.useState([])
   const [editableContact, setEditableContact] = React.useState()
@@ -104,27 +74,6 @@ function Home(): JSX.Element {
 
   const [selectionStart, setSelectionStart] = React.useState()
   const inputMessageRef = React.useRef()
-
-  const registerLog = (initiated_at: Date, currentRows: Array<object>): void => {
-    const results = {
-      rows: currentRows,
-      message,
-      status: true,
-      initiated_at,
-      finalized_at: Date.now()
-    }
-
-    setTimeout(() => {
-      const dataLog = localStorage.getItem('@logs')
-
-      if (dataLog !== null) {
-        const logs = JSON.parse(dataLog)
-        localStorage.setItem('@logs', JSON.stringify([{ id: uuidv4(), ...results }, ...logs]))
-      } else {
-        localStorage.setItem('@logs', JSON.stringify([{ id: uuidv4(), ...results }]))
-      }
-    }, 3000)
-  }
 
   const handleSubmitForm = (formValues: object): void => {
     if (isEditable) {
@@ -157,134 +106,12 @@ function Home(): JSX.Element {
   const handleSendSingleMessage = async (contact: object): Promise<void> => {
     if (message === '') return alert('Você não digitou a mensagem ainda')
 
-    try {
-      setIsLoadingButton(true)
-      setisLoading(true)
-      const initiated_at = Date.now()
 
-      await window.api.createGlobalInstanceOfDriver()
-
-      await window.api.loginWhatsapp(config)
-
-      const request = await window.api.sendMessage(contact, message, attachments, config)
-
-      if (!request.status) {
-        setSnackbarMessage({
-          message: `Ao tentar enviar a mensagem para ${contact.name} telefone ${contact.phone}, o erro ${request.error} `,
-          title: 'Problemas no envio',
-          severity: 'error'
-        })
-
-        handleClick()
-      }
-
-      const updatedRow = {
-        ...contact,
-        statusInfo: request.status ? 'Mensagem Enviada' : request.error,
-        status: request.status
-      }
-
-      setRows((prevState: never[]): never[] =>
-        prevState.map((contact) =>
-          contact.id === updatedRow.id ? { ...contact, ...updatedRow } : contact
-        )
-      )
-
-      await window.api.closeGlobalInstanceOfDriver()
-
-      registerLog(initiated_at, rows)
-
-      setSnackbarMessage({
-        message: `Mensagen enviada com sucesso!`,
-        title: 'Envio concluido',
-        severity: 'success'
-      })
-      handleClick()
-    } catch (error) {
-      setSnackbarMessage({
-        message: `Houve um erro ao tentar enviar as mensagens. \nContate o administrador. \n\n${error}`,
-        title: 'Tivemos um problema',
-        severity: 'error'
-      })
-      handleClick()
-    } finally {
-      setIsLoadingButton(false)
-      setisLoading(false)
-    }
   }
 
   const handleSendMessages = async (): Promise<void> => {
     if (message === '') return alert('Você não digitou a mensagem ainda')
     if (rows.length === 0) return alert('Você não incluiu contatos para o envio das mensagens')
-
-    try {
-      setIsLoadingButton(true)
-      const initiated_at = Date.now()
-
-      await window.api.createGlobalInstanceOfDriver()
-
-      await window.api.loginWhatsapp(config)
-
-      for (const contact of rows) {
-        const request = await window.api.sendMessage(contact, message, attachments, config)
-
-        if (!request.status) {
-          setSnackbarMessage({
-            message: `Ao tentar enviar a mensagem para ${contact.name} telefone ${contact.phone}, o erro ${request.error} `,
-            title: 'Problemas no envio',
-            severity: 'error'
-          })
-        }
-
-        const updatedRow = {
-          ...contact,
-          statusInfo: request.status ? 'Mensagem Enviada' : request.error,
-          status: request.status
-        }
-
-        setRows((prevState: never[]): never[] =>
-          prevState.map((contact) =>
-            contact.id === updatedRow.id ? { ...contact, ...updatedRow } : contact
-          )
-        )
-      }
-
-      await window.api.closeGlobalInstanceOfDriver()
-
-      registerLog(initiated_at, rows)
-
-      setSnackbarMessage({
-        message: `Mensagens enviadas com sucesso!`,
-        title: 'Envio concluido',
-        severity: 'success'
-      })
-      handleClick()
-
-      if (localStorage.getItem('@selected-messages-template') !== null) {
-        localStorage.removeItem('@selected-messages-template')
-      }
-
-      if (localStorage.getItem('@selected-contact-list') !== null) {
-        localStorage.removeItem('@selected-contact-list')
-      }
-    } catch (error) {
-      if (String(error).includes('ChromeDriver could not be found')) {
-        setSnackbarMessage({
-          message: `O Chromedriver não está instalado ou configurado. Faça a instalação corretamente ou\nContate o administrador.`,
-          title: 'Tivemos um problema',
-          severity: 'error'
-        })
-      } else {
-        setSnackbarMessage({
-          message: `Houve um erro ao tentar enviar as mensagens. \nContate o administrador. \n\n${error}`,
-          title: 'Tivemos um problema',
-          severity: 'error'
-        })
-      }
-      handleClick()
-    } finally {
-      setIsLoadingButton(false)
-    }
   }
 
   const removeAttachment = (index: number): void => {
@@ -424,71 +251,9 @@ function Home(): JSX.Element {
       }
     }
   ]
-
-  React.useEffect(() => {
-    if (localStorage.getItem('@selected-messages-template') !== null) {
-      const selectedMessage = JSON.parse(localStorage.getItem('@selected-messages-template'))
-      setMessage(selectedMessage.message)
-    }
-    if (localStorage.getItem('@selected-contact-list') !== null) {
-      const selectedContactsRows = JSON.parse(localStorage.getItem('@selected-contact-list'))
-      setRows(selectedContactsRows)
-    }
-
-    if (localStorage.getItem('@config') !== null) {
-      const configStorage = JSON.parse(localStorage.getItem('@config'))
-      setConfig(configStorage)
-    }
-  }, [])
-
+  
   return (
     <>
-      <Snackbar
-        sx={{ mt: 8 }}
-        open={openSnackBar}
-        autoHideDuration={snackbarMessage.severity === 'error' ? 30000 : 6000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        TransitionComponent={(props): void => <Slide {...props} direction="left" />}
-      >
-        <Alert
-          onClose={handleClose}
-          severity={snackbarMessage.severity}
-          sx={{ maxWidth: '400px', width: '100%' }}
-        >
-          <AlertTitle>{snackbarMessage.title}</AlertTitle>
-          {snackbarMessage.message}
-        </Alert>
-      </Snackbar>
-      {isLoading && (
-        <Box
-          sx={{
-            position: 'absolute',
-            width: '100vw',
-            height: '100vh',
-            zIndex: 10000,
-            backgroundColor: '#00000064',
-            overflow: 'hidden',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          <CircularProgress
-            variant="indeterminate"
-            disableShrink
-            color="primary"
-            sx={{
-              animationDuration: '550ms',
-              [`& .${circularProgressClasses.circle}`]: {
-                strokeLinecap: 'round'
-              }
-            }}
-            size={50}
-            thickness={6}
-          />
-        </Box>
-      )}
       <DrawerComponent title="Envio de mensagens">
         <Typography variant="h4">Mensagem</Typography>
         <Typography variant="body1">
