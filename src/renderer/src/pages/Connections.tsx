@@ -61,7 +61,6 @@ function Connections(): JSX.Element {
           Criar nova conexão
         </Button>
 
-
         <Button
           onClick={(): void => {
             window.api.connectToWhatsApp()
