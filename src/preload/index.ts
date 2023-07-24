@@ -2,7 +2,7 @@ import { electronAPI } from '@electron-toolkit/preload'
 import { contextBridge } from 'electron'
 
 import { Boom } from '@hapi/boom'
-import makeWASocket, { DisconnectReason, useMultiFileAuthState } from '@whiskeysockets/baileys'
+import { makeWASocket, DisconnectReason, useMultiFileAuthState } from '@whiskeysockets/baileys'
 
 export async function connectToWhatsApp(): Promise<void> {
   try {
@@ -10,7 +10,7 @@ export async function connectToWhatsApp(): Promise<void> {
 
     console.log('FILIPE AQUI', typeof makeWASocket, Object.keys(makeWASocket))
 
-    const sock = makeWASocket.makeWASocket({
+    const sock = makeWASocket({
       auth: state,
       // can provide additional config here
       printQRInTerminal: true
