@@ -1,6 +1,6 @@
 import { electronAPI } from '@electron-toolkit/preload'
 import { contextBridge } from 'electron'
-
+import fs from 'fs'
 import { Boom } from '@hapi/boom'
 import { makeWASocket, DisconnectReason, useMultiFileAuthState } from '@whiskeysockets/baileys'
 
@@ -8,15 +8,14 @@ export async function connectToWhatsApp(): Promise<void> {
   try {
     const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
 
-    console.log('FILIPE AQUI', typeof makeWASocket, Object.keys(makeWASocket))
-
     const sock = makeWASocket({
       auth: state,
       // can provide additional config here
       printQRInTerminal: true
     })
-    console.log('PASSEI AQUI')
     sock.ev.on('connection.update', (update) => {
+      console.log('PASSEI AQUI connection.update', update)
+
       const { connection, lastDisconnect } = update
       if (connection === 'close') {
         const shouldReconnect =
@@ -37,6 +36,8 @@ export async function connectToWhatsApp(): Promise<void> {
     })
     sock.ev.on('creds.update', saveCreds)
     sock.ev.on('messages.upsert', async (m) => {
+      console.log('PASSEI AQUI messages.upsert')
+
       console.log(JSON.stringify(m, undefined, 2))
 
       console.log('replying to', m.messages[0].key.remoteJid)
@@ -45,6 +46,7 @@ export async function connectToWhatsApp(): Promise<void> {
       })
     })
   } catch (e) {
+    console.log('PASSEI AQUI ERROR')
     console.log(e)
   }
 }
