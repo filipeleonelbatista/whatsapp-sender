@@ -1,11 +1,11 @@
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import CancelIcon from '@mui/icons-material/Cancel';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SendIcon from '@mui/icons-material/Send';
-import TableChartIcon from '@mui/icons-material/TableChart';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
+import CancelIcon from "@mui/icons-material/Cancel";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SendIcon from "@mui/icons-material/Send";
+import TableChartIcon from "@mui/icons-material/TableChart";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import {
   Alert,
   AlertTitle,
@@ -15,56 +15,67 @@ import {
   circularProgressClasses,
   Grid,
   IconButton,
-  InputAdornment, Slide, TextField, Tooltip, Typography
-} from '@mui/material';
-import { pink } from '@mui/material/colors';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
-import Snackbar from '@mui/material/Snackbar';
-import Switch from '@mui/material/Switch';
-import { DataGrid, GridCsvExportMenuItem, GridPrintExportMenuItem, GridToolbarExportContainer, ptBR } from '@mui/x-data-grid';
-import EmojiPicker from 'emoji-picker-react';
-import { useFormik } from 'formik';
-import React from 'react';
-import { FaEdit, FaFile, FaFilePdf, FaPlay, FaTrash } from 'react-icons/fa';
-import { BsCardImage } from 'react-icons/bs';
-import { GoVideo } from 'react-icons/go';
-import { PiFileAudioLight } from 'react-icons/pi';
-import { v4 as uuidv4 } from 'uuid';
-import * as Yup from 'yup';
-import DrawerComponent from '../components/DrawerComponent';
-import celular from '../utils/masks';
+  InputAdornment,
+  Slide,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { pink } from "@mui/material/colors";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
+import Snackbar from "@mui/material/Snackbar";
+import Switch from "@mui/material/Switch";
+import {
+  DataGrid,
+  GridCsvExportMenuItem,
+  GridPrintExportMenuItem,
+  GridToolbarExportContainer,
+  ptBR,
+} from "@mui/x-data-grid";
+import EmojiPicker from "emoji-picker-react";
+import { useFormik } from "formik";
+import React from "react";
+import { FaEdit, FaFile, FaFilePdf, FaPlay, FaTrash } from "react-icons/fa";
+import { BsCardImage } from "react-icons/bs";
+import { GoVideo } from "react-icons/go";
+import { PiFileAudioLight } from "react-icons/pi";
+import { v4 as uuidv4 } from "uuid";
+import * as Yup from "yup";
+import DrawerComponent from "../components/DrawerComponent";
+import celular from "../utils/masks";
 
 const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
   <GridToolbarExportContainer {...other}>
     <GridCsvExportMenuItem
       options={{
         ...csvOptions,
-        fileName: 'customerDataBase',
-        delimiter: ';',
+        fileName: "customerDataBase",
+        delimiter: ";",
         utf8WithBom: true,
-      }} />
+      }}
+    />
     <GridPrintExportMenuItem
       options={{
         ...printOptions,
         hideFooter: true,
         hideToolbar: true,
-        pageStyle: '.MuiDataGrid-root .MuiDataGrid-main { color: rgba(0, 0, 0, 0.87); padding: 2px }',
+        pageStyle:
+          ".MuiDataGrid-root .MuiDataGrid-main { color: rgba(0, 0, 0, 0.87); padding: 2px }",
       }}
     />
   </GridToolbarExportContainer>
 );
 
 function Home() {
-
   const [isLoading, setisLoading] = React.useState(false);
   const [isEditable, setisEditable] = React.useState(false);
 
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState({
-    message: '',
-    title: '',
-    severity: 'error'
+    message: "",
+    title: "",
+    severity: "error",
   });
 
   const handleClick = () => {
@@ -72,7 +83,7 @@ function Home() {
   };
 
   const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
 
@@ -85,12 +96,12 @@ function Home() {
     send_message: 3000,
     send_attachment: 3000,
     finalize_send: 5000,
-  })
+  });
 
   const [rows, setRows] = React.useState([]);
   const [editableContact, setEditableContact] = React.useState();
   const [attachments, setAttachments] = React.useState([]);
-  const [message, setMessage] = React.useState('');
+  const [message, setMessage] = React.useState("");
   const [isLoadingButton, setIsLoadingButton] = React.useState(false);
   const [openEmoji, setOpenEmoji] = React.useState(false);
 
@@ -103,34 +114,39 @@ function Home() {
       message,
       status: true,
       initiated_at,
-      finalized_at: Date.now()
-    }
+      finalized_at: Date.now(),
+    };
 
     setTimeout(() => {
-      const dataLog = localStorage.getItem("@logs")
+      const dataLog = localStorage.getItem("@logs");
 
       if (dataLog !== null) {
-        const logs = JSON.parse(dataLog)
-        localStorage.setItem("@logs", JSON.stringify([{ id: uuidv4(), ...results }, ...logs]))
+        const logs = JSON.parse(dataLog);
+        localStorage.setItem(
+          "@logs",
+          JSON.stringify([{ id: uuidv4(), ...results }, ...logs]),
+        );
       } else {
-        localStorage.setItem("@logs", JSON.stringify([{ id: uuidv4(), ...results }]))
+        localStorage.setItem(
+          "@logs",
+          JSON.stringify([{ id: uuidv4(), ...results }]),
+        );
       }
-    }, 3000)
-  }
+    }, 3000);
+  };
 
   const handleSubmitForm = (formValues) => {
     if (isEditable) {
-      const newRowsArray = rows.filter(row => row.id !== editableContact.id)
+      const newRowsArray = rows.filter((row) => row.id !== editableContact.id);
       newRowsArray.push({
         ...editableContact,
         name: formValues.name,
-        phone: formValues.phone
-      })
+        phone: formValues.phone,
+      });
 
       setRows(newRowsArray);
       setisEditable(false);
       formik.resetForm();
-
     } else {
       setRows((state) => [
         ...state,
@@ -139,7 +155,7 @@ function Home() {
           name: formValues.name,
           phone: formValues.phone,
           status: false,
-          statusInfo: 'Aguardando envio',
+          statusInfo: "Aguardando envio",
         },
       ]);
 
@@ -148,150 +164,221 @@ function Home() {
   };
 
   const handleSendSingleMessage = async (contact) => {
-    if (message === "") return alert("Você não digitou a mensagem ainda")
+    if (message === "") return alert("Você não digitou a mensagem ainda");
 
     try {
-      setIsLoadingButton(true)
-      setisLoading(true)
-      const initiated_at = Date.now()
+      setIsLoadingButton(true);
+      setisLoading(true);
+      const initiated_at = Date.now();
 
       await window.electron.createGlobalInstanceOfDriver();
 
-      await window.electron.loginWhatsapp(config)
+      await window.electron.loginWhatsapp(config);
 
-      const request = await window.electron.sendMessage(contact, message, attachments, config)
+      const request = await window.electron.sendMessage(
+        contact,
+        message,
+        attachments,
+        config,
+      );
 
       if (!request.status) {
         setSnackbarMessage({
           message: `Ao tentar enviar a mensagem para ${contact.name} telefone ${contact.phone}, o erro ${request.error} `,
-          title: 'Problemas no envio',
-          severity: 'error'
-        })
+          title: "Problemas no envio",
+          severity: "error",
+        });
 
-        handleClick()
+        handleClick();
       }
 
       const updatedRow = {
         ...contact,
         statusInfo: request.status ? "Mensagem Enviada" : request.error,
         status: request.status,
-      }
+      };
 
-      setRows(prevState => prevState.map(contact => contact.id === updatedRow.id ? { ...contact, ...updatedRow } : contact))
+      setRows((prevState) =>
+        prevState.map((contact) =>
+          contact.id === updatedRow.id
+            ? { ...contact, ...updatedRow }
+            : contact,
+        ),
+      );
 
       await window.electron.closeGlobalInstanceOfDriver();
 
-      registerLog(initiated_at, rows)
+      registerLog(initiated_at, rows);
 
       setSnackbarMessage({
         message: `Mensagen enviada com sucesso!`,
-        title: 'Envio concluido',
-        severity: 'success'
-      })
-      handleClick()
-
+        title: "Envio concluido",
+        severity: "success",
+      });
+      handleClick();
     } catch (error) {
-      setSnackbarMessage({
-        message: `Houve um erro ao tentar enviar as mensagens. \nContate o administrador. \n\n${error}`,
-        title: 'Tivemos um problema',
-        severity: 'error'
-      })
-      handleClick()
+      if (String(error).includes("target window already closed")) {
+        setSnackbarMessage({
+          message: `A janela da automação foi fechada pelo usuário`,
+          title: "Janela fechada pelo usuário",
+          severity: "warning",
+        });
+      } else if (String(error).includes("Wait timed out")) {
+        const local = String(error)
+          .replace(
+            "Error: Waiting for element to be located By(css selector, ",
+            "",
+          )
+          .split("\nWait");
+
+        setSnackbarMessage({
+          message: `O Sistema não conseguiu encontrar a interface específica e encerrou o programa. Elemento não encontrado ${local[0]}`,
+          title: "Tivemos um problema",
+          severity: "error",
+        });
+      } else if (String(error).includes("ChromeDriver could not be found")) {
+        setSnackbarMessage({
+          message: `O Chromedriver não está instalado ou configurado. Faça a instalação corretamente ou\nContate o administrador.`,
+          title: "Tivemos um problema",
+          severity: "error",
+        });
+      } else {
+        setSnackbarMessage({
+          message: `Houve um erro ao tentar enviar as mensagens. \nContate o administrador. \n\n${error}`,
+          title: "Tivemos um problema",
+          severity: "error",
+        });
+      }
+
+      await window.electron.closeGlobalInstanceOfDriver();
+      handleClick();
     } finally {
-      setIsLoadingButton(false)
-      setisLoading(false)
+      setIsLoadingButton(false);
+      setisLoading(false);
     }
-  }
+  };
 
   const handleSendMessages = async () => {
-    if (message === "") return alert("Você não digitou a mensagem ainda")
-    if (rows.length === 0) return alert("Você não incluiu contatos para o envio das mensagens")
+    if (message === "") return alert("Você não digitou a mensagem ainda");
+    if (rows.length === 0)
+      return alert("Você não incluiu contatos para o envio das mensagens");
 
     try {
-      setIsLoadingButton(true)
-      const initiated_at = Date.now()
+      setIsLoadingButton(true);
+      const initiated_at = Date.now();
 
       await window.electron.createGlobalInstanceOfDriver();
 
-      await window.electron.loginWhatsapp(config)
+      await window.electron.loginWhatsapp(config);
 
       for (const contact of rows) {
-        const request = await window.electron.sendMessage(contact, message, attachments, config)
+        const request = await window.electron.sendMessage(
+          contact,
+          message,
+          attachments,
+          config,
+        );
 
         if (!request.status) {
           setSnackbarMessage({
             message: `Ao tentar enviar a mensagem para ${contact.name} telefone ${contact.phone}, o erro ${request.error} `,
-            title: 'Problemas no envio',
-            severity: 'error'
-          })
+            title: "Problemas no envio",
+            severity: "error",
+          });
         }
 
         const updatedRow = {
           ...contact,
           statusInfo: request.status ? "Mensagem Enviada" : request.error,
           status: request.status,
-        }
+        };
 
-        setRows(prevState => prevState.map(contact => contact.id === updatedRow.id ? { ...contact, ...updatedRow } : contact))
-
+        setRows((prevState) =>
+          prevState.map((contact) =>
+            contact.id === updatedRow.id
+              ? { ...contact, ...updatedRow }
+              : contact,
+          ),
+        );
       }
 
       await window.electron.closeGlobalInstanceOfDriver();
 
-      registerLog(initiated_at, rows)
+      registerLog(initiated_at, rows);
 
       setSnackbarMessage({
         message: `Mensagens enviadas com sucesso!`,
-        title: 'Envio concluido',
-        severity: 'success'
-      })
-      handleClick()
+        title: "Envio concluido",
+        severity: "success",
+      });
+      handleClick();
 
       if (localStorage.getItem("@selected-messages-template") !== null) {
-        localStorage.removeItem("@selected-messages-template")
+        localStorage.removeItem("@selected-messages-template");
       }
 
       if (localStorage.getItem("@selected-contact-list") !== null) {
-        localStorage.removeItem("@selected-contact-list")
+        localStorage.removeItem("@selected-contact-list");
       }
-
     } catch (error) {
-      if (String(error).includes("ChromeDriver could not be found")) {
+      if (String(error).includes("target window already closed")) {
+        setSnackbarMessage({
+          message: `A janela da automação foi fechada pelo usuário`,
+          title: "Janela fechada pelo usuário",
+          severity: "warning",
+        });
+      } else if (String(error).includes("Wait timed out")) {
+        const local = String(error)
+          .replace(
+            "Error: Waiting for element to be located By(css selector, ",
+            "",
+          )
+          .split("\nWait");
+
+        setSnackbarMessage({
+          message: `O Sistema não conseguiu encontrar a interface específica e encerrou o programa. Elemento não encontrado ${local[0]}`,
+          title: "Tivemos um problema",
+          severity: "error",
+        });
+      } else if (String(error).includes("ChromeDriver could not be found")) {
         setSnackbarMessage({
           message: `O Chromedriver não está instalado ou configurado. Faça a instalação corretamente ou\nContate o administrador.`,
-          title: 'Tivemos um problema',
-          severity: 'error'
-        })
+          title: "Tivemos um problema",
+          severity: "error",
+        });
       } else {
         setSnackbarMessage({
           message: `Houve um erro ao tentar enviar as mensagens. \nContate o administrador. \n\n${error}`,
-          title: 'Tivemos um problema',
-          severity: 'error'
-        })
+          title: "Tivemos um problema",
+          severity: "error",
+        });
       }
-      handleClick()
+
+      await window.electron.closeGlobalInstanceOfDriver();
+
+      handleClick();
     } finally {
-      setIsLoadingButton(false)
+      setIsLoadingButton(false);
     }
   };
 
   const removeAttachment = (index) => {
-    const newArray = attachments.filter((item, arrIndex) => arrIndex !== index)
+    const newArray = attachments.filter((item, arrIndex) => arrIndex !== index);
     setAttachments(newArray);
   };
 
   const csvFileToArray = (string) => {
-    const csvRows = string.slice(0, string.lastIndexOf('\n')).split('\n');
+    const csvRows = string.slice(0, string.lastIndexOf("\n")).split("\n");
     const array = csvRows.map((i) => {
       return {
         id: uuidv4(),
-        name: i.replace('\r', '').split(';')[0],
-        phone: celular(String(i.replace('\r', '').split(';')[1])),
-        var1: i.replace('\r', '').split(';')[2],
-        var2: i.replace('\r', '').split(';')[3],
-        var3: i.replace('\r', '').split(';')[4],
+        name: i.replace("\r", "").split(";")[0],
+        phone: celular(String(i.replace("\r", "").split(";")[1])),
+        var1: i.replace("\r", "").split(";")[2],
+        var2: i.replace("\r", "").split(";")[3],
+        var3: i.replace("\r", "").split(";")[4],
         status: false,
-        statusInfo: 'Aguardando envio',
+        statusInfo: "Aguardando envio",
       };
     });
 
@@ -299,8 +386,8 @@ function Home() {
   };
 
   const handleLoadAttachments = (event) => {
-    event.stopPropagation()
-    const newItensAdded = Array.from(event.target.files)
+    event.stopPropagation();
+    const newItensAdded = Array.from(event.target.files);
     setAttachments([...attachments, ...newItensAdded]);
   };
 
@@ -318,18 +405,18 @@ function Home() {
 
   const formSchema = React.useMemo(() => {
     return Yup.object().shape({
-      name: Yup.string().required('Nome é obrigatório!').label('Nome'),
+      name: Yup.string().required("Nome é obrigatório!").label("Nome"),
       phone: Yup.string()
-        .required('Whatsapp é obrigatório!')
-        .label('WhatsApp')
+        .required("Whatsapp é obrigatório!")
+        .label("WhatsApp")
         .min(14),
     });
   }, []);
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      phone: '',
+      name: "",
+      phone: "",
     },
     validationSchema: formSchema,
     onSubmit: (values) => {
@@ -338,17 +425,17 @@ function Home() {
   });
 
   const columns = [
-    { field: 'id', headerName: 'Id', flex: 1 },
-    { field: 'name', headerName: 'Nome', flex: 1 },
-    { field: 'phone', headerName: 'Telefone', flex: 1 },
-    { field: 'var1', headerName: 'Var 1', flex: 1 },
-    { field: 'var2', headerName: 'Var 2', flex: 1 },
-    { field: 'var3', headerName: 'Var 3', flex: 1 },
-    { field: 'statusInfo', headerName: 'Informação', flex: 1 },
+    { field: "id", headerName: "Id", flex: 1 },
+    { field: "name", headerName: "Nome", flex: 1 },
+    { field: "phone", headerName: "Telefone", flex: 1 },
+    { field: "var1", headerName: "Var 1", flex: 1 },
+    { field: "var2", headerName: "Var 2", flex: 1 },
+    { field: "var3", headerName: "Var 3", flex: 1 },
+    { field: "statusInfo", headerName: "Informação", flex: 1 },
     {
-      field: 'status',
-      headerName: 'Status',
-      align: 'center',
+      field: "status",
+      headerName: "Status",
+      align: "center",
       width: 80,
       renderCell: (params) => {
         if (!params.value) {
@@ -358,19 +445,19 @@ function Home() {
       },
     },
     {
-      field: 'actions',
-      headerName: 'Ações',
-      align: 'center',
+      field: "actions",
+      headerName: "Ações",
+      align: "center",
       width: 140,
       renderCell: (params) => {
         const onClick = (e) => {
           e.stopPropagation();
 
-          setEditableContact(params.row)
-          setisEditable(true)
+          setEditableContact(params.row);
+          setisEditable(true);
 
-          formik.setFieldValue("name", params.row.name)
-          formik.setFieldValue("phone", params.row.phone)
+          formik.setFieldValue("name", params.row.name);
+          formik.setFieldValue("phone", params.row.phone);
 
           return;
         };
@@ -378,9 +465,13 @@ function Home() {
         const handleDelete = (e) => {
           e.stopPropagation();
 
-          if (confirm(`Deseja remover este contato?\n${params.row.name} - ${params.row.phone}`)) {
-            const newRowsArray = rows.filter(row => row.id !== params.row.id)
-            setRows(newRowsArray)
+          if (
+            confirm(
+              `Deseja remover este contato?\n${params.row.name} - ${params.row.phone}`,
+            )
+          ) {
+            const newRowsArray = rows.filter((row) => row.id !== params.row.id);
+            setRows(newRowsArray);
           }
 
           return;
@@ -400,10 +491,13 @@ function Home() {
             </Tooltip>
 
             <Tooltip title="Enviar somente para este contato">
-              <IconButton color="success" onClick={(event) => {
-                event.stopPropagation()
-                handleSendSingleMessage(params.row)
-              }}>
+              <IconButton
+                color="success"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleSendSingleMessage(params.row);
+                }}
+              >
                 <FaPlay size={16} />
               </IconButton>
             </Tooltip>
@@ -415,64 +509,72 @@ function Home() {
 
   React.useEffect(() => {
     if (localStorage.getItem("@selected-messages-template") !== null) {
-      const selectedMessage = JSON.parse(localStorage.getItem("@selected-messages-template"))
-      setMessage(selectedMessage.message)
+      const selectedMessage = JSON.parse(
+        localStorage.getItem("@selected-messages-template"),
+      );
+      setMessage(selectedMessage.message);
     }
     if (localStorage.getItem("@selected-contact-list") !== null) {
-      const selectedContactsRows = JSON.parse(localStorage.getItem("@selected-contact-list"))
-      setRows(selectedContactsRows)
+      const selectedContactsRows = JSON.parse(
+        localStorage.getItem("@selected-contact-list"),
+      );
+      setRows(selectedContactsRows);
     }
 
     if (localStorage.getItem("@config") !== null) {
-      const configStorage = JSON.parse(localStorage.getItem("@config"))
-      setConfig(configStorage)
+      const configStorage = JSON.parse(localStorage.getItem("@config"));
+      setConfig(configStorage);
     }
-  }, [])
+  }, []);
 
   return (
     <>
       <Snackbar
         sx={{ mt: 8 }}
         open={openSnackBar}
-        autoHideDuration={snackbarMessage.severity === 'error' ? 30000 : 6000}
+        autoHideDuration={snackbarMessage.severity === "error" ? 30000 : 6000}
         onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
         TransitionComponent={(props) => <Slide {...props} direction="left" />}
       >
-        <Alert onClose={handleClose} severity={snackbarMessage.severity} sx={{ maxWidth: '400px', width: '100%' }}>
+        <Alert
+          onClose={handleClose}
+          severity={snackbarMessage.severity}
+          sx={{ maxWidth: "400px", width: "100%" }}
+        >
           <AlertTitle>{snackbarMessage.title}</AlertTitle>
           {snackbarMessage.message}
         </Alert>
       </Snackbar>
-      {
-        isLoading && (
-          <Box sx={{
-            position: 'absolute',
+      {isLoading && (
+        <Box
+          sx={{
+            position: "absolute",
             width: "100vw",
-            height: '100vh',
+            height: "100vh",
             zIndex: 10000,
             backgroundColor: "#00000064",
             overflow: "hidden",
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: "center"
-          }}>
-            <CircularProgress
-              variant="indeterminate"
-              disableShrink
-              color='primary'
-              sx={{
-                animationDuration: '550ms',
-                [`& .${circularProgressClasses.circle}`]: {
-                  strokeLinecap: 'round',
-                },
-              }}
-              size={50}
-              thickness={6}
-            />
-          </Box>
-        )
-      }
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <CircularProgress
+            variant="indeterminate"
+            disableShrink
+            color="primary"
+            sx={{
+              animationDuration: "550ms",
+              [`& .${circularProgressClasses.circle}`]: {
+                strokeLinecap: "round",
+              },
+            }}
+            size={50}
+            thickness={6}
+          />
+        </Box>
+      )}
       <DrawerComponent title="Envio de mensagens">
         <Typography variant="h4">Mensagem</Typography>
         <Typography variant="body1">
@@ -487,81 +589,135 @@ function Home() {
               id="message"
               name="message"
               onSelect={(event) => {
-                setSelectionStart(inputMessageRef?.current?.selectionStart)
+                setSelectionStart(inputMessageRef?.current?.selectionStart);
               }}
               multiline
               rows={6}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 2, mb: 2, gap: 1 }}>
+            <Box
+              sx={{ display: "flex", flexWrap: "wrap", mt: 2, mb: 2, gap: 1 }}
+            >
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  setMessage([message.slice(0, selectionStart), "{primeiroNome}", message.slice(selectionStart)].join(''))
-                }}>
+                  setMessage(
+                    [
+                      message.slice(0, selectionStart),
+                      "{primeiroNome}",
+                      message.slice(selectionStart),
+                    ].join(""),
+                  );
+                }}
+              >
                 {`{primeiroNome}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  setMessage([message.slice(0, selectionStart), "{nomeCompleto}", message.slice(selectionStart)].join(''))
-                }}>
+                  setMessage(
+                    [
+                      message.slice(0, selectionStart),
+                      "{nomeCompleto}",
+                      message.slice(selectionStart),
+                    ].join(""),
+                  );
+                }}
+              >
                 {`{nomeCompleto}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  setMessage([message.slice(0, selectionStart), "{telefone}", message.slice(selectionStart)].join(''))
-                }}>
+                  setMessage(
+                    [
+                      message.slice(0, selectionStart),
+                      "{telefone}",
+                      message.slice(selectionStart),
+                    ].join(""),
+                  );
+                }}
+              >
                 {`{telefone}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  setMessage([message.slice(0, selectionStart), "{var1}", message.slice(selectionStart)].join(''))
-                }}>
+                  setMessage(
+                    [
+                      message.slice(0, selectionStart),
+                      "{var1}",
+                      message.slice(selectionStart),
+                    ].join(""),
+                  );
+                }}
+              >
                 {`{var1}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  setMessage([message.slice(0, selectionStart), "{var2}", message.slice(selectionStart)].join(''))
-                }}>
+                  setMessage(
+                    [
+                      message.slice(0, selectionStart),
+                      "{var2}",
+                      message.slice(selectionStart),
+                    ].join(""),
+                  );
+                }}
+              >
                 {`{var2}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  setMessage([message.slice(0, selectionStart), "{var3}", message.slice(selectionStart)].join(''))
-                }}>
+                  setMessage(
+                    [
+                      message.slice(0, selectionStart),
+                      "{var3}",
+                      message.slice(selectionStart),
+                    ].join(""),
+                  );
+                }}
+              >
                 {`{var3}`}
               </Button>
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => {
-                  setOpenEmoji(!openEmoji)
-                }}>
+                  setOpenEmoji(!openEmoji);
+                }}
+              >
                 Emojis
               </Button>
-              {
-                openEmoji && (
-                  <EmojiPicker
-                    width="100%" height="25em"
-                    searchPlaceHolder="Pesquisar emojis..."
-                    emojiVersion="3.0"
-                    onEmojiClick={(emoji) => {
-                      setMessage([message.slice(0, selectionStart), `${emoji.emoji}`, message.slice(selectionStart)].join(''))
-                    }}
-                    theme={localStorage.getItem("@dark-theme") === null ? 'light' : localStorage.getItem("@dark-theme")}
-                  />
-                )
-              }
+              {openEmoji && (
+                <EmojiPicker
+                  width="100%"
+                  height="25em"
+                  searchPlaceHolder="Pesquisar emojis..."
+                  emojiVersion="3.0"
+                  onEmojiClick={(emoji) => {
+                    setMessage(
+                      [
+                        message.slice(0, selectionStart),
+                        `${emoji.emoji}`,
+                        message.slice(selectionStart),
+                      ].join(""),
+                    );
+                  }}
+                  theme={
+                    localStorage.getItem("@dark-theme") === null
+                      ? "light"
+                      : localStorage.getItem("@dark-theme")
+                  }
+                />
+              )}
             </Box>
           </Grid>
           <Grid item xs={6}>
             <Button
-              sx={{ width: '100%' }}
+              sx={{ width: "100%" }}
               variant="contained"
               component="label"
               startIcon={<AddAPhotoIcon />}
@@ -578,9 +734,9 @@ function Home() {
             </Button>
             <Box
               sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
               }}
             >
               {attachments.length > 0 ? (
@@ -588,32 +744,49 @@ function Home() {
                   <Box
                     key={index}
                     sx={{
-                      width: '100%',
+                      width: "100%",
                       minHeight: 42,
                       padding: 1,
                       borderRadius: 1,
                       marginTop: 1,
-                      border: '1px solid #CCC',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
+                      border: "1px solid #CCC",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
                     }}
                   >
-                    {
-                      item.type === 'application/pdf' && <Typography><FaFilePdf size={28} /></Typography>
-                    }
-                    {
-                      item.type.includes('image') && <Typography><BsCardImage size={28} /></Typography>
-                    }
-                    {
-                      item.type.includes('video') && <Typography><GoVideo size={28} /></Typography>
-                    }
-                    {
-                      item.type.includes('audio') && <Typography><PiFileAudioLight size={28} /></Typography>
-                    }
-                    <Typography>{item.name.length > 20 ? item.name.substr(0, 20) + "..." : item.name}</Typography>
-                    <Typography>{(item.size / (1024 * 1024)).toFixed(3)} Mb</Typography>
-                    <IconButton color="error" onClick={() => removeAttachment(index)}>
+                    {item.type === "application/pdf" && (
+                      <Typography>
+                        <FaFilePdf size={28} />
+                      </Typography>
+                    )}
+                    {item.type.includes("image") && (
+                      <Typography>
+                        <BsCardImage size={28} />
+                      </Typography>
+                    )}
+                    {item.type.includes("video") && (
+                      <Typography>
+                        <GoVideo size={28} />
+                      </Typography>
+                    )}
+                    {item.type.includes("audio") && (
+                      <Typography>
+                        <PiFileAudioLight size={28} />
+                      </Typography>
+                    )}
+                    <Typography>
+                      {item.name.length > 20
+                        ? item.name.substr(0, 20) + "..."
+                        : item.name}
+                    </Typography>
+                    <Typography>
+                      {(item.size / (1024 * 1024)).toFixed(3)} Mb
+                    </Typography>
+                    <IconButton
+                      color="error"
+                      onClick={() => removeAttachment(index)}
+                    >
                       <FaTrash size={20} />
                     </IconButton>
                   </Box>
@@ -633,7 +806,7 @@ function Home() {
         </Typography>
 
         <form onSubmit={formik.handleSubmit}>
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box sx={{ display: "flex", gap: 2 }}>
             <TextField
               label="Nome"
               id="name"
@@ -676,20 +849,25 @@ function Home() {
               }}
             />
             <Button type="submit" variant="contained">
-              {isEditable ? 'Salvar' : 'Adicionar'}
+              {isEditable ? "Salvar" : "Adicionar"}
             </Button>
             {isEditable && (
-              <Button onClick={() => {
-                formik.resetForm()
-                setisEditable(false)
-              }} type="button" color="error" variant="contained">
+              <Button
+                onClick={() => {
+                  formik.resetForm();
+                  setisEditable(false);
+                }}
+                type="button"
+                color="error"
+                variant="contained"
+              >
                 Cancelar
               </Button>
             )}
           </Box>
         </form>
 
-        <Box sx={{ display: 'flex', mt: 4, gap: 1 }}>
+        <Box sx={{ display: "flex", mt: 4, gap: 1 }}>
           <Button
             variant="contained"
             component="label"
@@ -704,42 +882,48 @@ function Home() {
               onChange={(event) => handleLoadCsv(event)}
             />
           </Button>
-          {
-            rows.length > 0 && (
-              <>
-                <Button
-                  variant="contained"
-                  color="error"
-                  startIcon={<FaTrash size={16} />}
-                  onClick={() => {
-                    if (confirm("Deseja remover todos os contatos da tabela de envios?")) {
-                      setRows([])
-                    }
-                  }}
-                >
-                  Limpar tabela
-                </Button>
-                <Button
-                  variant="contained"
-                  color="warning"
-                  startIcon={<FaTrash size={16} />}
-                  onClick={() => {
-                    if (confirm("Deseja remover todos os contatos que receberam mensagens da tabela de envios?")) {
-                      const newArray = rows.filter(row => !row.status)
-                      setRows(newArray)
-                    }
-                  }}
-                >
-                  Remover enviados
-                </Button>
-              </>
-            )
-          }
+          {rows.length > 0 && (
+            <>
+              <Button
+                variant="contained"
+                color="error"
+                startIcon={<FaTrash size={16} />}
+                onClick={() => {
+                  if (
+                    confirm(
+                      "Deseja remover todos os contatos da tabela de envios?",
+                    )
+                  ) {
+                    setRows([]);
+                  }
+                }}
+              >
+                Limpar tabela
+              </Button>
+              <Button
+                variant="contained"
+                color="warning"
+                startIcon={<FaTrash size={16} />}
+                onClick={() => {
+                  if (
+                    confirm(
+                      "Deseja remover todos os contatos que receberam mensagens da tabela de envios?",
+                    )
+                  ) {
+                    const newArray = rows.filter((row) => !row.status);
+                    setRows(newArray);
+                  }
+                }}
+              >
+                Remover enviados
+              </Button>
+            </>
+          )}
         </Box>
 
-        <Box sx={{ height: 500, w: '100%', mt: 4 }}>
+        <Box sx={{ height: 500, w: "100%", mt: 4 }}>
           <DataGrid
-            onCellFocusOut={() => { }}
+            onCellFocusOut={() => {}}
             columnVisibilityModel={{
               id: false,
             }}
@@ -752,8 +936,8 @@ function Home() {
             localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
             components={{ Toolbar: GridToolbarExport }}
             sx={{
-              '@media print': {
-                '.MuiDataGrid-main': { color: 'rgba(0, 0, 0, 0.87)' },
+              "@media print": {
+                ".MuiDataGrid-main": { color: "rgba(0, 0, 0, 0.87)" },
               },
             }}
           />
@@ -762,17 +946,21 @@ function Home() {
         <Button
           onClick={handleSendMessages}
           sx={{
-            width: '100%',
+            width: "100%",
             mt: 4,
             mb: 4,
           }}
           variant="contained"
           disabled={isLoadingButton}
-          startIcon={isLoadingButton ? <CircularProgress size={22} color="inherit" /> : <SendIcon />}
-        >
-          {
-            isLoadingButton ? "Aguarde, Enviando Mensagens" : "Enviar mensagens"
+          startIcon={
+            isLoadingButton ? (
+              <CircularProgress size={22} color="inherit" />
+            ) : (
+              <SendIcon />
+            )
           }
+        >
+          {isLoadingButton ? "Aguarde, Enviando Mensagens" : "Enviar mensagens"}
         </Button>
       </DrawerComponent>
     </>

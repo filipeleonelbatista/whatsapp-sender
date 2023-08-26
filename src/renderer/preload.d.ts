@@ -18,7 +18,6 @@ declare global {
   }
   interface Window {
     electron: {
-      checkFilePath(path: string): boolean;
       createGlobalInstanceOfDriver: () => Promise<void>;
       loginWhatsapp: (config: TimerConfiguration) => Promise<void>;
       closeGlobalInstanceOfDriver: () => Promise<void>;
@@ -26,9 +25,6 @@ declare global {
         status: boolean;
         error: any;
       }>
-
-      extractContacts(group_name: string, config: TimerConfiguration): any[];
-      initiateSendProcess(rows: any[], message: string, attachments: any[], isNewLineReturnCharacter: boolean, config: TimerConfiguration): any;
       ipcRenderer: {
         sendMessage(channel: Channels, args: unknown[]): void;
         on(

@@ -1,8 +1,8 @@
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-import { Browser, Builder, By, until, Key } from 'selenium-webdriver';
-import fs from 'fs'
+import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
+import { Browser, Builder, By, until } from "selenium-webdriver";
+import chrome from "selenium-webdriver/chrome";
 
-export type Channels = 'ipc-example';
+export type Channels = "ipc-example";
 
 interface Contact {
   name: string;
@@ -13,13 +13,13 @@ interface Contact {
 }
 
 interface TimerConfiguration {
-  start: number,
-  initiate_send: number,
-  check_error: number,
-  send_message: number,
-  send_attachment: number,
-  finalize_send: number,
-  new_whatsapp_send_button: boolean,
+  start: number;
+  initiate_send: number;
+  check_error: number;
+  send_message: number;
+  send_attachment: number;
+  finalize_send: number;
+  new_whatsapp_send_button: boolean;
 }
 
 interface ExtractionObject {
@@ -29,9 +29,9 @@ interface ExtractionObject {
 }
 
 const log = (message: string) => {
-  console.log(message)
-  ipcRenderer.send('ipc-example', [message])
-}
+  console.log(message);
+  ipcRenderer.send("ipc-example", [message]);
+};
 
 function delay(time: number) {
   return new Promise(function (resolve) {
@@ -39,313 +39,163 @@ function delay(time: number) {
   });
 }
 
+const chromeDriverPath = "C:\\whatsappsenderchromedriver\\chromedriver.exe";
+
 let GlobalDriver: any;
 
-contextBridge.exposeInMainWorld('electron', {
-  checkFilePath: (path: string) => {
-    return fs.existsSync(path)
-  },
-  extractContacts: async (group_name: string, config: TimerConfiguration) => {
-    let contacts_extracted: ExtractionObject[] = []
-
-    log("Iniciando instancia do navegador")
-    const initiated_at = Date.now()
-    let driver = await new Builder().forBrowser(Browser.CHROME).build();
-
-    log("Abrindo Login Whatsapp")
-    await driver.get(`https://web.whatsapp.com/`)
-
-    try {
-      log("Aguardando Validar a página de inicio")
-      const result = await driver.wait(until.elementLocated(By.css("h1[data-testid='intro-title']")));
-
-      log("Autenticado")
-      await delay(config.start);
-
-      log("Procurando grupo")
-      const group = await driver.wait(until.elementLocated(By.css(`span[title='${group_name}']`)));
-
-      log("Abrindo o grupo")
-      group.click()
-
-      log("Clicando em informações")
-      const groupInfoTitle = await driver.wait(until.elementLocated(By.css("span[data-testid='conversation-info-header-chat-title']")));
-      groupInfoTitle.click();
-
-
-      log("Obtendo total de participantes")
-      const participants = await driver.wait(until.elementLocated(By.css("div[data-testid='section-participants'] span[class='x2dsD _1lF7t bze30y65 a4ywakfo']")));
-      const pq = await participants.getAttribute("value")
-      console.log("participants", participants)
-      log(`Aqui está o total de participantes ${pq}`)
-
-    } catch (error) {
-
-    }
-
-
-
-    return contacts_extracted
-  },
+contextBridge.exposeInMainWorld("electron", {
   createGlobalInstanceOfDriver: async () => {
-    GlobalDriver = new Builder().forBrowser(Browser.CHROME).build();
+    GlobalDriver = new Builder()
+      .forBrowser(Browser.CHROME)
+      .setChromeOptions(new chrome.Options())
+      .setChromeService(new chrome.ServiceBuilder(chromeDriverPath))
+      .build();
   },
   loginWhatsapp: async (config: TimerConfiguration) => {
-    log("Abrindo Login Whatsapp")
-    await GlobalDriver.get(`https://web.whatsapp.com/`)
+    log("Abrindo Login Whatsapp");
+    await GlobalDriver.get(`https://web.whatsapp.com/`);
 
-    log("Aguardando Validar a página de inicio")
-    await GlobalDriver.wait(until.elementLocated(By.css("h1[data-testid='intro-title']")));
-    log("Autenticado")
+    log("Aguardando Validar a página de inicio");
+    await GlobalDriver.wait(
+      until.elementLocated(By.css("span[data-icon='lock-small']")),
+      config.start,
+    );
+    log("Autenticado");
     await delay(config.start);
   },
   closeGlobalInstanceOfDriver: async () => {
     await GlobalDriver.quit();
   },
-  sendMessage: async (contact: Contact, message: string, attachments: any[], config: TimerConfiguration) => {
+  sendMessage: async (
+    contact: Contact,
+    message: string,
+    attachments: any[],
+    config: TimerConfiguration,
+  ) => {
     try {
-      let finalMessage = message.replaceAll("{primeiroNome}", contact.name.split(" ")[0])
+      let finalMessage = message
+        .replaceAll("{primeiroNome}", contact.name.split(" ")[0])
         .replaceAll("{nomeCompleto}", contact.name)
         .replaceAll("{telefone}", contact.phone)
         .replaceAll("{var1}", contact.var1)
         .replaceAll("{var2}", contact.var2)
-        .replaceAll("{var3}", contact.var3)
+        .replaceAll("{var3}", contact.var3);
 
-      await GlobalDriver.get(`https://web.whatsapp.com/send/?phone=%2B55${contact.phone.replace(/\D/g, "")}&text=${encodeURI(finalMessage).replace(/&/g, "%26").replace(/\+/g, "%2B")}&amp;text&amp;type=phone_number&amp;app_absent=0`)
+      await GlobalDriver.get(
+        `https://web.whatsapp.com/send/?phone=%2B55${contact.phone.replace(
+          /\D/g,
+          "",
+        )}&text=${encodeURI(finalMessage)
+          .replace(/&/g, "%26")
+          .replace(
+            /\+/g,
+            "%2B",
+          )}&amp;text&amp;type=phone_number&amp;app_absent=0`,
+      );
 
       await delay(config.initiate_send);
-      log("Verificando se tem mensagem de erro")
-      await GlobalDriver.wait(until.elementLocated(By.css("div[data-testid='confirm-popup']")), 10000);
-      await delay(config.check_error);
+      log("Verificando se tem mensagem de erro");
+      await GlobalDriver.wait(
+        until.elementLocated(By.css("div[role='dialog']")),
+        config.check_error,
+      );
 
-      const element = await GlobalDriver.findElement(By.css('div[data-testid="popup-contents"]'))
-      const text = await element.getText()
+      const element = await GlobalDriver.findElement(
+        By.css("div[role='dialog'] div div div"),
+      );
+      const text = await element.getText();
 
-      log("Houve mensagem de erro")
-      log(text)
+      log("Houve mensagem de erro");
+      log(text);
 
       await delay(config.finalize_send);
 
       return {
         status: false,
         error: text,
-      }
+      };
     } catch (error) {
+      log("Procurando botão para enviar mensagem");
+      await delay(config.send_message);
+      const sendButton = await GlobalDriver.wait(
+        until.elementLocated(By.css("span[data-icon='send']")),
+        config.send_message,
+      );
 
-      log("Procurando botão para enviar mensagem")
-      await delay(config.send_message);
-      const sendButton = await GlobalDriver.wait(until.elementLocated(By.css("button[data-testid='compose-btn-send']")));
-      await delay(config.send_message);
       sendButton.click();
 
       if (attachments.length > 0) {
-        log("Enviando arquivos")       
-  
-        const tiposImagemSuportados = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'tiff', 'webp'];
-        const tiposVideoSuportados = ['mp4', 'mov', 'avi', '3gp', 'wmv', 'mkv'];
+        log("Enviando arquivos");
+
+        const tiposImagemSuportados = [
+          "jpeg",
+          "jpg",
+          "png",
+          "gif",
+          "bmp",
+          "tiff",
+          "webp",
+        ];
+        const tiposVideoSuportados = [
+          "mp4",
+          "mov",
+          "avi",
+          "3gp",
+          "wmv",
+          "mkv",
+          "mp3",
+          "ogg",
+          "wav",
+          "wma",
+        ];
 
         for (const file of attachments) {
-          if(config.new_whatsapp_send_button){
-            log("Procurando novo botão drop up")
-            const attachMenuPlus = await GlobalDriver.wait(until.elementLocated(By.css("span[data-testid='attach-menu-plus']")));
-            attachMenuPlus.click();
-
-            await delay(config.send_message);
-
-            const isImageOrVideo = tiposImagemSuportados.includes(file.name.split('.').pop().toLowerCase()) || tiposVideoSuportados.includes(file.name.split('.').pop().toLowerCase())
-
-            const selectButtonByTypes = isImageOrVideo ? "li[data-testid='mi-attach-media']" : "li[data-testid='mi-attach-document']"
-            
-            log(`BOTÃO SELECIONADO: ${selectButtonByTypes}, é imagem ou video? ${file.isImageOrVideo}`)
-            log("Procurando botão de anexar o tipo")
-            const attachButton = await GlobalDriver.wait(until.elementLocated(By.css(selectButtonByTypes)));
-            
-            log("Inserindo anexo")
-            const inputElement = await attachButton.findElement(By.css(`input`))
-            inputElement.sendKeys(file.path) 
-          }else{
-            log("Procurando botão clip")
-            const clipButton = await GlobalDriver.wait(until.elementLocated(By.css("div[data-testid='conversation-clip']")));
-            clipButton.click();
-  
-            await delay(config.send_message);
-  
-            const isImageOrVideo = tiposImagemSuportados.includes(file.name.split('.').pop().toLowerCase()) || tiposVideoSuportados.includes(file.name.split('.').pop().toLowerCase())
-            console.log("TO AQUI", isImageOrVideo, file)
-            const selectButtonByTypes = isImageOrVideo ? "button[aria-label='Fotos e vídeos']" : "button[aria-label='Documento']"
-  
-            log(`BOTÃO SELECIONADO: ${selectButtonByTypes}, é imagem ou video? ${file.isImageOrVideo}`)
-            log("Procurando botão de anexar o tipo")
-            const attachButton = await GlobalDriver.wait(until.elementLocated(By.css(selectButtonByTypes)));
-            log("Inserindo anexo")
-            const inputElement = await attachButton.findElement(By.css(`input`))
-            inputElement.sendKeys(file.path)            
-          }
+          log("Procurando novo botão drop up");
+          const attachMenuPlus = await GlobalDriver.wait(
+            until.elementLocated(By.css("span[data-icon='attach-menu-plus']")),
+            config.send_message,
+          );
+          attachMenuPlus.click();
 
           await delay(config.send_message);
 
-          log("Procurando botão para enviar anexo")
-          const sendImageButton = await GlobalDriver.wait(until.elementLocated(By.css("span[data-testid='send']")));
+          const isImageOrVideo =
+            tiposImagemSuportados.includes(
+              file.name.split(".").pop().toLowerCase(),
+            ) ||
+            tiposVideoSuportados.includes(
+              file.name.split(".").pop().toLowerCase(),
+            );
+
+          const selectButtonByTypes = isImageOrVideo
+            ? "input[accept*='image/*'][accept*='video/mp4'][accept*='video/3gpp'][accept*='video/quicktime']"
+            : "input[accept*='*']";
+
+          log("Procurando input de anexar por tipo");
+          const attachInput = await GlobalDriver.wait(
+            until.elementLocated(By.css(selectButtonByTypes)),
+            config.send_message,
+          );
+
+          log("Inserindo anexo");
+          attachInput.sendKeys(file.path);
+
+          log("Procurando botão para enviar anexo");
+          const sendImageButton = await GlobalDriver.wait(
+            until.elementLocated(By.css("span[data-icon='send']")),
+            config.send_message,
+          );
           sendImageButton.click();
+
           await delay(config.send_attachment);
         }
       }
-      log("Finalizei o envio")
+      log("Finalizei o envio");
       await delay(config.send_message);
       return {
         status: true,
-        error: 'false'
-      }
-    }
-  },
-  initiateSendProcess: async (rows: any[], message: string, images: any[], isNewLineReturnCharacter: boolean, config: TimerConfiguration) => {
-    log("Iniciando instancia do navegador")
-    const initiated_at = Date.now()
-
-    let driver = await new Builder().forBrowser(Browser.CHROME).build();
-
-    try {
-      log("Abrindo Login Whatsapp")
-      await driver.get(`https://web.whatsapp.com/`)
-
-      log("Aguardando Validar a página de inicio")
-      const result = await driver.wait(until.elementLocated(By.css("h1[data-testid='intro-title']")));
-      log("Autenticado")
-      await delay(config.start);
-
-      if (result) {
-        let newRows = []
-        for (const contact of rows) {
-          log("Abrindo contato")
-          if (!isNewLineReturnCharacter) {
-            let finalMessage = message.replaceAll("{primeiroNome}", contact.name.split(" ")[0])
-              .replaceAll("{nomeCompleto}", contact.name)
-              .replaceAll("{telefone}", contact.phone)
-              .replaceAll("{var1}", contact.var1)
-              .replaceAll("{var2}", contact.var2)
-              .replaceAll("{var3}", contact.var3)
-
-            await driver.get(`https://web.whatsapp.com/send/?phone=%2B55${contact.phone.replace(/\D/g, "")}&text=${encodeURI(finalMessage)}&amp;text&amp;type=phone_number&amp;app_absent=0`)
-          } else {
-            await driver.get(`https://web.whatsapp.com/send/?phone=%2B55${contact.phone.replace(/\D/g, "")}&amp;text&amp;type=phone_number&amp;app_absent=0`)
-          }
-          await delay(config.initiate_send);
-
-          try {
-            log("Verificando se tem mensagem de erro")
-            await driver.wait(until.elementLocated(By.css("div[data-testid='confirm-popup']")), 10000);
-            await delay(config.check_error);
-
-            const element = await driver.findElement(By.css('div[data-testid="popup-contents"]'))
-            const text = await element.getText()
-
-            log("Houve mensagem de erro")
-            log(text)
-
-            await delay(config.finalize_send);
-
-            newRows.push({
-              ...contact,
-              statusInfo: text
-            })
-          } catch (error) {
-
-            if (!isNewLineReturnCharacter) {
-              log("Procurando botão para enviar mensagem")
-              await delay(config.send_message);
-              const sendButton = await driver.wait(until.elementLocated(By.css("button[data-testid='compose-btn-send']")));
-              sendButton.click();
-            } else {
-              log("Procurando input")
-              const input = await driver.wait(until.elementLocated(By.css("p.selectable-text.copyable-text")));
-
-              log("Inserindo texto")
-              let finalMessage = message.replaceAll("{primeiroNome}", contact.name.split(" ")[0])
-                .replaceAll("{nomeCompleto}", contact.name)
-                .replaceAll("{telefone}", contact.phone)
-                .replaceAll("{var1}", contact.var1)
-                .replaceAll("{var2}", contact.var2)
-                .replaceAll("{var3}", contact.var3)
-
-              input.click()
-
-              const finalMessageArray = finalMessage.split("\n")
-
-              for (const message of finalMessageArray) {
-                input.sendKeys(message);
-                await delay(config.send_message);
-                input.sendKeys(isNewLineReturnCharacter ? Key.ENTER : Key.chord(Key.SHIFT, Key.ENTER));
-                await delay(config.send_message);
-              }
-            }
-
-            if (images.length > 0) {
-              log("Enviando imagens anexadas")
-              for (const image of images) {
-                log("Procurando botão clipe")
-                const clipButton = await driver.wait(until.elementLocated(By.css("div[data-testid='conversation-clip']")));
-                clipButton.click();
-
-                await delay(config.send_message);
-
-                log("Procurando botão anexar imagens")
-                const attachButton = await driver.wait(until.elementLocated(By.css("button[aria-label='Fotos e vídeos']")));
-                log("Inserindo imagem")
-                const inputElement = await attachButton.findElement(By.css(`input`))
-                inputElement.sendKeys(image.path)
-
-                await delay(config.send_message);
-
-                log("Procurando botão para enviar imagem")
-                const sendImageButton = await driver.wait(until.elementLocated(By.css("span[data-testid='send']")));
-                sendImageButton.click();
-                await delay(config.send_message);
-              }
-            }
-
-            newRows.push({
-              ...contact,
-              status: true,
-              statusInfo: "Mensagem enviada!"
-            })
-          }
-        }
-
-        await delay(config.finalize_send);
-
-        await driver.quit();
-        return {
-          rows: newRows,
-          message,
-          status: true,
-          initiated_at,
-          finalized_at: Date.now()
-        };
-      } else {
-        await driver.quit();
-        return {
-          rows: rows,
-          message,
-          error: "Não foi possivel autenticar",
-          status: false,
-          initiated_at,
-          finalized_at: Date.now()
-        };
-      }
-    } catch (error) {
-      console.log("Estou aqui", error)
-      log("Houve um erro e fechamos o navegador")
-
-      await driver.quit();
-
-      return {
-        rows,
-        error,
-        message,
-        status: false,
-        initiated_at,
-        finalized_at: Date.now()
-      }
+        error: "false",
+      };
     }
   },
   ipcRenderer: {
