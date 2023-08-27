@@ -1,10 +1,7 @@
 import {
   Box,
   Button,
-  Checkbox,
   FormControl,
-  FormControlLabel,
-  FormGroup,
   FormHelperText,
   InputLabel,
   MenuItem,
@@ -17,9 +14,9 @@ import { add, differenceInCalendarDays } from "date-fns";
 import { useFormik } from "formik";
 import React, { useState } from "react";
 import QRCode from "react-qr-code";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import DrawerComponent from "../components/DrawerComponent";
-import { useNavigate } from "react-router-dom";
 
 export default function Settings() {
   const [user, setUser] = useState();

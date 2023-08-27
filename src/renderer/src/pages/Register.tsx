@@ -511,7 +511,7 @@ export default function Register() {
                       <Typography>
                         Aceito os{" "}
                         <a
-                          href="https://desenvolvedordeaplicativos.com.br/termos-e-condicoes"
+                          href="https://filipeleonelbatista.vercel.app/termos-e-condicoes"
                           target="_blank"
                         >
                           Termos e Condições de serviço

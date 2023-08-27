@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Snackbar, Slide } from "@mui/material";
+import { Alert, AlertTitle, Slide, Snackbar } from "@mui/material";
 import { createContext, useState } from "react";
 
 import Grow from "@mui/material/Grow";

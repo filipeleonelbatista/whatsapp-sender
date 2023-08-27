@@ -14,7 +14,7 @@ import {
   InputAdornment,
   TextField,
   Tooltip,
-  Typography,
+  Typography
 } from "@mui/material";
 import { pink } from "@mui/material/colors";
 import {
@@ -22,7 +22,7 @@ import {
   GridCsvExportMenuItem,
   GridPrintExportMenuItem,
   GridToolbarExportContainer,
-  ptBR,
+  ptBR
 } from "@mui/x-data-grid";
 import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";

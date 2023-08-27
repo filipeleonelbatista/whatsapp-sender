@@ -5,7 +5,7 @@ import {
   IconButton,
   TextField,
   Tooltip,
-  Typography
+  Typography,
 } from "@mui/material";
 import { useState } from "react";
 import { BiBot } from "react-icons/bi";

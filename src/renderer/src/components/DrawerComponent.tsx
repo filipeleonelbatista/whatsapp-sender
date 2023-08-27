@@ -1,22 +1,22 @@
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import LogoutIcon from "@mui/icons-material/Logout";
 import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
 import MenuIcon from "@mui/icons-material/Menu";
 import MessageIcon from "@mui/icons-material/Message";
+import NewspaperIcon from "@mui/icons-material/Newspaper";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import SettingsIcon from "@mui/icons-material/Settings";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import {
-  Avatar,
+  Button,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Tooltip,
-  useMediaQuery,
-  Modal,
-  Button,
   Menu,
+  Modal,
+  Tooltip,
 } from "@mui/material";
 import MuiAppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -27,31 +27,25 @@ import MuiDrawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
 import List from "@mui/material/List";
-import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
-import StoriesIcon from "./StoriesIcon";
-import VolumeUpIcon from "@mui/icons-material/VolumeUp";
-import SettingsIcon from "@mui/icons-material/Settings";
-import { useLocation, useNavigate } from "react-router-dom";
-import LogoutIcon from "@mui/icons-material/Logout";
 import { add, differenceInCalendarDays } from "date-fns";
-import NewspaperIcon from "@mui/icons-material/Newspaper";
-import ContactsIcon from "@mui/icons-material/Contacts";
-import { api, getVersions } from "../services/api";
-import { BsCloudDownload } from "react-icons/bs";
+import * as React from "react";
 import { BiBot } from "react-icons/bi";
+import { BsCloudDownload } from "react-icons/bs";
+import { useLocation, useNavigate } from "react-router-dom";
 import { VERSION } from "../constants/application";
-import IAComponent from "./IAComponent";
 import useCurrentTheme from "../hooks/useCurrentTheme";
+import { api, getVersions } from "../services/api";
+import IAComponent from "./IAComponent";
 
 function Copyright() {
   return (
     <Box sx={{ mt: 4 }}>
       <Typography variant="body2" color="text.secondary" align="center">
         {"Copyright © "}
-        <Link color="inherit" href="https://desenvolvedordeaplicativos.com.br/">
+        <Link color="inherit" href="https://filipeleonelbatista.vercel.app/">
           Desenvolvedor de aplicativos
         </Link>{" "}
         {new Date().getFullYear()}.
@@ -272,23 +266,31 @@ function DrawerComponent({ title, children }: DrawerComponent) {
               </Typography>
             )}
 
-            {/* <Tooltip title="Iniciar conversa com IA">
-              <IconButton sx={{ mx: 2 }} onClick={handleClick} color="inherit">
-                <BiBot />
-              </IconButton>
-            </Tooltip>
+            {false && (
+              <>
+                <Tooltip title="Iniciar conversa com IA">
+                  <IconButton
+                    sx={{ mx: 2 }}
+                    onClick={handleClick}
+                    color="inherit"
+                  >
+                    <BiBot />
+                  </IconButton>
+                </Tooltip>
 
-            <Menu
-              id="ai-menu"
-              anchorEl={anchorAi}
-              open={openAiMenu}
-              onClose={handleClose}
-              MenuListProps={{
-                'aria-labelledby': 'ai-button',
-              }}
-            >
-              <IAComponent />
-            </Menu> */}
+                <Menu
+                  id="ai-menu"
+                  anchorEl={anchorAi}
+                  open={openAiMenu}
+                  onClose={handleClose}
+                  MenuListProps={{
+                    "aria-labelledby": "ai-button",
+                  }}
+                >
+                  <IAComponent />
+                </Menu>
+              </>
+            )}
 
             <Typography variant="caption">Ver. {currentVersion}</Typography>
             <Tooltip title="Definir Modo Escuro/Claro">
@@ -314,16 +316,6 @@ function DrawerComponent({ title, children }: DrawerComponent) {
                   color="inherit"
                 >
                   <BsCloudDownload />
-                </IconButton>
-              </Tooltip>
-            )}
-            {false && (
-              <Tooltip title="Perfil">
-                <IconButton onClick={() => handleNavigate("/perfil")}>
-                  <Avatar
-                    alt="Filipe"
-                    src="https://github.com/filipeleonelbatista.png"
-                  />
                 </IconButton>
               </Tooltip>
             )}
@@ -392,30 +384,6 @@ function DrawerComponent({ title, children }: DrawerComponent) {
                 <ListItemText primary="Listas de envios" />
               </ListItemButton>
             </Tooltip>
-            {/* <Tooltip placement="right" title="Extrator de contatos">
-              <ListItemButton selected={location.pathname === "/extrator"} onClick={() => handleNavigate("/extrator")}>
-                <ListItemIcon>
-                  <ContactsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Extrator de contatoss" />
-              </ListItemButton>
-            </Tooltip> */}
-            {false && (
-              <>
-                <Tooltip placement="right" title="Perfil">
-                  <ListItemButton
-                    selected={location.pathname === "/perfil"}
-                    onClick={() => handleNavigate("/perfil")}
-                  >
-                    <ListItemIcon>
-                      <ManageAccountsIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Perfil" />
-                  </ListItemButton>
-                </Tooltip>
-                <Divider sx={{ my: 1 }} />
-              </>
-            )}
             {user && user?.selectedPlan > 1 && (
               <>
                 <Divider sx={{ my: 1 }} />
