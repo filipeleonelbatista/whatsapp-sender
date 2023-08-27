@@ -7,21 +7,12 @@ import { useNavigate } from "react-router";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import CheckmarkIcon from "@mui/icons-material/Check";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import {
-  Alert,
-  AlertTitle,
-  CircularProgress,
-  circularProgressClasses,
-  InputAdornment,
-  Slide,
-  TextField,
-} from "@mui/material";
+import { InputAdornment, TextField } from "@mui/material";
 import CardMedia from "@mui/material/CardMedia";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import Snackbar from "@mui/material/Snackbar";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import ImageChrome from "../assets/chrome.png";
@@ -31,31 +22,16 @@ import ImageNovoCaminho from "../assets/novocaminho.png";
 import ImageSistema from "../assets/sistema.png";
 import ImageVariaveis from "../assets/variaveis.png";
 
+import useLoader from "../hooks/useLoader";
+import useToast from "../hooks/useToast";
 import celular from "../utils/masks";
 
 export default function Onboarding() {
+  const { setIsLoading } = useLoader();
+  const { addToast } = useToast();
+
   const navigate = useNavigate();
   const [stepPosition, setStepPosition] = React.useState(0);
-  const [isLoading, setisLoading] = React.useState(false);
-
-  const [openSnackBar, setOpenSnackBar] = React.useState(false);
-  const [snackbarMessage, setSnackbarMessage] = React.useState({
-    message: "",
-    title: "",
-    severity: "error",
-  });
-
-  const handleClick = () => {
-    setOpenSnackBar(true);
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpenSnackBar(false);
-  };
 
   React.useEffect(() => {
     localStorage.setItem("@onboarding-step", JSON.stringify(stepPosition));
@@ -103,23 +79,40 @@ export default function Onboarding() {
       await window.electron.closeGlobalInstanceOfDriver();
 
       if (!request.status) {
-        setSnackbarMessage({
+        addToast({
           message: `Ao tentar enviar a mensagem para ${contact.name} telefone ${contact.phone}, o erro ${request.error} `,
           title: "Problemas no envio",
           severity: "error",
         });
-
-        handleClick();
       }
     } catch (error) {
-      if (String(error).includes("ChromeDriver could not be found")) {
-        setSnackbarMessage({
+      if (String(error).includes("target window already closed")) {
+        addToast({
+          message: `A janela da automação foi fechada pelo usuário`,
+          title: "Janela fechada pelo usuário",
+          severity: "warning",
+        });
+      } else if (String(error).includes("Wait timed out")) {
+        const local = String(error)
+          .replace(
+            "Error: Waiting for element to be located By(css selector, ",
+            "",
+          )
+          .split("\nWait");
+
+        addToast({
+          message: `O Sistema não conseguiu encontrar a interface específica e encerrou o programa. Elemento não encontrado ${local[0]}`,
+          title: "Tivemos um problema",
+          severity: "error",
+        });
+      } else if (String(error).includes("ChromeDriver could not be found")) {
+        addToast({
           message: `O Chromedriver não está instalado ou configurado. Faça a instalação corretamente ou\nContate o administrador.`,
           title: "Tivemos um problema",
           severity: "error",
         });
       } else {
-        setSnackbarMessage({
+        addToast({
           message: `Houve um erro ao tentar enviar as mensagens. \nContate o administrador. \n\n${error}`,
           title: "Tivemos um problema",
           severity: "error",
@@ -1069,113 +1062,65 @@ export default function Onboarding() {
   ];
 
   return (
-    <>
-      <Snackbar
-        sx={{ mt: 8 }}
-        open={openSnackBar}
-        autoHideDuration={snackbarMessage.severity === "error" ? 30000 : 6000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        TransitionComponent={(props) => <Slide {...props} direction="left" />}
-      >
-        <Alert
-          onClose={handleClose}
-          severity={snackbarMessage.severity}
-          sx={{ maxWidth: "400px", width: "100%" }}
-        >
-          <AlertTitle>{snackbarMessage.title}</AlertTitle>
-          {snackbarMessage.message}
-        </Alert>
-      </Snackbar>
-      {isLoading && (
-        <Box
-          sx={{
-            position: "absolute",
-            width: "100vw",
-            height: "100vh",
-            zIndex: 10000,
-            backgroundColor: "#00000064",
-            overflow: "hidden",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <CircularProgress
-            variant="indeterminate"
-            disableShrink
-            color="primary"
-            sx={{
-              animationDuration: "550ms",
-              [`& .${circularProgressClasses.circle}`]: {
-                strokeLinecap: "round",
-              },
-            }}
-            size={50}
-            thickness={6}
-          />
-        </Box>
-      )}
+    <Box
+      sx={{
+        m: 0,
+        position: "relative",
+        width: "100%",
+        height: "100vh",
+        overflow: "auto",
+        backgroundColor: (theme) =>
+          theme.palette.mode === "light"
+            ? theme.palette.grey[100]
+            : theme.palette.grey[900],
+      }}
+    >
       <Box
         sx={{
-          m: 0,
-          position: "relative",
+          zIndex: 1,
+          position: "absolute",
+          top: 0,
           width: "100%",
-          height: "100vh",
-          overflow: "auto",
-          backgroundColor: (theme) =>
-            theme.palette.mode === "light"
-              ? theme.palette.grey[100]
-              : theme.palette.grey[900],
+          height: "15rem",
+          backgroundColor: (theme) => theme.palette.primary.main,
         }}
-      >
+      ></Box>
+      <Box sx={{ zIndex: 10, position: "absolute", top: 0, width: "100%" }}>
         <Box
           sx={{
-            zIndex: 1,
-            position: "absolute",
-            top: 0,
-            width: "100%",
-            height: "15rem",
-            backgroundColor: (theme) => theme.palette.primary.main,
+            mt: 8,
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            flexDirection: "column",
           }}
-        ></Box>
-        <Box sx={{ zIndex: 10, position: "absolute", top: 0, width: "100%" }}>
-          <Box
+        >
+          <Typography variant="h4" sx={{ mb: 2 }}>
+            <FaWhatsapp color="25d366" />
+            <span style={{ color: "#25d366" }}>
+              <b>WhatsApp</b>
+            </span>
+            <span style={{ color: "#f9f9f9" }}>
+              <b>Sender</b>
+            </span>
+          </Typography>
+          <Card
             sx={{
-              mt: 8,
+              p: 2,
+              maxWidth: 400,
+              width: "100%",
               display: "flex",
-              alignItems: "center",
               gap: 2,
               flexDirection: "column",
             }}
           >
-            <Typography variant="h4" sx={{ mb: 2 }}>
-              <FaWhatsapp color="25d366" />
-              <span style={{ color: "#25d366" }}>
-                <b>WhatsApp</b>
-              </span>
-              <span style={{ color: "#f9f9f9" }}>
-                <b>Sender</b>
-              </span>
-            </Typography>
-            <Card
-              sx={{
-                p: 2,
-                maxWidth: 400,
-                width: "100%",
-                display: "flex",
-                gap: 2,
-                flexDirection: "column",
-              }}
-            >
-              {steps[stepPosition].component}
-            </Card>
-            <Button variant="text" onClick={finishConfig}>
-              Pular
-            </Button>
-          </Box>
+            {steps[stepPosition].component}
+          </Card>
+          <Button variant="text" onClick={finishConfig}>
+            Pular
+          </Button>
         </Box>
       </Box>
-    </>
+    </Box>
   );
 }

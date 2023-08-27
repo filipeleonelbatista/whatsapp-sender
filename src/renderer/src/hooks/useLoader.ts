@@ -1,7 +1,7 @@
-import { useContext } from 'react';
-import LoaderContext, { LoaderContextData } from '../contexts/Loader';
+import { useContext } from "react";
+import { LoaderContext } from "../contexts/LoaderContext";
 
-const useLoader = (): LoaderContextData => {
+const useLoader = () => {
   const context = useContext(LoaderContext);
 
   if (!context) {

@@ -5,8 +5,6 @@ import {
   Button,
   Card,
   Checkbox,
-  CircularProgress,
-  circularProgressClasses,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -19,7 +17,7 @@ import {
   OutlinedInput,
   Select,
   TextField,
-  Typography,
+  Typography
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { useFormik } from "formik";
@@ -29,10 +27,14 @@ import QRCode from "react-qr-code";
 import { useNavigate } from "react-router";
 import * as Yup from "yup";
 import { VERSION } from "../constants/application";
+import useLoader from "../hooks/useLoader";
+import useToast from "../hooks/useToast";
 import { api, createAssinante, getVersions } from "../services/api";
 
 export default function Register() {
-  const [isLoading, setisLoading] = React.useState(false);
+  const { setIsLoading } = useLoader();
+  const { addToast } = useToast();
+
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const [open, setOpen] = React.useState(false);
@@ -69,11 +71,18 @@ export default function Register() {
 
   const handleSubmitForm = async (formValues) => {
     if (!formValues.accept_terms) {
-      alert("Para acessar é necessário aceitar os Termos e Condições do app!");
+      addToast({
+        severity: "error",
+        message:
+          "Para acessar é necessário aceitar os Termos e Condições do app!",
+      });
       return;
     }
     if (formValues.plan === 0) {
-      alert("Você precisa definir o plano que deseja adiquirir!");
+      addToast({
+        severity: "error",
+        message: "Você precisa definir o plano que deseja adiquirir!",
+      });
       return;
     }
     const data = {
@@ -96,9 +105,11 @@ export default function Register() {
       );
 
     if (applicationVersionIndex > 0) {
-      alert(
-        "A versão do seu aplicativo está desatualizada. Caso queira prosseguir, baixe a nova versão.",
-      );
+      addToast({
+        severity: "error",
+        message:
+          "A versão do seu aplicativo está desatualizada. Caso queira prosseguir, baixe a nova versão.",
+      });
       window.open(
         versionResponse.data.data.applicationVersions[0].versionUrl,
         "_blank",
@@ -107,7 +118,7 @@ export default function Register() {
     }
 
     try {
-      setisLoading(true);
+      setIsLoading(true);
 
       emailjs
         .send(
@@ -131,11 +142,9 @@ export default function Register() {
         .then(
           (res) => {
             console.log("Sucesso", res);
-            // alert("Sua mensagem foi enviada com sucesso")
           },
           (err) => {
-            console.log("ERRO", err);
-            // alert("Houve um erro ao enviar sua mensagem. Tente o contato pelo Whatsapp ou tente novamente mais tarde!")
+            console.log("emailjs error", err);
           },
         );
 
@@ -180,21 +189,26 @@ export default function Register() {
       setOpen(true);
     } catch (err) {
       console.log("ERROR DURING AXIOS REQUEST", err);
-      setisLoading(false);
+      setIsLoading(false);
 
       if (
         err?.response?.data?.errors[0]?.message ===
         'value is not unique for the field "email"'
       ) {
-        alert("Email ja cadastrado");
+        addToast({
+          severity: "error",
+          message: "Email ja cadastrado",
+        });
         return;
       } else {
-        alert(
-          "Houve um problema ao enviar sua solicitação, tente novamente mais tarde!",
-        );
+        addToast({
+          severity: "error",
+          message:
+            "Houve um problema ao enviar sua solicitação, tente novamente mais tarde!",
+        });
       }
     } finally {
-      setisLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -273,35 +287,6 @@ export default function Register() {
 
   return (
     <>
-      {isLoading && (
-        <Box
-          sx={{
-            position: "absolute",
-            width: "100vw",
-            height: "100vh",
-            zIndex: 10000,
-            backgroundColor: "#00000064",
-            overflow: "hidden",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <CircularProgress
-            variant="indeterminate"
-            disableShrink
-            color="primary"
-            sx={{
-              animationDuration: "550ms",
-              [`& .${circularProgressClasses.circle}`]: {
-                strokeLinecap: "round",
-              },
-            }}
-            size={50}
-            thickness={6}
-          />
-        </Box>
-      )}
       <Modal
         open={open}
         onClose={() => setOpen(false)}

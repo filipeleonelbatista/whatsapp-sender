@@ -4,8 +4,6 @@ import {
   Button,
   Card,
   Checkbox,
-  CircularProgress,
-  circularProgressClasses,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -28,6 +26,8 @@ import { FaWhatsapp } from "react-icons/fa";
 import QRCode from "react-qr-code";
 import { useNavigate } from "react-router";
 import * as Yup from "yup";
+import useLoader from "../hooks/useLoader";
+import useToast from "../hooks/useToast";
 import { api, filterAssinantesByEmail } from "../services/api";
 
 export default function Login() {
@@ -84,7 +84,9 @@ export default function Login() {
 
   const [selectedUser, setSelectedUser] = React.useState();
   const [waitingActivation, setWaitingActivation] = React.useState(false);
-  const [isLoading, setisLoading] = React.useState(false);
+  const { setIsLoading } = useLoader();
+  const { addToast } = useToast();
+
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = React.useState(false);
@@ -122,14 +124,17 @@ export default function Login() {
 
   const handleSubmitForm = async (formValues) => {
     try {
-      setisLoading(true);
+      setIsLoading(true);
       const filterAssinantesByEmailObject = filterAssinantesByEmail(
         formValues.email,
       );
       const result = await api.post("", filterAssinantesByEmailObject);
 
       if (result.data.data.assinantes.length === 0) {
-        alert("Usuário não encontrado.");
+        addToast({
+          severity: "error",
+          message: "Usuário não encontrado.",
+        });
         return;
       }
       if (result.data.data.assinantes[0].senha === formValues.senha) {
@@ -141,9 +146,11 @@ export default function Login() {
             Date.now(),
           ) < 1
         ) {
-          alert(
-            "Sua licença expirou. adiquira uma nova licença e continue usando o aplicativo",
-          );
+          addToast({
+            severity: "error",
+            message:
+              "Sua licença expirou. adiquira uma nova licença e continue usando o aplicativo",
+          });
           setLicenseExpiration(true);
           return;
         } else {
@@ -158,19 +165,25 @@ export default function Login() {
               ? navigate("/onboarding")
               : navigate("/envio-mensagens");
           } else {
-            alert("Seu acesso não está ativo ainda.");
+            addToast({
+              severity: "error",
+              message: "Seu acesso não está ativo ainda.",
+            });
             setWaitingActivation(true);
             setSelectedUser(result.data.data.assinantes[0]);
           }
         }
       } else {
-        alert("Usuário ou senha incorretos!");
+        addToast({
+          severity: "error",
+          message: "Usuário ou senha incorretos!",
+        });
         return;
       }
       console.log();
     } catch (error) {
     } finally {
-      setisLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -302,35 +315,6 @@ export default function Login() {
           )}
         </Box>
       </Modal>
-      {isLoading && (
-        <Box
-          sx={{
-            position: "absolute",
-            width: "100vw",
-            height: "100vh",
-            zIndex: 10000,
-            backgroundColor: "#00000064",
-            overflow: "hidden",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <CircularProgress
-            variant="indeterminate"
-            disableShrink
-            color="primary"
-            sx={{
-              animationDuration: "550ms",
-              [`& .${circularProgressClasses.circle}`]: {
-                strokeLinecap: "round",
-              },
-            }}
-            size={50}
-            thickness={6}
-          />
-        </Box>
-      )}
       <Box
         sx={{
           m: 0,
