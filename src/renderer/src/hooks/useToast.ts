@@ -1,9 +1,7 @@
-import { useContext } from 'react';
-import ToastContext, {
-  ToastContextData,
-} from '../contexts/Toast';
+import { useContext } from "react";
+import { ToastContext } from "../contexts/ToastContext";
 
-const useToast = (): ToastContextData => {
+const useToast = () => {
   const context = useContext(ToastContext);
 
   if (!context) {
