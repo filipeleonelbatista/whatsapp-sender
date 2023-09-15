@@ -24,7 +24,7 @@ const AcceptTerms = (props) => {
 
 
   return (
-    <Modal open={isShow} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+    <Modal open={isShow} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', zIndex: 1000000, }}>
       <Card sx={{ display: 'flex', p: 4, justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="body1" color="text.secondary" sx={{ width: '90%' }}>
           Nós utilizamos cookies e outras tecnologias semelhantes para
