@@ -31,7 +31,7 @@ export default function HomeNavigation() {
 
   function handleDownloadApp() {
     console.log("Baixar o app")
-    window.open(window.location.href + 'WhatsAppSenderBot.Setup.4.8.0.exe', '_blank')
+    window.open(window.location.href + 'WhatsAppSenderBot.Setup.4.8.4.exe', '_blank')
   }
 
   const handleSubmitForm = async (formValues) => {
