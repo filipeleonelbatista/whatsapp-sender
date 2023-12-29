@@ -1,6 +1,10 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
+import fs from "fs";
+import path from "path";
 import { Browser, Builder, By, until } from "selenium-webdriver";
 import chrome from "selenium-webdriver/chrome";
+
+import * as remote from "@electron/remote";
 
 export type Channels = "ipc-example";
 
@@ -43,7 +47,83 @@ const chromeDriverPath = "C:\\whatsappsenderchromedriver\\chromedriver.exe";
 
 let GlobalDriver: any;
 
+function criarPastaNoDiretorioDeInstalacao(nomeDaPasta: string) {
+  const diretorioDeInstalacao = remote.app.getAppPath();
+
+  const caminhoDaPasta = path.join(
+    diretorioDeInstalacao,
+    "instances",
+    nomeDaPasta,
+  );
+
+  if (!fs.existsSync(caminhoDaPasta)) {
+    fs.mkdirSync(caminhoDaPasta);
+  }
+
+  return caminhoDaPasta;
+}
+
+const createInstanceOfWhatsApp = async (instanceInfo: {
+  id: string;
+  name: string;
+  createdAt: number;
+}) => {
+  const destinationPath = criarPastaNoDiretorioDeInstalacao(instanceInfo.id);
+
+  const options = new chrome.Options();
+  options.addArguments(`--user-data-dir=${destinationPath}`);
+
+  const instancedDriver = new Builder()
+    .forBrowser(Browser.CHROME)
+    .setChromeOptions(options)
+    .setChromeService(new chrome.ServiceBuilder(chromeDriverPath))
+    .build();
+
+  log("Abrindo Login Whatsapp");
+  await instancedDriver.get(`https://web.whatsapp.com/`);
+
+  log("Aguardando Validar a página de inicio");
+  await instancedDriver.wait(
+    until.elementLocated(By.css("span[data-icon='lock-small']")),
+    2 * 60 * 1000,
+  );
+  log("Autenticado");
+  await delay(3000);
+
+  instancedDriver.quit();
+};
+
+const testInstance = async (id: string) => {
+  const diretorioDeInstalacao = remote.app.getAppPath();
+
+  const destinationPath = path.join(diretorioDeInstalacao, "instances", id);
+
+  const options = new chrome.Options();
+  options.addArguments(`--user-data-dir=${destinationPath}`);
+
+  const instancedDriver = new Builder()
+    .forBrowser(Browser.CHROME)
+    .setChromeOptions(options)
+    .setChromeService(new chrome.ServiceBuilder(chromeDriverPath))
+    .build();
+
+  log("Abrindo Login Whatsapp");
+  await instancedDriver.get(`https://web.whatsapp.com/`);
+
+  log("Aguardando Validar a página de inicio");
+  await instancedDriver.wait(
+    until.elementLocated(By.css("span[data-icon='lock-small']")),
+    60 * 1000,
+  );
+  log("Autenticado");
+  await delay(3000);
+
+  instancedDriver.quit();
+};
+
 contextBridge.exposeInMainWorld("electron", {
+  testInstance: testInstance,
+  createInstanceOfWhatsApp: createInstanceOfWhatsApp,
   createGlobalInstanceOfDriver: async () => {
     GlobalDriver = new Builder()
       .forBrowser(Browser.CHROME)

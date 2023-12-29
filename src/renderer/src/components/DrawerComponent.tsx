@@ -39,6 +39,9 @@ import { VERSION } from "../constants/application";
 import useCurrentTheme from "../hooks/useCurrentTheme";
 import { api, getVersions } from "../services/api";
 import IAComponent from "./IAComponent";
+import { AiOutlineMobile } from "react-icons/ai";
+import { FaUsers } from "react-icons/fa";
+import { BsWhatsapp } from "react-icons/bs";
 
 function Copyright() {
   return (
@@ -351,6 +354,84 @@ function DrawerComponent({ title, children }: DrawerComponent) {
           </Toolbar>
           <Divider />
           <List component="nav">
+            <Tooltip placement="right" title="Envio de mensagens">
+              <ListItemButton
+                selected={location.pathname === "/cadastro-whatsapp"}
+                onClick={() => handleNavigate("/cadastro-whatsapp")}
+              >
+                <ListItemIcon>
+                  <Box
+                    sx={{
+                      position: "relative",
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <AiOutlineMobile size={26} />
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: (theme) =>
+                          theme.palette.background.default,
+                        width: 20,
+                        height: 20,
+                        borderRadius: 20,
+                        bottom: -6,
+                        right: -8,
+                      }}
+                    >
+                      <BsWhatsapp size={10} />
+                    </Box>
+                  </Box>
+                </ListItemIcon>
+                <ListItemText primary="Cadastrar (Beta)" />
+              </ListItemButton>
+            </Tooltip>
+            <Tooltip placement="right" title="Envio simultâneo (beta)">
+              <ListItemButton
+                selected={location.pathname === "/envio-simultaneo"}
+                onClick={() => handleNavigate("/envio-simultaneo")}
+              >
+                <ListItemIcon>
+                  <Box
+                    sx={{
+                      position: "relative",
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <FaUsers size={26} />
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: (theme) =>
+                          theme.palette.background.default,
+                        width: 20,
+                        height: 20,
+                        borderRadius: 20,
+                        bottom: -6,
+                        right: -8,
+                      }}
+                    >
+                      <BsWhatsapp size={10} />
+                    </Box>
+                  </Box>
+                </ListItemIcon>
+                <ListItemText primary="Envio simultâneo (beta)" />
+              </ListItemButton>
+            </Tooltip>
             <Tooltip placement="right" title="Envio de mensagens">
               <ListItemButton
                 selected={location.pathname === "/envio-mensagens"}
