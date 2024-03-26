@@ -27,7 +27,7 @@ Falo mais [NESTE POST](https://www.linkedin.com/posts/filipeleonelbatista_reactj
 
 Esse projeto foi desenvolvido com as seguintes principais tecnologias:
 
-- [Selenium]([https://developers.google.com/analytics?hl=pt-br](https://www.selenium.dev/documentation/webdriver/))
+- [Selenium](https://www.selenium.dev/documentation/webdriver/)
 - [Electron](https://www.electronjs.org/pt/)
 - [React JS](https://legacy.reactjs.org/docs/getting-started.html)
 - [Hygraph](https://hygraph.com/)
