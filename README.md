@@ -1,3 +1,10 @@
+<a href="https://github.com/filipeleonelbatista/whatsapp-sender/blob/master/README_EN.md" target="_blank">
+  <img src="https://raw.githubusercontent.com/filipeleonelbatista/filipeleonelbatista/master/assets/usa_flag.png" width="28px" />
+  Version in English
+</a>
+</br>
+</br>
+
 <img width="100%" src=".github/2.png">
 
 # Indice
