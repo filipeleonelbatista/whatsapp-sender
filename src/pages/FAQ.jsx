@@ -67,7 +67,7 @@ function FaqComponent() {
 
   function handleDownloadApp() {
     console.log("Baixar o app")
-    window.open(window.location.href + 'WhatsAppSenderBot.Setup.4.8.4.exe', '_blank')
+    window.open(window.location.href + 'WhatsAppSenderBot.Setup.4.8.6.exe', '_blank')
   }
 
   const loadFaqs = async () => {
