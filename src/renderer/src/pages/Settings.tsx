@@ -26,15 +26,14 @@ export default function Settings() {
   const navigate = useNavigate();
 
   const handleInformPayment = async () => {
-    const message = `Olá sou ${user?.nome}, e gostaria de informar o pagamento do WPSender para o email ${user?.email} com o plano ${
-      plan === 1
+    const message = `Olá sou ${user?.nome}, e gostaria de informar o pagamento do WPSender para o email ${user?.email} com o plano ${plan === 1
         ? "Mensal R$ 10,00"
         : plan === 2
-        ? "Semestral de R$ 60,00 por R$ 50,00"
-        : plan === 3
-        ? "Anual de R$ 120,00 por R$ 100,00"
-        : ""
-    }`;
+          ? "Semestral de R$ 60,00 por R$ 50,00"
+          : plan === 3
+            ? "Anual de R$ 120,00 por R$ 100,00"
+            : ""
+      }`;
 
     window.open(
       `https://web.whatsapp.com/send/?phone=%2B5551992736445}&text=${encodeURI(
@@ -114,19 +113,19 @@ export default function Settings() {
     }
     if (localStorage.getItem("@config") !== null) {
       const config = JSON.parse(localStorage.getItem("@config"));
-      formik.setFieldValue("start", config.start ?? 5000);
-      formik.setFieldValue("initiate_send", config.initiate_send ?? 8000);
-      formik.setFieldValue("check_error", config.check_error ?? 2000);
-      formik.setFieldValue("send_message", config.send_message ?? 3000);
-      formik.setFieldValue("send_attachment", config.send_attachment ?? 3000);
+      formik.setFieldValue("start", config.start ?? 20000);
+      formik.setFieldValue("initiate_send", config.initiate_send ?? 10000);
+      formik.setFieldValue("check_error", config.check_error ?? 10000);
+      formik.setFieldValue("send_message", config.send_message ?? 5000);
+      formik.setFieldValue("send_attachment", config.send_attachment ?? 5000);
       formik.setFieldValue("finalize_send", config.finalize_send ?? 5000);
     } else {
       const config = {
-        start: 5000,
-        initiate_send: 8000,
-        check_error: 2000,
-        send_message: 3000,
-        send_attachment: 3000,
+        start: 20000,
+        initiate_send: 10000,
+        check_error: 10000,
+        send_message: 5000,
+        send_attachment: 5000,
         finalize_send: 5000,
       };
       localStorage.setItem("@config", JSON.stringify(config));
@@ -229,21 +228,21 @@ export default function Settings() {
         add(new Date(user?.paymentDate), { months: user?.selectedPlan }),
         Date.now(),
       ) < 15 && (
-        <Box sx={{ mt: 2, mb: 2 }}>
-          <Typography variant="body2">
-            Sua licença está prestes a expirar, adiquira já uma nova licensa e
-            evite ficar sem enviar mensagens.
-          </Typography>
-          <Button
-            type="button"
-            variant="contained"
-            color="primary"
-            onClick={() => setOpen(true)}
-          >
-            Renovar licença
-          </Button>
-        </Box>
-      )}
+          <Box sx={{ mt: 2, mb: 2 }}>
+            <Typography variant="body2">
+              Sua licença está prestes a expirar, adiquira já uma nova licensa e
+              evite ficar sem enviar mensagens.
+            </Typography>
+            <Button
+              type="button"
+              variant="contained"
+              color="primary"
+              onClick={() => setOpen(true)}
+            >
+              Renovar licença
+            </Button>
+          </Box>
+        )}
       <Typography variant="body1">Configuração do aplicativo</Typography>
 
       <Box

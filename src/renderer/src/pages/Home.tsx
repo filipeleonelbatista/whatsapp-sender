@@ -37,6 +37,7 @@ import DrawerComponent from "../components/DrawerComponent";
 import useLoader from "../hooks/useLoader";
 import useToast from "../hooks/useToast";
 import celular from "../utils/masks";
+import { useNavigate } from "react-router-dom";
 
 const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
   <GridToolbarExportContainer {...other}>
@@ -61,6 +62,7 @@ const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
 );
 
 function Home() {
+  const navigate = useNavigate();
   const { setIsLoading } = useLoader();
   const { addToast } = useToast();
 
@@ -210,7 +212,7 @@ function Home() {
           .split("\nWait");
 
         addToast({
-          message: `O Sistema não conseguiu encontrar a interface específica e encerrou o programa. Elemento não encontrado ${local[0]}`,
+          message: `O Sistema não conseguiu encontrar a interface específica e encerrou o programa. Caso isso esteja acontecendo muito, tente aumentar o tempo das interações em "CONFIGURAÇÕES". Elemento não encontrado ${local[0]}`,
           title: "Tivemos um problema",
           severity: "error",
         });
@@ -319,7 +321,7 @@ function Home() {
           .split("\nWait");
 
         addToast({
-          message: `O Sistema não conseguiu encontrar a interface específica e encerrou o programa. Elemento não encontrado ${local[0]}`,
+          message: `O Sistema não conseguiu encontrar a interface específica e encerrou o programa. Caso isso esteja acontecendo muito, tente aumentar o tempo das interações em "CONFIGURAÇÕES". Elemento não encontrado ${local[0]}`,
           title: "Tivemos um problema",
           severity: "error",
         });
@@ -513,6 +515,13 @@ function Home() {
       <Typography variant="h4">Mensagem</Typography>
       <Typography variant="body1">
         Digite a mensagem que será enviada para os contatos do Whatsapp
+      </Typography>
+      <Typography alignItems={`center`} variant="caption">
+        Em computadores mais simples talvez seja necessário aumentar o tempo entre interações. Para isso vá para
+        <Button onClick={() => navigate("/configuracoes")}>
+          🔗 Configurações
+        </Button>
+        e ajuste os tempos conforme sua necessidade.<br />
       </Typography>
       <Grid container spacing={2} sx={{ mt: 2, mb: 4 }}>
         <Grid item xs={6}>
@@ -855,7 +864,7 @@ function Home() {
 
       <Box sx={{ height: 500, w: "100%", mt: 4 }}>
         <DataGrid
-          onCellFocusOut={() => {}}
+          onCellFocusOut={() => { }}
           columnVisibilityModel={{
             id: false,
           }}
@@ -880,7 +889,7 @@ function Home() {
         sx={{
           width: "100%",
           mt: 4,
-          mb: 4,
+          mb: 1,
         }}
         variant="contained"
         disabled={isLoadingButton}
@@ -894,6 +903,16 @@ function Home() {
       >
         {isLoadingButton ? "Aguarde, Enviando Mensagens" : "Enviar mensagens"}
       </Button>
+      <Box sx={{
+        w: "100%",
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+      }}>
+        <Typography alignItems={`center`} variant="caption">
+          Lembre-se que o envio de SPAN pode causar bloqueio do número pelo WhatsApp. Essa é uma ferramenta externa que não usa a API oficial do WhatsApp.
+        </Typography>
+      </Box>
     </DrawerComponent>
   );
 }

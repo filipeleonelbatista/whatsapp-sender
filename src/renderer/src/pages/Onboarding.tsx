@@ -101,7 +101,7 @@ export default function Onboarding() {
           .split("\nWait");
 
         addToast({
-          message: `O Sistema não conseguiu encontrar a interface específica e encerrou o programa. Elemento não encontrado ${local[0]}`,
+          message: `O Sistema não conseguiu encontrar a interface específica e encerrou o programa. Caso isso esteja acontecendo muito, tente aumentar o tempo das interações em "CONFIGURAÇÕES". Elemento não encontrado ${local[0]}`,
           title: "Tivemos um problema",
           severity: "error",
         });
@@ -176,22 +176,22 @@ export default function Onboarding() {
     }
     if (localStorage.getItem("@config") !== null) {
       const config = JSON.parse(localStorage.getItem("@config"));
-      formikConfig.setFieldValue("start", config.start ?? 5000);
-      formikConfig.setFieldValue("initiate_send", config.initiate_send ?? 8000);
-      formikConfig.setFieldValue("check_error", config.check_error ?? 2000);
-      formikConfig.setFieldValue("send_message", config.send_message ?? 3000);
+      formikConfig.setFieldValue("start", config.start ?? 20000);
+      formikConfig.setFieldValue("initiate_send", config.initiate_send ?? 10000);
+      formikConfig.setFieldValue("check_error", config.check_error ?? 10000);
+      formikConfig.setFieldValue("send_message", config.send_message ?? 5000);
       formikConfig.setFieldValue(
         "send_attachment",
-        config.send_attachment ?? 3000,
+        config.send_attachment ?? 5000,
       );
       formikConfig.setFieldValue("finalize_send", config.finalize_send ?? 5000);
     } else {
       const config = {
-        start: 5000,
-        initiate_send: 8000,
-        check_error: 2000,
-        send_message: 3000,
-        send_attachment: 3000,
+        start: 20000,
+        initiate_send: 10000,
+        check_error: 10000,
+        send_message: 5000,
+        send_attachment: 5000,
         finalize_send: 5000,
       };
       localStorage.setItem("@config", JSON.stringify(config));
@@ -355,13 +355,28 @@ export default function Onboarding() {
           </Typography>
           <Button
             component="a"
-            href="https://chromedriver.chromium.org/downloads"
+            href="https://googlechromelabs.github.io/chrome-for-testing/"
+            target="_blank"
             variant="contained"
             sx={{ marginTop: 2 }}
             fullWidth
           >
             Baixar o Driver do Google Chrome
           </Button>
+
+          <Typography variant="body2" fontWeight={"bold"} lineHeight={1} mt={2} textAlign="center">
+            Certifique-se de que seja a mesma versão do seu chrome instalado.
+          </Typography>
+          {/* <Button
+            component="a"
+            href="chrome://settings/help"
+            target="_blank"
+            variant="contained"
+            sx={{ marginTop: 2 }}
+            fullWidth
+          >
+            Ver versão do Google Chrome
+          </Button> */}
 
           <CardMedia
             sx={{
@@ -387,7 +402,7 @@ export default function Onboarding() {
                 backgroundColor: "#F5f5f5",
               }}
             >
-              C:/whatsappsenderchromedriver
+              C:\whatsappsenderchromedriver
             </Box>
           </Typography>
 
@@ -715,7 +730,7 @@ export default function Onboarding() {
                 backgroundColor: "#F5f5f5",
               }}
             >
-              C:/whatsappsenderchromedriver
+              C:\whatsappsenderchromedriver
             </Box>
             que você baixou nos passos anteriores.
           </Typography>

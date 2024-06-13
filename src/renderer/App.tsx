@@ -9,7 +9,7 @@ import "./src/styles/global.css";
 function AppComponent() {
   const { currentTheme } = useCurrentTheme();
 
-  return (
+  return ( 
     <ThemeProvider
       theme={createTheme({
         palette: {
