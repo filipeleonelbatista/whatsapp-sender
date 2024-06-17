@@ -293,6 +293,9 @@ function HomeComponent() {
                 Com o app você consegue enviar mensagens, salvar modelos de mensagens e listas, salvar listas de envios para usar em outros momentos e mais.
               </Typography>
               <Button sx={{ maxWidth: 450 }} variant="contained" color="primary" size="large" onClick={handleDownloadApp}>BAIXAR O APP AGORA</Button>
+              <Typography variant="caption" sx={{ maxWidth: 450, marginBottom: 2 }}>
+                Requisitos mínimos: Windows 11/10 64-bit e 32-bit, I3 3° Geração ou equivalente, 4GB Memória Ram.
+              </Typography>
             </Box>
             <CardMedia
               component="img"
@@ -322,7 +325,7 @@ function HomeComponent() {
             justifyContent: size[0] < 720 ? 'center' : 'space-evenly',
             alignItems: size[0] < 720 ? 'center' : 'flex-start',
             gap: 3,
-            mt: -12,
+            mt: -10,
             zIndex: 10,
           }}
         >
@@ -701,111 +704,114 @@ function HomeComponent() {
         </Container>
         {/* End hero unit */}
         <Container maxWidth="md" component="main">
-          <Grid container spacing={5} alignItems="flex-start">
+          <Box container sx={{
+            display: "flex",
+            flexDirection: {
+              sm: "column",
+              md: "row"
+            },
+            gap: 4,
+            justifyContent: "center",
+          }}>
             {tiers.map((tier) => (
-              // Enterprise card is full width at sm breakpoint
-              <Grid
-                item
-                key={tier.title}
-                xs={12}
-                sm={tier.title === 'Enterprise' ? 12 : 6}
-                md={4}
+              <Card
+                sx={{
+                  width: "100%"
+                }}
               >
-                <Card>
-                  <CardHeader
-                    title={tier.title}
-                    subheader={tier.subheader}
-                    titleTypographyProps={{ align: 'center', color: "#FFF", fontWeight: "bold" }}
-                    action={tier.title === 'Semestral' ? <BsStar size={24} color={"#DDD"} /> : null}
-                    subheaderTypographyProps={{
-                      align: 'center',
-                      color: "#FFF"
-                    }}
+                <CardHeader
+                  title={tier.title}
+                  subheader={tier.subheader}
+                  titleTypographyProps={{ align: 'center', color: "#FFF", fontWeight: "bold" }}
+                  action={tier.title === 'Semestral' ? <BsStar size={24} color={"#DDD"} /> : null}
+                  subheaderTypographyProps={{
+                    align: 'center',
+                    color: "#FFF"
+                  }}
+                  sx={{
+                    backgroundColor: (theme) =>
+                      theme.palette.mode === 'light'
+                        ? theme.palette.primary.dark
+                        : theme.palette.grey[700],
+                  }}
+                />
+                <CardContent sx={{ py: 4 }}>
+                  <Box
                     sx={{
-                      backgroundColor: (theme) =>
-                        theme.palette.mode === 'light'
-                          ? theme.palette.primary.dark
-                          : theme.palette.grey[700],
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'baseline',
+                      mb: 2,
                     }}
-                  />
-                  <CardContent sx={{ py: 4 }}>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'baseline',
-                        mb: 2,
-                      }}
-                    >
-                      {
-                        !!tier.currentPrice ? (
-                          <Box
-                            flexDirection={'column'}
-                          >
-                            <Box display={"flex"} alignItems="baseline" flexDirection={'row'} width={"100%"}>
-                              <Typography mr={1}>De</Typography>
-                              <Typography sx={{ textDecoration: 'line-through' }}>R${tier.price}</Typography>
-                              <Typography sx={{ textDecoration: 'line-through' }} variant="caption" color="text.secondary">
-                                {tier.title === 'Mensal' && "/mês"}
-                                {tier.title === 'Semestral' && "/Sem"}
-                                {tier.title === 'Anual' && "/Ano"}
-                              </Typography>
-                              <Typography ml={1}>Por</Typography>
-                            </Box>
-                            <Box display={"flex"} alignItems="baseline" flexDirection={'row'}>
-                              <Typography component="h2" variant="h4" color="text.primary">
-                                R${tier.currentPrice}
-                              </Typography>
-                              <Typography variant="h6" color="text.secondary">
-                                {tier.title === 'Mensal' && "/mês"}
-                                {tier.title === 'Semestral' && "/Sem"}
-                                {tier.title === 'Anual' && "/Ano"}
-                              </Typography>
-                            </Box>
+                  >
+                    {
+                      !!tier.currentPrice ? (
+                        <Box
+                          flexDirection={'column'}
+                        >
+                          <Box display={"flex"} alignItems="baseline" flexDirection={'row'} width={"100%"}>
+                            <Typography mr={1}>De</Typography>
+                            <Typography sx={{ textDecoration: 'line-through' }}>R${tier.price}</Typography>
+                            <Typography sx={{ textDecoration: 'line-through' }} variant="caption" color="text.secondary">
+                              {tier.title === 'Mensal' && "/mês"}
+                              {tier.title === 'Semestral' && "/Sem"}
+                              {tier.title === 'Anual' && "/Ano"}
+                            </Typography>
+                            <Typography ml={1}>Por</Typography>
                           </Box>
-                        ) : (
-                          <>
+                          <Box display={"flex"} alignItems="baseline" flexDirection={'row'}>
                             <Typography component="h2" variant="h4" color="text.primary">
-                              R${tier.price}
+                              R${tier.currentPrice}
                             </Typography>
                             <Typography variant="h6" color="text.secondary">
                               {tier.title === 'Mensal' && "/mês"}
                               {tier.title === 'Semestral' && "/Sem"}
                               {tier.title === 'Anual' && "/Ano"}
                             </Typography>
-                          </>
-                        )
-                      }
-                    </Box>
-                    <ul>
-                      {tier.description.map((line) => (
-                        <Typography
-                          component="li"
-                          variant="subtitle1"
-                          fontWeight={"normal"}
-                          align="left"
-                          key={line}
-                          fontSize={14}
-                          sx={{
-                            listStyle: 'none',
-                          }}
-                        >
-                          <FaCheckCircle color={"#25d366"} />  {line}
-                        </Typography>
-                      ))}
-                    </ul>
-                  </CardContent>
-                  <CardActions>
-                    <Button fullWidth variant={tier.buttonVariant} onClick={() => {
-                      document.getElementById("cadastre").click()
-                    }}>
-                      {tier.buttonText}
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
+                          </Box>
+                        </Box>
+                      ) : (
+                        <>
+                          <Typography component="h2" variant="h4" color="text.primary">
+                            R${tier.price}
+                          </Typography>
+                          <Typography variant="h6" color="text.secondary">
+                            {tier.title === 'Mensal' && "/mês"}
+                            {tier.title === 'Semestral' && "/Sem"}
+                            {tier.title === 'Anual' && "/Ano"}
+                          </Typography>
+                        </>
+                      )
+                    }
+                  </Box>
+                  <ul>
+                    {tier.description.map((line) => (
+                      <Typography
+                        component="li"
+                        variant="subtitle1"
+                        fontWeight={"normal"}
+                        align="left"
+                        key={line}
+                        fontSize={14}
+                        sx={{
+                          listStyle: 'none',
+                        }}
+                      >
+                        <FaCheckCircle color={"#25d366"} />  {line}
+                      </Typography>
+                    ))}
+                  </ul>
+                </CardContent>
+                <CardActions>
+                  <Button fullWidth variant={tier.buttonVariant} onClick={() => {
+                    document.getElementById("cadastre").click()
+                  }}>
+                    {tier.buttonText}
+                  </Button>
+                </CardActions>
+              </Card>
             ))}
-          </Grid>
+          </Box>
         </Container>
         {/* Fim do preço */}
         {/* video */}
