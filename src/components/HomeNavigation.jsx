@@ -31,7 +31,7 @@ export default function HomeNavigation() {
 
   function handleDownloadApp() {
     console.log("Baixar o app")
-    window.open(window.location.href + 'WhatsAppSenderBot.Setup.4.8.6.exe', '_blank')
+    window.open(window.location.href + 'WhatsAppSenderBot.Setup.4.8.8.exe', '_blank')
   }
 
   const handleSubmitForm = async (formValues) => {
@@ -74,7 +74,7 @@ export default function HomeNavigation() {
       await api.post('', mutationcreateAssinante)
 
       if (formValues.plan === '0') {
-        setQrCode('00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b520400005303986540520.005802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062250521eN2bHtVplcyggdJ13l5he6304D991')
+        setQrCode('00020126780014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b0216WhatsapSenderApp520400005303986540510.005802BR5924Filipe de Leonel Batista6009SAO PAULO6214051032Fc9zavWB63046EE3')
       } else if (formValues.plan === '1') {
         setQrCode('00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b520400005303986540519.905802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062210517WhatsappSenderApp6304573D')
       } else if (formValues.plan === '6') {
