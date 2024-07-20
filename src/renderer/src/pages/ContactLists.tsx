@@ -32,6 +32,7 @@ const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
         fileName: "customerDataBase",
         delimiter: ";",
         utf8WithBom: true,
+        includeHeaders:false
       }}
     />
     <GridPrintExportMenuItem

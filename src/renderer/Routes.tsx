@@ -1,8 +1,9 @@
 import {
-  MemoryRouter as Router,
   Route,
+  MemoryRouter as Router,
   Routes as Switch,
 } from "react-router-dom";
+import AdminDashboard from "./src/pages/AdminDashboard";
 import Blog from "./src/pages/Blog";
 import ContactLists from "./src/pages/ContactLists";
 import Home from "./src/pages/Home";
@@ -26,6 +27,7 @@ export default function Routes() {
         <Route path="/configuracoes" element={<Settings />} />
         <Route path="/historico-de-envios" element={<Logs />} />
         <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Switch>
     </Router>
   );

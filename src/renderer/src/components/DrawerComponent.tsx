@@ -34,6 +34,7 @@ import { add, differenceInCalendarDays } from "date-fns";
 import * as React from "react";
 import { BiBot } from "react-icons/bi";
 import { BsCloudDownload } from "react-icons/bs";
+import { AiOutlineDashboard } from "react-icons/ai";
 import { useLocation, useNavigate } from "react-router-dom";
 import { VERSION } from "../constants/application";
 import useCurrentTheme from "../hooks/useCurrentTheme";
@@ -254,17 +255,17 @@ function DrawerComponent({ title, children }: DrawerComponent) {
               add(new Date(user?.paymentDate), { months: user?.selectedPlan }),
               Date.now(),
             ) < 15 && (
-              <Typography>
-                Licença expira em{" "}
-                {differenceInCalendarDays(
-                  add(new Date(user?.paymentDate), {
-                    months: user?.selectedPlan,
-                  }),
-                  Date.now(),
-                )}{" "}
-                dias
-              </Typography>
-            )}
+                <Typography>
+                  Licença expira em{" "}
+                  {differenceInCalendarDays(
+                    add(new Date(user?.paymentDate), {
+                      months: user?.selectedPlan,
+                    }),
+                    Date.now(),
+                  )}{" "}
+                  dias
+                </Typography>
+              )}
 
             {false && (
               <>
@@ -396,6 +397,22 @@ function DrawerComponent({ title, children }: DrawerComponent) {
                       <NewspaperIcon />
                     </ListItemIcon>
                     <ListItemText primary="Blog" />
+                  </ListItemButton>
+                </Tooltip>
+              </>
+            )}
+            {user && user?.isAdmin && (
+              <>
+                <Divider sx={{ my: 1 }} />
+                <Tooltip placement="right" title="Painel Admin">
+                  <ListItemButton
+                    selected={location.pathname === "/admin"}
+                    onClick={() => handleNavigate("/admin")}
+                  >
+                    <ListItemIcon>
+                      <AiOutlineDashboard size={24} />
+                    </ListItemIcon>
+                    <ListItemText primary="Painel Admin" />
                   </ListItemButton>
                 </Tooltip>
               </>

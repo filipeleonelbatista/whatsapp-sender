@@ -64,7 +64,7 @@ export default function Login() {
   const handleChangeQrCode = async (event) => {
     if (event.target.value === 0) {
       setQrCode(
-        "00020126580014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b520400005303986540520.005802BR5924Filipe de Leonel Batista6009SAO PAULO61080540900062250521eN2bHtVplcyggdJ13l5he6304D991",
+        "00020126780014BR.GOV.BCB.PIX0136f1bfe5be-67eb-42ad-8928-f71e02e1c99b0216WhatsapSenderApp520400005303986540510.005802BR5924Filipe de Leonel Batista6009SAO PAULO6214051032Fc9zavWB63046EE3",
       );
     } else if (event.target.value === 1) {
       setQrCode(
@@ -155,6 +155,7 @@ export default function Login() {
           return;
         } else {
           if (result.data.data.assinantes[0].isActive) {
+            console.log("Estou aqui", result.data.data.assinantes[0])
             localStorage.setItem("@remember", formValues.remember);
             localStorage.setItem(
               "@user-info",

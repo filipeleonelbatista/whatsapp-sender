@@ -48,6 +48,8 @@ const filterAssinantesByEmail = (email: string) => {
           selectedPlan
           senha
           updatedAt
+          whatsapp
+          isAdmin
         }
       }
     `,
@@ -57,7 +59,7 @@ const filterAssinantesByEmail = (email: string) => {
 const listAssinantes = {
   query: `
       query listAssinantes {
-        assinantes {
+        assinantes(first: 100) {
           createdAt
           email
           id
@@ -68,6 +70,8 @@ const listAssinantes = {
           requestAccessDate
           selectedPlan
           senha
+          whatsapp
+          isAdmin
           updatedAt
         }
       }
